@@ -1,0 +1,122 @@
+[
+  {
+    "w": 375,
+    "h": 812,
+    "path": "/",
+    "sw": 375,
+    "iw": 375,
+    "overflow": false
+  },
+  {
+    "w": 375,
+    "h": 812,
+    "path": "/search?q=braids&hood=le-plateau",
+    "sw": 375,
+    "iw": 375,
+    "overflow": false
+  },
+  {
+    "w": 375,
+    "h": 812,
+    "path": "/providers/nadia-braids-studio",
+    "sw": 375,
+    "iw": 375,
+    "overflow": false
+  },
+  {
+    "w": 375,
+    "h": 812,
+    "path": "/login",
+    "sw": 375,
+    "iw": 375,
+    "overflow": false
+  },
+  {
+    "w": 375,
+    "h": 812,
+    "path": "/how-it-works",
+    "sw": 375,
+    "iw": 375,
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "path": "/",
+    "sw": 390,
+    "iw": 390,
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "path": "/search?q=braids&hood=le-plateau",
+    "sw": 390,
+    "iw": 390,
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "path": "/providers/nadia-braids-studio",
+    "sw": 390,
+    "iw": 390,
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "path": "/login",
+    "sw": 390,
+    "iw": 390,
+    "overflow": false
+  },
+  {
+    "w": 390,
+    "h": 844,
+    "path": "/how-it-works",
+    "sw": 390,
+    "iw": 390,
+    "overflow": false
+  },
+  {
+    "w": 768,
+    "h": 1024,
+    "path": "/",
+    "sw": 768,
+    "iw": 768,
+    "overflow": false
+  },
+  {
+    "w": 768,
+    "h": 1024,
+    "path": "/search?q=braids&hood=le-plateau",
+    "sw": 768,
+    "iw": 768,
+    "overflow": false
+  },
+  {
+    "w": 768,
+    "h": 1024,
+    "path": "/providers/nadia-braids-studio",
+    "sw": 768,
+    "iw": 768,
+    "overflow": false
+  },
+  {
+    "w": 768,
+    "h": 1024,
+    "path": "/login",
+    "sw": 768,
+    "iw": 768,
+    "overflow": false
+  },
+  {
+    "w": 768,
+    "h": 1024,
+    "path": "/how-it-works",
+    "sw": 768,
+    "iw": 768,
+    "overflow": false
+  }
+]

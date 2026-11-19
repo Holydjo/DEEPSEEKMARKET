@@ -1,0 +1,370 @@
+[
+  {
+    "path": "/for-providers",
+    "status": 200
+  },
+  {
+    "path": "/",
+    "status": 200
+  },
+  {
+    "path": "/search",
+    "status": 200
+  },
+  {
+    "path": "/how-it-works",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=rosemont",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=villeray",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=little-burgundy",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=mile-end",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=little-italy",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=outremont",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=verdun",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=hochelaga",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal&hood=cote-des-neiges",
+    "status": 200
+  },
+  {
+    "path": "/search?city=montreal",
+    "status": 200
+  },
+  {
+    "path": "/login",
+    "status": 200
+  },
+  {
+    "path": "/provider/join",
+    "status": 200
+  },
+  {
+    "path": "/search?q=knotless&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=deep%20clean&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=phone&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=silk%20press&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=kids%20braids&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio",
+    "status": 200
+  },
+  {
+    "path": "/search?category=hair",
+    "status": 200
+  },
+  {
+    "path": "/search?category=braids",
+    "status": 200
+  },
+  {
+    "path": "/search?category=beauty",
+    "status": 200
+  },
+  {
+    "path": "/search?category=nails",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning",
+    "status": 200
+  },
+  {
+    "path": "/search?category=repairs",
+    "status": 200
+  },
+  {
+    "path": "/search?category=tutoring",
+    "status": 200
+  },
+  {
+    "path": "/search?category=moving",
+    "status": 200
+  },
+  {
+    "path": "/search?hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/providers/maison-propre",
+    "status": 200
+  },
+  {
+    "path": "/login?next=%2F",
+    "status": 200
+  },
+  {
+    "path": "/providers/awas-hair-atelier",
+    "status": 200
+  },
+  {
+    "path": "/login?next=%2Fsaved",
+    "status": 200
+  },
+  {
+    "path": "/login?next=%2Faccount",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=hair",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=braids",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=beauty",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=nails",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=cleaning",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=repairs",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=tutoring",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&category=moving",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&sort=distance",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&sort=rating",
+    "status": 200
+  },
+  {
+    "path": "/search?q=braids&hood=le-plateau&sort=price",
+    "status": 200
+  },
+  {
+    "path": "/login?next=%2Fsearch",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio?request=1",
+    "status": 200
+  },
+  {
+    "path": "/providers/mariam-a-domicile",
+    "status": 200
+  },
+  {
+    "path": "/providers/mariam-a-domicile?request=1",
+    "status": 200
+  },
+  {
+    "path": "/providers/studio-kora",
+    "status": 200
+  },
+  {
+    "path": "/providers/studio-kora?request=1",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=hair",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=braids",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=beauty",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=nails",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=cleaning",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=repairs",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=tutoring",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&category=moving",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&sort=distance",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&sort=rating",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&sort=price",
+    "status": 200
+  },
+  {
+    "path": "/search?q=zzzzzz&hood=le-plateau&radius=10",
+    "status": 200
+  },
+  {
+    "path": "/search?category=hair&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=braids&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=beauty&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=nails&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=repairs&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=tutoring&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=moving&hood=le-plateau",
+    "status": 200
+  },
+  {
+    "path": "/search?category=hair&hood=le-plateau&sort=distance",
+    "status": 200
+  },
+  {
+    "path": "/search?category=hair&hood=le-plateau&sort=rating",
+    "status": 200
+  },
+  {
+    "path": "/search?category=hair&hood=le-plateau&sort=price",
+    "status": 200
+  },
+  {
+    "path": "/providers/awas-hair-atelier?request=1",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning&sort=distance",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning&sort=rating",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning&sort=price",
+    "status": 200
+  },
+  {
+    "path": "/search?category=cleaning&radius=10",
+    "status": 200
+  },
+  {
+    "path": "/login?next=%2Fproviders%2Fnadia-braids-studio",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio?request=1&service=cmwo3aybq000msbpyxi02z1l3",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio?request=1&service=cmwo3aybq000nsbpy4kb7dj4k",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio?request=1&service=cmwo3aybq000osbpyto1nryvt",
+    "status": 200
+  },
+  {
+    "path": "/providers/nadia-braids-studio?request=1&service=cmwo3aybq000psbpyme6j6ypp",
+    "status": 200
+  },
+  {
+    "path": "/login?next=/providers/nadia-braids-studio",
+    "status": 200
+  },
+  {
+    "path": "/forgot-password",
+    "status": 200
+  },
+  {
+    "path": "/signup",
+    "status": 200
+  }
+]

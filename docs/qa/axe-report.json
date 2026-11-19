@@ -1,0 +1,188 @@
+[
+  {
+    "name": "home",
+    "path": "/",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 3,
+        "targets": [
+          [
+            ".\\!text-paper\\/55"
+          ],
+          [
+            ".\\!text-ink\\/55"
+          ],
+          [
+            ".text-ink\\/65"
+          ]
+        ]
+      },
+      {
+        "id": "region",
+        "impact": "moderate",
+        "help": "All page content should be contained by landmarks",
+        "nodes": 1,
+        "targets": [
+          [
+            ".md\\:block"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "path": "/search?q=braids&hood=le-plateau",
+    "violations": [
+      {
+        "id": "heading-order",
+        "impact": "moderate",
+        "help": "Heading levels should only increase by one",
+        "nodes": 1,
+        "targets": [
+          [
+            "article:nth-child(1) > .sm\\:p-4.flex-1.p-3 > .items-start.justify-between.gap-2 > .min-w-0 > .flex-wrap.gap-1\\.5.items-center > h3"
+          ]
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+        "nodes": 1,
+        "targets": [
+          [
+            "aside:nth-child(1)"
+          ]
+        ]
+      },
+      {
+        "id": "region",
+        "impact": "moderate",
+        "help": "All page content should be contained by landmarks",
+        "nodes": 1,
+        "targets": [
+          [
+            ".md\\:block"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "name": "profile",
+    "path": "/providers/nadia-braids-studio",
+    "violations": [
+      {
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "help": "Elements must only use permitted ARIA attributes",
+        "nodes": 4,
+        "targets": [
+          [
+            "span[aria-label=\"4.9 out of 5\"]"
+          ],
+          [
+            ".p-3\\.5:nth-child(1) > .items-start.justify-between.gap-2 > .text-right > .gap-0\\.5.inline-flex[aria-label=\"5.0 out of 5\"]"
+          ],
+          [
+            ".p-3\\.5:nth-child(2) > .items-start.justify-between.gap-2 > .text-right > .gap-0\\.5.inline-flex[aria-label=\"5.0 out of 5\"]"
+          ]
+        ]
+      },
+      {
+        "id": "landmark-main-is-top-level",
+        "impact": "moderate",
+        "help": "Main landmark should not be contained in another landmark",
+        "nodes": 1,
+        "targets": [
+          [
+            ".mt-6 > main"
+          ]
+        ]
+      },
+      {
+        "id": "landmark-no-duplicate-main",
+        "impact": "moderate",
+        "help": "Document should not have more than one main landmark",
+        "nodes": 1,
+        "targets": [
+          [
+            "#main"
+          ]
+        ]
+      },
+      {
+        "id": "landmark-unique",
+        "impact": "moderate",
+        "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+        "nodes": 1,
+        "targets": [
+          [
+            "#main"
+          ]
+        ]
+      },
+      {
+        "id": "region",
+        "impact": "moderate",
+        "help": "All page content should be contained by landmarks",
+        "nodes": 1,
+        "targets": [
+          [
+            ".md\\:block"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "name": "login",
+    "path": "/login",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 7,
+        "targets": [
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(1) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ],
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(2) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ],
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(3) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "name": "saved-guest",
+    "path": "/saved",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 7,
+        "targets": [
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(1) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ],
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(2) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ],
+          [
+            ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(3) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+          ]
+        ]
+      }
+    ]
+  }
+]

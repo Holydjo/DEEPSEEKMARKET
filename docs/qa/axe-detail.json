@@ -1,0 +1,396 @@
+[
+  {
+    "page": "home",
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "nodes": [
+      {
+        "target": [
+          ".\\!text-paper\\/55"
+        ],
+        "html": "<p class=\"eyebrow !text-paper/55 before:!bg-paper/40\">Why you can relax a little</p>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 4.35 (foreground color: #929f92, background color: #173d2e, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#929f92",
+            "bgColor": "#173d2e",
+            "contrastRatio": 4.35,
+            "fontSize": "7.5pt (10px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".\\!text-ink\\/55"
+        ],
+        "html": "<p class=\"eyebrow !text-ink/55 before:!bg-ink\">For independent providers &amp; small businesses</p>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.37 (foreground color: #7a5b24, background color: #f2b33d, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#7a5b24",
+            "bgColor": "#f2b33d",
+            "contrastRatio": 3.37,
+            "fontSize": "7.5pt (10px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".text-ink\\/65"
+        ],
+        "html": "<span class=\"text-[10px] text-ink/65\">Takes about 12 minutes · reviewed by a person</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 4.39 (foreground color: #644b1f, background color: #f2b33d, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#644b1f",
+            "bgColor": "#f2b33d",
+            "contrastRatio": 4.39,
+            "fontSize": "7.5pt (10px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "id": "region",
+    "impact": "moderate",
+    "help": "All page content should be contained by landmarks",
+    "nodes": [
+      {
+        "target": [
+          ".md\\:block"
+        ],
+        "html": "<div class=\"hidden border-b border-ink bg-ink text-paper md:block\">",
+        "failure": "Fix any of the following:\n  Some page content is not contained by landmarks",
+        "data": [
+          {
+            "isIframe": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "search",
+    "id": "heading-order",
+    "impact": "moderate",
+    "help": "Heading levels should only increase by one",
+    "nodes": [
+      {
+        "target": [
+          "article:nth-child(1) > .sm\\:p-4.flex-1.p-3 > .items-start.justify-between.gap-2 > .min-w-0 > .flex-wrap.gap-1\\.5.items-center > h3"
+        ],
+        "html": "<h3 class=\"truncate text-[13.5px] font-semibold leading-tight sm:text-[15px]\"><a class=\"hover:underline\" href=\"/providers/nadia-braids-studio\">Nadia Braids Studio</a></h3>",
+        "failure": "Fix any of the following:\n  Heading order invalid",
+        "data": [
+          null
+        ]
+      }
+    ]
+  },
+  {
+    "page": "search",
+    "id": "landmark-unique",
+    "impact": "moderate",
+    "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+    "nodes": [
+      {
+        "target": [
+          "aside:nth-child(1)"
+        ],
+        "html": "<aside class=\"lg:sticky lg:top-20\">",
+        "failure": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable",
+        "data": [
+          {
+            "role": "complementary",
+            "accessibleText": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "search",
+    "id": "region",
+    "impact": "moderate",
+    "help": "All page content should be contained by landmarks",
+    "nodes": [
+      {
+        "target": [
+          ".md\\:block"
+        ],
+        "html": "<div class=\"hidden border-b border-ink bg-ink text-paper md:block\">",
+        "failure": "Fix any of the following:\n  Some page content is not contained by landmarks",
+        "data": [
+          {
+            "isIframe": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "profile",
+    "id": "aria-prohibited-attr",
+    "impact": "serious",
+    "help": "Elements must only use permitted ARIA attributes",
+    "nodes": [
+      {
+        "target": [
+          "span[aria-label=\"4.9 out of 5\"]"
+        ],
+        "html": "<span class=\"inline-flex items-center gap-0.5 \" aria-label=\"4.9 out of 5\">",
+        "failure": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+        "data": []
+      },
+      {
+        "target": [
+          ".p-3\\.5:nth-child(1) > .items-start.justify-between.gap-2 > .text-right > .gap-0\\.5.inline-flex[aria-label=\"5.0 out of 5\"]"
+        ],
+        "html": "<span class=\"inline-flex items-center gap-0.5 \" aria-label=\"5.0 out of 5\">",
+        "failure": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+        "data": []
+      },
+      {
+        "target": [
+          ".p-3\\.5:nth-child(2) > .items-start.justify-between.gap-2 > .text-right > .gap-0\\.5.inline-flex[aria-label=\"5.0 out of 5\"]"
+        ],
+        "html": "<span class=\"inline-flex items-center gap-0.5 \" aria-label=\"5.0 out of 5\">",
+        "failure": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+        "data": []
+      },
+      {
+        "target": [
+          ".p-3\\.5:nth-child(3) > .items-start.justify-between.gap-2 > .text-right > .gap-0\\.5.inline-flex[aria-label=\"5.0 out of 5\"]"
+        ],
+        "html": "<span class=\"inline-flex items-center gap-0.5 \" aria-label=\"5.0 out of 5\">",
+        "failure": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute.",
+        "data": []
+      }
+    ]
+  },
+  {
+    "page": "profile",
+    "id": "landmark-main-is-top-level",
+    "impact": "moderate",
+    "help": "Main landmark should not be contained in another landmark",
+    "nodes": [
+      {
+        "target": [
+          ".mt-6 > main"
+        ],
+        "html": "<main>",
+        "failure": "Fix any of the following:\n  The main landmark is contained in another landmark.",
+        "data": [
+          {
+            "role": "main"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "profile",
+    "id": "landmark-no-duplicate-main",
+    "impact": "moderate",
+    "help": "Document should not have more than one main landmark",
+    "nodes": [
+      {
+        "target": [
+          "#main"
+        ],
+        "html": "<main id=\"main\" class=\"flex-1\">",
+        "failure": "Fix any of the following:\n  Document has more than one main landmark",
+        "data": [
+          null
+        ]
+      }
+    ]
+  },
+  {
+    "page": "profile",
+    "id": "landmark-unique",
+    "impact": "moderate",
+    "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+    "nodes": [
+      {
+        "target": [
+          "#main"
+        ],
+        "html": "<main id=\"main\" class=\"flex-1\">",
+        "failure": "Fix any of the following:\n  The landmark must have a unique aria-label, aria-labelledby, or title to make landmarks distinguishable",
+        "data": [
+          {
+            "role": "main",
+            "accessibleText": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "profile",
+    "id": "region",
+    "impact": "moderate",
+    "help": "All page content should be contained by landmarks",
+    "nodes": [
+      {
+        "target": [
+          ".md\\:block"
+        ],
+        "html": "<div class=\"hidden border-b border-ink bg-ink text-paper md:block\">",
+        "failure": "Fix any of the following:\n  Some page content is not contained by landmarks",
+        "data": [
+          {
+            "isIframe": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page": "login",
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "nodes": [
+      {
+        "target": [
+          ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(1) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+        ],
+        "html": "<span class=\"text-[9px] text-paper/50\">Requests and reviews</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #8c9b8d, background color: #224637, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#8c9b8d",
+            "bgColor": "#224637",
+            "contrastRatio": 3.59,
+            "fontSize": "6.8pt (9px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(2) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+        ],
+        "html": "<span class=\"text-[9px] text-paper/50\">Approved profile &amp; inbox</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #8c9b8d, background color: #224637, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#8c9b8d",
+            "bgColor": "#224637",
+            "contrastRatio": 3.59,
+            "fontSize": "6.8pt (9px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(3) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+        ],
+        "html": "<span class=\"text-[9px] text-paper/50\">See the review state</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #8c9b8d, background color: #224637, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#8c9b8d",
+            "bgColor": "#224637",
+            "contrastRatio": 3.59,
+            "fontSize": "6.8pt (9px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(4) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+        ],
+        "html": "<span class=\"text-[9px] text-paper/50\">Try the 7-step application</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #8c9b8d, background color: #224637, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#8c9b8d",
+            "bgColor": "#224637",
+            "contrastRatio": 3.59,
+            "fontSize": "6.8pt (9px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".rounded-xl.border-paper\\/15.bg-paper\\/5:nth-child(5) > .items-baseline.justify-between.gap-2 > .text-paper\\/50.text-\\[9px\\]"
+        ],
+        "html": "<span class=\"text-[9px] text-paper/50\">Approval queue</span>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.59 (foreground color: #8c9b8d, background color: #224637, font size: 6.8pt (9px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#8c9b8d",
+            "bgColor": "#224637",
+            "contrastRatio": 3.59,
+            "fontSize": "6.8pt (9px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          ".text-\\[10px\\]"
+        ],
+        "html": "<p class=\"mt-5 text-[10px] leading-relaxed text-paper/50\">",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.87 (foreground color: #879689, background color: #173d2e, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#879689",
+            "bgColor": "#173d2e",
+            "contrastRatio": 3.87,
+            "fontSize": "7.5pt (10px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      },
+      {
+        "target": [
+          "code"
+        ],
+        "html": "<code>prisma/seed.ts</code>",
+        "failure": "Fix any of the following:\n  Element has insufficient color contrast of 3.87 (foreground color: #879689, background color: #173d2e, font size: 7.5pt (10px), font weight: normal). Expected contrast ratio of 4.5:1",
+        "data": [
+          {
+            "fgColor": "#879689",
+            "bgColor": "#173d2e",
+            "contrastRatio": 3.87,
+            "fontSize": "7.5pt (10px)",
+            "fontWeight": "normal",
+            "messageKey": null,
+            "expectedContrastRatio": "4.5:1"
+          }
+        ]
+      }
+    ]
+  }
+]
