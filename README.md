@@ -4,10 +4,11 @@
 customers with independent providers and small businesses — hair, braids, beauty,
 cleaning, repairs and more.
 
-> **Status: v1 is built and runnable.** The repository began empty; this is an original
-> implementation based on the [v1 plan](docs/V1-PLAN.md) and the four approved
-> [wireframes](wireframes/index.html). Core customer, provider and admin journeys have been
-> tested end-to-end.
+> **Status: v1 is built and runnable, with a v1.1 hardening pass.** The repository began
+> empty; this is an original implementation based on the [v1 plan](docs/V1-PLAN.md) and the
+> four approved [wireframes](wireframes/index.html). Core customer, provider and admin
+> journeys have been tested end-to-end. v1.1 adds saved providers, admin review moderation
+> and basic public-form rate limiting.
 
 ![HOLYDO MARKET homepage](docs/screenshots/home.png)
 
@@ -32,7 +33,7 @@ Open **http://localhost:3000**.
 
 | Role | Email | Password | What to try |
 | --- | --- | --- | --- |
-| Customer | `amina@example.com` | `Customer123!` | Requests, reviews, account |
+| Customer | `amina@example.com` | `Customer123!` | Requests, reviews, saved providers |
 | Provider (approved) | `nadia@example.com` | `Provider123!` | Dashboard, services, requests |
 | Provider (pending) | `naya@example.com` | `Provider123!` | “In review” state |
 | Provider (draft) | `rose@example.com` | `Provider123!` | The 7-step onboarding |
@@ -52,6 +53,8 @@ before any public deployment.**
 | ![Provider dashboard](docs/screenshots/provider-dashboard.png) | ![Admin](docs/screenshots/admin.png) |
 | **Mobile home** | **Mobile search** |
 | ![Mobile home](docs/screenshots/mobile-home.png) | ![Mobile search](docs/screenshots/mobile-search.png) |
+| **Saved providers** | **Admin review moderation** |
+| ![Saved providers](docs/screenshots/saved.png) | ![Admin reviews](docs/screenshots/admin-reviews.png) |
 
 ## What is included
 
@@ -68,6 +71,8 @@ before any public deployment.**
 - Confirmation page with a shareable reference; provider replies appear there and in the
   customer account.
 - Customer account with requests, provider notes, reviews, and logout.
+- Saved providers: a private shortlist at `/saved`, a heart control on cards and profiles,
+  and a saved-provider shortcut in the header and mobile tab bar.
 - Sign-up / login, installable web app manifest, sitemap, robots rules and JSON-LD.
 
 ### Providers
@@ -90,6 +95,8 @@ before any public deployment.**
 - Full application review: profile, applicant contact, private address, photos, services,
   prices, hours, service area and a completeness checklist.
 - Approve & publish, request changes with a required note, suspend and reinstate.
+- Review moderation: hide or restore any review. Hidden reviews disappear from the public
+  profile and the provider's weighted rating is recalculated in both directions.
 - Every decision is written to an `AdminAction` audit trail and attributed to the admin.
 
 ### Only approved profiles are public
@@ -115,7 +122,7 @@ Draft, pending, rejected and suspended providers return 404 publicly.
 | Maps | Leaflet + OpenStreetMap, dynamically imported |
 | Validation | Zod on every server action |
 | Icons | Lucide |
-| Tests | Vitest (33 unit tests) |
+| Tests | Vitest (45 unit tests) |
 
 ### Why scrypt instead of Argon2id?
 
@@ -128,13 +135,13 @@ Argon2id, hashes can be re-derived on next login without changing the user model
 
 ```
 app/
-  (public)/              public layout, home, search, provider profile, account, requests,
-                         how-it-works, for-providers
+  (public)/              public layout, home, search, provider profile, account, saved,
+                         requests, how-it-works, for-providers
   (auth)/                login, signup, minimal auth layout
   provider/join/         step 1 of the provider application
   provider/onboarding/   7-step application (server actions, uploaded photos)
   provider/dashboard/    overview, profile, services, requests, reviews
-  admin/                 overview, applications queue, application detail, all providers
+  admin/                 overview, applications queue, application detail, reviews, all providers
   actions/               auth, provider, request/review and admin server actions
   api/                   (none — server actions are used throughout)
 components/              shared UI: header/footer, cards, filters, map, booking sheet, forms
@@ -150,10 +157,13 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 - [`prisma/schema.prisma`](prisma/schema.prisma) — users, providers, services, photos, hours,
   areas, requests, reviews, admin audit log.
 - [`prisma/seed.ts`](prisma/seed.ts) — 12 categories, 17 providers (13 approved, 2 pending,
-  1 draft, 1 rejected), 19 reviews and 24 requests.
+  1 draft, 1 rejected), 19 reviews, 24 requests and 2 saved providers.
 - [`lib/search.ts`](lib/search.ts) — approved-only search, distance, filters, sorting,
   map points and provider profile queries.
 - [`lib/auth.ts`](lib/auth.ts) — sessions, role guards, provider/admin access.
+- [`lib/saved.ts`](lib/saved.ts) — the customer's private saved-provider set.
+- [`lib/reviews.ts`](lib/reviews.ts) — weighted rating recalculation for moderation.
+- [`lib/rate-limit.ts`](lib/rate-limit.ts) — in-process rate limiting for public forms.
 - [`app/actions/provider.ts`](app/actions/provider.ts) — the full provider lifecycle.
 - [`app/actions/admin.ts`](app/actions/admin.ts) — approval and moderation with audit logging.
 
@@ -206,12 +216,14 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 ## Verification performed
 
 - `npm run build` succeeds; all routes compile.
-- `npm run typecheck`, `npm run lint` and `npm test` (33 tests) pass.
+- `npm run typecheck`, `npm run lint` and `npm test` (45 tests) pass.
 - Browser-tested customer request flow through the booking sheet → confirmation page.
 - Browser-tested a brand-new provider through all 7 onboarding steps, photo upload, submit,
   admin approval, and the resulting public profile.
 - Browser-tested provider request acceptance, review submission, customer login, provider login
   and admin login.
+- Browser-tested saving/unsaving providers, the private `/saved` page, and admin hide/publish
+  review moderation with rating recalculation (48 → 47 → 48 reviews).
 - Mobile viewport checks at 390 × 844: no horizontal overflow on home, search, profile, join,
   login, onboarding or dashboard.
 
@@ -228,7 +240,12 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
   storage with image processing and virus/MIME scanning.
 - **SQLite.** The schema avoids SQLite-specific features and is ready for Postgres, but v1 runs
   on a local SQLite file.
-- **No rate limiting or spam protection** on public request/review endpoints yet.
+- **Rate limiting is in-memory and per process.** It covers booking requests and reviews with
+  a modest burst limit, but a multi-instance deployment needs a shared store (Redis/Upstash)
+  plus CAPTCHA or another bot defence.
+- **Review aggregates mix demo history and recent rows.** Seeded providers carry a lifetime
+  rating count while only the most recent reviews are rows; moderation recalculates the
+  weighted aggregate correctly, but the two views intentionally differ.
 - **Search filters in application code** after an indexed approved-provider query. Fine for
   this dataset; production should use PostGIS/geohash and pagination in SQL.
 - **Demo photography** from Unsplash — see [image credits](public/images/ATTRIBUTION.md).
@@ -240,7 +257,7 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 2. Postgres + object storage + image processing.
 3. Rate limiting, CAPTCHA on requests, and email verification.
 4. Real availability / calendar slots and provider response templates.
-5. Customer favourites, review moderation tools, and supply-demand analytics.
+5. Distributed rate limiting, CAPTCHA on public forms, and supply-demand analytics.
 6. French localisation and a bilingual content model.
 
 ## Planning documents

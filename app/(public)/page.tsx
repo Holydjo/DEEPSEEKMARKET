@@ -11,6 +11,8 @@ import {
   Star,
 } from "lucide-react";
 import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
+import { getSavedProviderIds } from "@/lib/saved";
 import {
   getCategoriesWithCounts,
   getFeaturedProviders,
@@ -42,7 +44,8 @@ const POPULAR = [
 ];
 
 export default async function HomePage() {
-  const [categories, featured, hoodCounts, providerStats, reviewCount] = await Promise.all([
+  const user = await getCurrentUser();
+  const [categories, featured, hoodCounts, providerStats, reviewCount, savedIds] = await Promise.all([
     getCategoriesWithCounts(),
     getFeaturedProviders(3),
     getNeighbourhoodCounts(),
@@ -52,6 +55,7 @@ export default async function HomePage() {
       _avg: { ratingAvg: true },
     }),
     db.review.count({ where: { status: "PUBLISHED" } }),
+    getSavedProviderIds(user?.id),
   ]);
 
   const heroProvider =
@@ -269,6 +273,8 @@ export default async function HomePage() {
                 minPriceCents={item.minPriceCents}
                 openNow={item.openNow}
                 priority={index === 0}
+                saved={savedIds.has(item.provider.id)}
+                isAuthed={Boolean(user)}
               />
             ))}
           </div>

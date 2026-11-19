@@ -13,6 +13,8 @@ import {
   type SearchFilters,
 } from "@/lib/search";
 import { MONTREAL, neighbourhoodBySlug } from "@/lib/location";
+import { getCurrentUser } from "@/lib/auth";
+import { getSavedProviderIds } from "@/lib/saved";
 import { SearchForm } from "@/components/search-form";
 import { FilterPanel } from "@/components/filter-panel";
 import { SearchResultCard } from "@/components/search-result-card";
@@ -51,9 +53,11 @@ export default async function SearchPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const [search, categories] = await Promise.all([
+  const user = await getCurrentUser();
+  const [search, categories, savedIds] = await Promise.all([
     searchProviders(params),
     getCategoriesWithCounts(),
+    getSavedProviderIds(user?.id),
   ]);
 
   const { filters, origin } = search;
@@ -259,6 +263,8 @@ export default async function SearchPage({
                     distanceKm={result.distanceKm}
                     minPriceCents={result.minPriceCents}
                     openNow={result.openNow}
+                    saved={savedIds.has(result.provider.id)}
+                    isAuthed={Boolean(user)}
                   />
                 ))}
               </div>

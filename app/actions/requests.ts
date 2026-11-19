@@ -7,6 +7,9 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { PREFERRED_WINDOWS } from "@/lib/constants";
 import { reference } from "@/lib/slug";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/request-ip";
+import { ratingAfterPublish } from "@/lib/reviews";
 import type { ActionState } from "@/lib/types";
 
 const bookingSchema = z.object({
@@ -27,6 +30,13 @@ export async function createBookingRequest(
   const parsed = bookingSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check your request and try again." };
+  }
+
+  const ip = await getClientIp();
+  const limit = rateLimit(`booking:${ip}`, 8, 10 * 60_000);
+  if (!limit.allowed) {
+    const minutes = Math.max(1, Math.ceil(limit.retryAfterMs / 60_000));
+    return { error: `Too many requests from this connection. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
   }
 
   const provider = await db.provider.findFirst({
@@ -98,6 +108,13 @@ export async function createReview(
     return { error: parsed.error.issues[0]?.message ?? "Check your review and try again." };
   }
 
+  const ip = await getClientIp();
+  const limit = rateLimit(`review:${user.id}:${ip}`, 5, 10 * 60_000);
+  if (!limit.allowed) {
+    const minutes = Math.max(1, Math.ceil(limit.retryAfterMs / 60_000));
+    return { error: `Too many reviews from this connection. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.` };
+  }
+
   const provider = await db.provider.findFirst({
     where: { id: parsed.data.providerId, status: "APPROVED" },
   });
@@ -123,9 +140,11 @@ export async function createReview(
     orderBy: { createdAt: "desc" },
   });
 
-  const newCount = provider.ratingCount + 1;
-  const newAverage =
-    (provider.ratingAvg * provider.ratingCount + parsed.data.rating) / newCount;
+  const nextRating = ratingAfterPublish(
+    provider.ratingAvg,
+    provider.ratingCount,
+    parsed.data.rating,
+  );
 
   await db.$transaction([
     db.review.create({
@@ -140,7 +159,7 @@ export async function createReview(
     }),
     db.provider.update({
       where: { id: provider.id },
-      data: { ratingAvg: newAverage, ratingCount: newCount },
+      data: { ratingAvg: nextRating.ratingAvg, ratingCount: nextRating.ratingCount },
     }),
   ]);
 

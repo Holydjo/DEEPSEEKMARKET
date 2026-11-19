@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import {
   ArrowRight,
   CalendarDays,
+  Heart,
   LayoutDashboard,
   LogOut,
   MapPin,
@@ -32,7 +33,7 @@ export default async function AccountPage() {
   if (!user) redirect("/login?next=/account");
   if (user.role === "ADMIN") redirect("/admin");
 
-  const [requests, reviews] = await Promise.all([
+  const [requests, reviews, savedCount] = await Promise.all([
     db.bookingRequest.findMany({
       where: {
         OR: [{ customerUserId: user.id }, { email: user.email }],
@@ -48,6 +49,7 @@ export default async function AccountPage() {
       include: { provider: { include: { category: true } } },
       orderBy: { createdAt: "desc" },
     }),
+    db.savedProvider.count({ where: { userId: user.id } }),
   ]);
 
   const pending = requests.filter((request) => request.status === "PENDING").length;
@@ -66,6 +68,9 @@ export default async function AccountPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Link href="/saved" className="btn btn-outline btn-sm">
+            <Heart className="h-3.5 w-3.5" aria-hidden /> Saved {savedCount > 0 && <span className="text-muted">({savedCount})</span>}
+          </Link>
           <Link href="/search" className="btn btn-primary btn-sm">
             Find a service <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
@@ -201,6 +206,21 @@ export default async function AccountPage() {
               </button>
             </form>
           </div>
+
+          <Link href="/saved" className="card block p-5 transition-colors hover:border-ink">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg">Saved providers</h2>
+              <Heart className="h-4 w-4 text-clay" aria-hidden />
+            </div>
+            <p className="mt-1 text-[10px] leading-relaxed text-muted">
+              {savedCount > 0
+                ? `${savedCount} saved ${savedCount === 1 ? "provider" : "providers"} for later.`
+                : "Tap the heart on any provider to keep them here."}
+            </p>
+            <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-ink">
+              View saved <ArrowRight className="h-3 w-3" aria-hidden />
+            </span>
+          </Link>
 
           <div className="card p-5">
             <div className="flex items-center justify-between">

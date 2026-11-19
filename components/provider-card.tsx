@@ -8,6 +8,7 @@ import { formatMoney } from "@/lib/format";
 import { CategoryIcon } from "./category-icon";
 import { Rating } from "./rating";
 import { VerifiedBadge } from "./verified-badge";
+import { SaveButton } from "./save-button";
 
 export function ProviderCard({
   provider,
@@ -15,12 +16,16 @@ export function ProviderCard({
   minPriceCents,
   openNow,
   priority = false,
+  saved = false,
+  isAuthed = false,
 }: {
   provider: ProviderCardData;
   distanceKm: number | null;
   minPriceCents: number | null;
   openNow?: boolean;
   priority?: boolean;
+  saved?: boolean;
+  isAuthed?: boolean;
 }) {
   const photo = provider.photos[0]?.url ?? provider.coverUrl;
   const placeTags = PLACE_OPTIONS.filter((option) => {
@@ -31,7 +36,7 @@ export function ProviderCard({
   });
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-ink hover:shadow-[4px_4px_0_var(--color-ink)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface transition-all duration-300 hover:-translate-y-0.5 hover:border-ink hover:shadow-[4px_4px_0_var(--color-ink)]">
       <Link
         href={`/providers/${provider.slug}`}
         className="relative block aspect-[16/11] overflow-hidden bg-surface-2"
@@ -66,6 +71,14 @@ export function ProviderCard({
           <ArrowUpRight className="h-4 w-4" aria-hidden />
         </span>
       </Link>
+
+      <div className="absolute right-3 top-3 z-20">
+        <SaveButton
+          providerId={provider.id}
+          initialSaved={saved}
+          isAuthed={isAuthed}
+        />
+      </div>
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">

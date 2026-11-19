@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
+import { getSavedProviderIds } from "@/lib/saved";
+import { SaveButton } from "@/components/save-button";
 import { formatDateTime, formatDuration, formatRelative, formatServicePrice, dayName, dayShort, initials, isOpenNow, nextOpenDay, todayHours, torontoNowParts, WEEK_ORDER } from "@/lib/format";
 import { formatDistance } from "@/lib/location";
 import { PROVIDER_TYPE_LABEL } from "@/lib/constants";
@@ -86,6 +88,8 @@ export default async function ProviderPage({
 
   const { provider, similar, distanceFromPlateau } = data;
   const user = await getCurrentUser();
+  const savedIds = await getSavedProviderIds(user?.id);
+  const isSaved = savedIds.has(provider.id);
   const existingReview = user
     ? await db.review.findUnique({
         where: {
@@ -221,12 +225,20 @@ export default async function ProviderPage({
         {/* Body */}
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
           <main>
-            <div className="flex flex-wrap items-center gap-2">
-              <VerifiedBadge />
-              <span className="pill">{PROVIDER_TYPE_LABEL[provider.type] ?? "Provider"}</span>
-              <span className={`pill ${open ? "pill-pine" : ""}`}>
-                <span className="status-dot" /> {openLabel}
-              </span>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <VerifiedBadge />
+                <span className="pill">{PROVIDER_TYPE_LABEL[provider.type] ?? "Provider"}</span>
+                <span className={`pill ${open ? "pill-pine" : ""}`}>
+                  <span className="status-dot" /> {openLabel}
+                </span>
+              </div>
+              <SaveButton
+                providerId={provider.id}
+                initialSaved={isSaved}
+                isAuthed={Boolean(user)}
+                variant="button"
+              />
             </div>
 
             <h1 className="display mt-3 text-[clamp(2.2rem,4.4vw,3.7rem)]">
@@ -540,6 +552,8 @@ export default async function ProviderPage({
                       distanceKm={item.distanceKm}
                       minPriceCents={item.minPriceCents}
                       openNow={isOpenNow(item.provider.hours)}
+                      saved={savedIds.has(item.provider.id)}
+                      isAuthed={Boolean(user)}
                     />
                   ))}
                 </div>

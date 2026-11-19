@@ -972,6 +972,7 @@ async function main() {
   console.log("Resetting database…");
   await db.review.deleteMany();
   await db.bookingRequest.deleteMany();
+  await db.savedProvider.deleteMany();
   await db.adminAction.deleteMany();
   await db.providerPhoto.deleteMany();
   await db.service.deleteMany();
@@ -1390,6 +1391,14 @@ async function main() {
     });
   }
 
+  console.log("Creating saved providers…");
+  await db.savedProvider.createMany({
+    data: [
+      { userId: amina.id, providerId: providers.get("nadia")!.id },
+      { userId: amina.id, providerId: providers.get("kora")!.id },
+    ],
+  });
+
   console.log("Creating approval history…");
   const adminActions = [
     { provider: "nadia", action: "APPROVE", note: "Identity and portfolio checked. Clear pricing." },
@@ -1419,6 +1428,7 @@ async function main() {
     draft: providerSeeds.filter((p) => p.status === "DRAFT").length,
     reviews: reviewSeeds.length,
     requests: await db.bookingRequest.count(),
+    saved: await db.savedProvider.count(),
   };
   console.log("Seed complete:", counts);
   console.log("Admin: admin@holydo.market / Admin123!");

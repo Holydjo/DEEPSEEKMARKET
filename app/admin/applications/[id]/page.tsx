@@ -23,6 +23,8 @@ const ACTION_LABEL: Record<string, string> = {
   REJECT: "Requested changes",
   SUSPEND: "Suspended",
   REINSTATE: "Reinstated",
+  HIDE_REVIEW: "Hid a review",
+  PUBLISH_REVIEW: "Published a review",
 };
 
 function statusTone(status: string): string {

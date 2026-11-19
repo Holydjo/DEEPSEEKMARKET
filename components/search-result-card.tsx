@@ -8,17 +8,22 @@ import { formatMoney } from "@/lib/format";
 import { CategoryIcon } from "./category-icon";
 import { Rating } from "./rating";
 import { VerifiedBadge } from "./verified-badge";
+import { SaveButton } from "./save-button";
 
 export function SearchResultCard({
   provider,
   distanceKm,
   minPriceCents,
   openNow,
+  saved = false,
+  isAuthed = false,
 }: {
   provider: ProviderCardData;
   distanceKm: number | null;
   minPriceCents: number | null;
   openNow?: boolean;
+  saved?: boolean;
+  isAuthed?: boolean;
 }) {
   const photo = provider.photos[0]?.url ?? provider.coverUrl;
   const placeTags = PLACE_OPTIONS.filter((option) => {
@@ -29,7 +34,7 @@ export function SearchResultCard({
   });
 
   return (
-    <article className="group flex overflow-hidden rounded-2xl border border-line bg-surface transition-all hover:border-ink hover:shadow-[3px_3px_0_var(--color-ink)]">
+    <article className="group relative flex overflow-hidden rounded-2xl border border-line bg-surface transition-all hover:border-ink hover:shadow-[3px_3px_0_var(--color-ink)]">
       <Link
         href={`/providers/${provider.slug}`}
         className="relative w-[108px] shrink-0 overflow-hidden bg-surface-2 sm:w-[150px]"
@@ -49,6 +54,14 @@ export function SearchResultCard({
           </div>
         )}
       </Link>
+
+      <div className="absolute left-2 top-2 z-20">
+        <SaveButton
+          providerId={provider.id}
+          initialSaved={saved}
+          isAuthed={isAuthed}
+        />
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2">

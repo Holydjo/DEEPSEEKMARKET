@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+import { ratingAfterHide, ratingAfterPublish } from "@/lib/reviews";
 
 function revalidateProvider(providerId: string, slug: string) {
   revalidatePath("/admin");
@@ -93,6 +94,65 @@ export async function rejectProviderAction(formData: FormData): Promise<void> {
 
   revalidateProvider(provider.id, provider.slug);
   redirect(`/admin/applications/${provider.id}?done=rejected`);
+}
+
+export async function moderateReviewAction(formData: FormData): Promise<void> {
+  const admin = await requireAdmin();
+  const parsed = z
+    .object({
+      reviewId: z.string().min(1),
+      status: z.enum(["PUBLISHED", "HIDDEN"]),
+    })
+    .safeParse(Object.fromEntries(formData));
+
+  if (!parsed.success) redirect("/admin/reviews?error=invalid");
+
+  const review = await db.review.findUnique({
+    where: { id: parsed.data.reviewId },
+    include: {
+      provider: {
+        select: { id: true, slug: true, ratingAvg: true, ratingCount: true },
+      },
+    },
+  });
+  if (!review) redirect("/admin/reviews?error=notfound");
+  if (review.status === parsed.data.status) redirect("/admin/reviews?done=same");
+
+  const next =
+    parsed.data.status === "HIDDEN"
+      ? ratingAfterHide(review.provider.ratingAvg, review.provider.ratingCount, review.rating)
+      : ratingAfterPublish(review.provider.ratingAvg, review.provider.ratingCount, review.rating);
+
+  await db.$transaction([
+    db.review.update({
+      where: { id: review.id },
+      data: { status: parsed.data.status },
+    }),
+    db.provider.update({
+      where: { id: review.providerId },
+      data: {
+        ratingAvg: next.ratingAvg,
+        ratingCount: next.ratingCount,
+      },
+    }),
+    db.adminAction.create({
+      data: {
+        adminUserId: admin.id,
+        providerId: review.providerId,
+        action: parsed.data.status === "HIDDEN" ? "HIDE_REVIEW" : "PUBLISH_REVIEW",
+        note: `Review ${review.id}`,
+      },
+    }),
+  ]);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/reviews");
+  revalidatePath("/admin/providers");
+  revalidatePath("/search");
+  revalidatePath("/");
+  revalidatePath(`/providers/${review.provider.slug}`);
+
+  redirect(`/admin/reviews?done=${parsed.data.status === "HIDDEN" ? "hidden" : "published"}`);
 }
 
 export async function suspendProviderAction(formData: FormData): Promise<void> {

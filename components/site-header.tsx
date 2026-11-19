@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   ChevronDown,
+  Heart,
   LayoutDashboard,
   LogOut,
   MapPin,
@@ -107,6 +108,14 @@ export async function SiteHeader() {
 
             {user ? (
               <>
+                <Link
+                  href="/saved"
+                  aria-label="Saved providers"
+                  title="Saved providers"
+                  className="hidden h-8 w-8 items-center justify-center rounded-full border border-line bg-surface text-muted hover:border-ink hover:text-clay sm:flex"
+                >
+                  <Heart className="h-3.5 w-3.5" aria-hidden />
+                </Link>
                 <Link
                   href={dashboardHref}
                   className="hidden items-center gap-2 rounded-full border border-line bg-surface px-3 py-2 text-[11.5px] font-medium hover:border-ink sm:flex"

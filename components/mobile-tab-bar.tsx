@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, Search, CalendarCheck, UserRound } from "lucide-react";
+import { Compass, Search, Heart, UserRound } from "lucide-react";
 
 const tabs = [
-  { href: "/", label: "Explore", icon: Compass },
-  { href: "/search", label: "Search", icon: Search },
-  { href: "/account#requests", label: "Requests", icon: CalendarCheck },
-  { href: "/account", label: "Account", icon: UserRound },
+  { href: "/", label: "Explore", icon: Compass, auth: false },
+  { href: "/search", label: "Search", icon: Search, auth: false },
+  { href: "/saved", label: "Saved", icon: Heart, auth: true },
+  { href: "/account", label: "Account", icon: UserRound, auth: true },
 ];
 
 export function MobileTabBar({ isAuthed }: { isAuthed: boolean }) {
@@ -24,11 +24,8 @@ export function MobileTabBar({ isAuthed }: { isAuthed: boolean }) {
     >
       <div className="grid grid-cols-4">
         {tabs.map((tab) => {
-          const href = !isAuthed && tab.label === "Requests" ? "/login?next=/account" : tab.href;
-          const active =
-            tab.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(tab.href.split("#")[0] || "/account");
+          const href = !isAuthed && tab.auth ? `/login?next=${encodeURIComponent(tab.href)}` : tab.href;
+          const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
           const Icon = tab.icon;
           return (
             <Link

@@ -26,7 +26,21 @@ model User {
   sessions          Session[]
   requests          BookingRequest[]   @relation("CustomerRequests")
   reviews           Review[]
+  savedProviders    SavedProvider[]
   adminActions      AdminAction[]
+}
+
+model SavedProvider {
+  id         String   @id @default(cuid())
+  userId     String
+  providerId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, providerId])
+  @@index([userId, createdAt])
 }
 
 model Session {
@@ -112,9 +126,10 @@ model Provider {
   photos       ProviderPhoto[]
   hours        OpeningHour[]
   areas        ServiceArea[]
-  requests     BookingRequest[]
-  reviews      Review[]
-  adminActions AdminAction[]
+  requests       BookingRequest[]
+  reviews        Review[]
+  savedByUsers   SavedProvider[]
+  adminActions   AdminAction[]
 
   @@index([status, city])
   @@index([status, categoryId])

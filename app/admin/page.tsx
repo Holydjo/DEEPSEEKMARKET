@@ -20,6 +20,8 @@ const ACTION_LABEL: Record<string, string> = {
   REJECT: "requested changes to",
   SUSPEND: "suspended",
   REINSTATE: "reinstated",
+  HIDE_REVIEW: "hid a review for",
+  PUBLISH_REVIEW: "published a review for",
 };
 
 export default async function AdminOverviewPage() {
@@ -66,7 +68,7 @@ export default async function AdminOverviewPage() {
           { label: "Pending review", value: pendingCount, icon: ClipboardCheck, href: "/admin/applications", tone: "text-clay" },
           { label: "Approved providers", value: approvedCount, icon: BadgeCheck, href: "/admin/providers?status=APPROVED", tone: "text-pine" },
           { label: "Appointment requests", value: requestCount, icon: CalendarCheck, href: "/admin/providers", tone: "text-ink" },
-          { label: "Published reviews", value: reviewCount, icon: Star, href: "/admin/providers", tone: "text-ink" },
+          { label: "Published reviews", value: reviewCount, icon: Star, href: "/admin/reviews", tone: "text-ink" },
         ].map((stat) => (
           <Link key={stat.label} href={stat.href} className="card p-3.5 transition-colors hover:border-ink">
             <div className="flex items-center justify-between">
