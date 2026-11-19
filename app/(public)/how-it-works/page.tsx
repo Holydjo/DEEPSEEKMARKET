@@ -12,60 +12,98 @@ import {
   Star,
   Store,
 } from "lucide-react";
+import { getTranslator } from "@/lib/i18n/server";
 
-export const metadata = {
-  title: "How it works",
-  description:
-    "How HOLYDO MARKET connects Montréal customers with verified local providers — and how provider approval works.",
-};
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return {
+    title: t("how.meta.title"),
+    description: t("how.meta.description"),
+  };
+}
 
-const faqs = [
-  {
-    q: "Is HOLYDO a booking platform?",
-    a: "In v1, you send an appointment request with a preferred date and time window. The provider confirms the details directly. There are no payments through HOLYDO and no automatic calendar booking yet.",
-  },
-  {
-    q: "What does “verified” actually mean?",
-    a: "A HOLYDO reviewer has checked the provider’s identity and contact details, the services and prices on the profile, the photos, and the declared service area. It is a human review at a point in time, not a guarantee of every future interaction.",
-  },
-  {
-    q: "How much does it cost?",
-    a: "Customers pay nothing to search, request or review. Provider profiles are free during the launch period, and HOLYDO does not take a commission on appointment requests.",
-  },
-  {
-    q: "Where is HOLYDO available?",
-    a: "Version 1 is live in Montréal, with a seeded set of providers across Le Plateau, Rosemont, Villeray, Little Burgundy and nearby neighbourhoods. Other cities are planned.",
-  },
-];
+export default async function HowItWorksPage() {
+  const { t } = await getTranslator();
 
-export default function HowItWorksPage() {
+  const faqs = [
+    { q: t("how.faq.q1"), a: t("how.faq.a1") },
+    { q: t("how.faq.q2"), a: t("how.faq.a2") },
+    { q: t("how.faq.q3"), a: t("how.faq.a3") },
+    { q: t("how.faq.q4"), a: t("how.faq.a4") },
+  ];
+
+  const customerSteps: Array<[string, string]> = [
+    [t("how.customers.1.title"), t("how.customers.1.text")],
+    [t("how.customers.2.title"), t("how.customers.2.text")],
+    [t("how.customers.3.title"), t("how.customers.3.text")],
+    [t("how.customers.4.title"), t("how.customers.4.text")],
+  ];
+
+  const providerSteps: Array<[string, string]> = [
+    [t("how.providers.1.title"), t("how.providers.1.text")],
+    [t("how.providers.2.title"), t("how.providers.2.text")],
+    [t("how.providers.3.title"), t("how.providers.3.text")],
+    [t("how.providers.4.title"), t("how.providers.4.text")],
+  ];
+
+  const approvalChecks: Array<[string, string]> = [
+    [t("how.approval.1.title"), t("how.approval.1.text")],
+    [t("how.approval.2.title"), t("how.approval.2.text")],
+    [t("how.approval.3.title"), t("how.approval.3.text")],
+    [t("how.approval.4.title"), t("how.approval.4.text")],
+  ];
+
+  const states: Array<[string, string, string]> = [
+    [t("how.states.DRAFT.title"), t("how.states.DRAFT.text"), "bg-surface-2"],
+    [t("how.states.PENDING.title"), t("how.states.PENDING.text"), "bg-marigold-soft"],
+    [t("how.states.APPROVED.title"), t("how.states.APPROVED.text"), "bg-pine-soft"],
+    [t("how.states.REJECTED.title"), t("how.states.REJECTED.text"), "bg-clay-soft"],
+    [t("how.states.SUSPENDED.title"), t("how.states.SUSPENDED.text"), "bg-surface-2"],
+  ];
+
+  const safety = [
+    {
+      icon: BadgeCheck,
+      title: t("how.safety.1.title"),
+      text: t("how.safety.1.text"),
+    },
+    {
+      icon: MapPin,
+      title: t("how.safety.2.title"),
+      text: t("how.safety.2.text"),
+    },
+    {
+      icon: CalendarCheck,
+      title: t("how.safety.3.title"),
+      text: t("how.safety.3.text"),
+    },
+  ];
+
   return (
     <div>
       <section className="relative overflow-hidden border-b border-line">
         <div className="container-hd grid gap-10 py-12 md:grid-cols-[1.1fr_0.9fr] md:items-center md:py-20">
           <div>
-            <p className="eyebrow">How it works</p>
+            <p className="eyebrow">{t("how.hero.eyebrow")}</p>
             <h1 className="display mt-4 text-[clamp(2.6rem,5.6vw,5rem)]">
-              A local marketplace that acts like a neighbour, not a search engine.
+              {t("how.hero.title")}
             </h1>
             <p className="mt-5 max-w-[520px] text-sm leading-relaxed text-muted">
-              HOLYDO is built around a simple idea: the best person for the job is often
-              a few streets away, and you should be able to see who they are before you
-              trust them with your time.
+              {t("how.hero.body")}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Link href="/search" className="btn btn-primary">
-                Find a service <ArrowRight className="h-4 w-4" aria-hidden />
+                {t("how.hero.find")} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link href="/provider/join" className="btn btn-outline">
-                List your service
+                {t("how.hero.list")}
               </Link>
             </div>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] border border-ink shadow-[6px_6px_0_var(--color-ink)]">
             <Image
               src="/images/places/plateau.jpg"
-              alt="A residential street in Le Plateau, Montréal"
+              alt={t("how.hero.imageAlt")}
               fill
               sizes="(max-width: 768px) 100vw, 480px"
               className="object-cover"
@@ -73,10 +111,10 @@ export default function HowItWorksPage() {
             />
             <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-ink bg-surface/95 p-3">
               <p className="flex items-center gap-1.5 text-[10px] font-semibold">
-                <MapPin className="h-3.5 w-3.5" aria-hidden /> Le Plateau, Montréal
+                <MapPin className="h-3.5 w-3.5" aria-hidden /> {t("how.hero.hood")}
               </p>
               <p className="mt-0.5 text-[9px] text-muted">
-                13 approved providers within walking distance.
+                {t("how.hero.hoodNote")}
               </p>
             </div>
           </div>
@@ -90,14 +128,9 @@ export default function HowItWorksPage() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink bg-marigold-soft">
               <Search className="h-4 w-4" aria-hidden />
             </span>
-            <h2 className="display mt-5 text-3xl">For customers</h2>
+            <h2 className="display mt-5 text-3xl">{t("how.customers.title")}</h2>
             <ol className="mt-4 grid gap-3">
-              {[
-                ["Search with a place in mind", "Choose a category, type what you need, and set a neighbourhood or use your location."],
-                ["Compare real profiles", "See prices, photos, hours, travel area and verified reviews before you decide."],
-                ["Send a request", "Pick a service, a date and a time window. No account wall required."],
-                ["Hear back and confirm", "The provider replies with availability and the final price. You agree the details directly."],
-              ].map(([title, text], index) => (
+              {customerSteps.map(([title, text], index) => (
                 <li key={title} className="flex gap-3">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink text-[9px] font-bold text-paper">
                     {index + 1}
@@ -110,7 +143,7 @@ export default function HowItWorksPage() {
               ))}
             </ol>
             <Link href="/search" className="btn btn-outline btn-sm mt-6">
-              Browse providers
+              {t("how.browse")}
             </Link>
           </div>
 
@@ -118,14 +151,9 @@ export default function HowItWorksPage() {
             <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink bg-marigold">
               <Store className="h-4 w-4" aria-hidden />
             </span>
-            <h2 className="display mt-5 text-3xl">For providers</h2>
+            <h2 className="display mt-5 text-3xl">{t("how.providers.title")}</h2>
             <ol className="mt-4 grid gap-3">
-              {[
-                ["Create a free account", "Tell us whether you are an independent provider or a business."],
-                ["Build your storefront", "Add services, prices, photos, hours, service settings and travel area."],
-                ["Submit for review", "A human checks your profile. Nothing is public until it is approved."],
-                ["Run your business", "Manage requests, update availability and keep your profile accurate from your dashboard."],
-              ].map(([title, text], index) => (
+              {providerSteps.map(([title, text], index) => (
                 <li key={title} className="flex gap-3">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink text-[9px] font-bold text-paper">
                     {index + 1}
@@ -138,7 +166,7 @@ export default function HowItWorksPage() {
               ))}
             </ol>
             <Link href="/provider/join" className="btn btn-primary btn-sm mt-6">
-              Start your application
+              {t("how.startApplication")}
             </Link>
           </div>
         </div>
@@ -148,22 +176,15 @@ export default function HowItWorksPage() {
       <section id="approval" className="scroll-mt-24 border-y border-ink bg-pine text-paper">
         <div className="container-hd grid gap-10 py-14 md:py-20 lg:grid-cols-[1fr_0.95fr]">
           <div>
-            <p className="eyebrow !text-paper/55 before:!bg-paper/40">Human approval</p>
+            <p className="eyebrow !text-paper/55 before:!bg-paper/40">{t("how.approval.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[560px] text-[clamp(2.1rem,4vw,3.4rem)]">
-              Trust is a process, not a badge.
+              {t("how.approval.title")}
             </h2>
             <p className="mt-4 max-w-[500px] text-sm leading-relaxed text-paper/70">
-              Every provider application is read by a person. We check that the provider is
-              who they say they are, that the services and prices are real, and that the photos
-              show their actual work. Only then does the profile appear in search.
+              {t("how.approval.body")}
             </p>
             <div className="mt-6 grid gap-2.5">
-              {[
-                ["Identity & contact", "Name, phone and email are checked against the application."],
-                ["Services & prices", "Each service needs a clear name, price and duration."],
-                ["Photos", "At least one original photo; stock faces are not accepted."],
-                ["Service area", "The neighbourhood and travel radius are confirmed, not invented."],
-              ].map(([title, text]) => (
+              {approvalChecks.map(([title, text]) => (
                 <div key={title} className="flex gap-3 rounded-xl border border-paper/15 bg-paper/5 p-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-paper/30">
                     <Check className="h-3 w-3" aria-hidden />
@@ -180,18 +201,12 @@ export default function HowItWorksPage() {
           <div className="rounded-2xl border border-ink bg-surface p-5 text-ink shadow-[6px_6px_0_rgba(0,0,0,.35)] md:p-6">
             <div className="flex items-center justify-between border-b border-line pb-3">
               <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
-                Provider states
+                {t("how.states.title")}
               </span>
               <ShieldCheck className="h-4 w-4" aria-hidden />
             </div>
             <div className="mt-4 grid gap-2">
-              {[
-                ["Draft", "Only the provider can see it. Can be saved and resumed at any time.", "bg-surface-2"],
-                ["In review", "Submitted and waiting for a HOLYDO reviewer. Still private.", "bg-marigold-soft"],
-                ["Approved", "Public in search and on its profile URL. Verified badge active.", "bg-pine-soft"],
-                ["Changes requested", "A reviewer has left a note. The provider edits and resubmits.", "bg-clay-soft"],
-                ["Suspended", "Hidden immediately. Existing requests stay visible to the provider.", "bg-surface-2"],
-              ].map(([title, text, tone]) => (
+              {states.map(([title, text, tone]) => (
                 <div key={title} className={`rounded-xl border border-line p-3 ${tone}`}>
                   <p className="text-[11px] font-semibold">{title}</p>
                   <p className="mt-0.5 text-[9.5px] leading-relaxed text-ink/65">{text}</p>
@@ -199,8 +214,8 @@ export default function HowItWorksPage() {
               ))}
             </div>
             <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
-              <p className="text-[9px] text-muted">Target review time</p>
-              <p className="text-sm font-semibold">Under 48 hours</p>
+              <p className="text-[9px] text-muted">{t("how.states.reviewTime")}</p>
+              <p className="text-sm font-semibold">{t("how.states.under48")}</p>
             </div>
           </div>
         </div>
@@ -209,23 +224,7 @@ export default function HowItWorksPage() {
       {/* Safety */}
       <section className="container-hd section-pad">
         <div className="grid gap-4 md:grid-cols-3">
-          {[
-            {
-              icon: BadgeCheck,
-              title: "Approved only",
-              text: "Draft, pending, rejected and suspended providers never appear in search or on a public URL.",
-            },
-            {
-              icon: MapPin,
-              title: "Approximate locations",
-              text: "Public maps show a neighbourhood and a radius, not a provider’s exact home address.",
-            },
-            {
-              icon: CalendarCheck,
-              title: "Requests, not guesses",
-              text: "A request is not a confirmed appointment. The provider confirms details before anything is agreed.",
-            },
-          ].map((item) => (
+          {safety.map((item) => (
             <div key={item.title} className="rounded-2xl border border-line bg-surface p-5">
               <item.icon className="h-5 w-5" aria-hidden />
               <h3 className="mt-4 text-lg">{item.title}</h3>
@@ -239,18 +238,18 @@ export default function HowItWorksPage() {
       <section className="border-t border-line bg-surface">
         <div className="container-hd grid gap-8 py-14 md:grid-cols-[0.8fr_1.2fr] md:py-20">
           <div>
-            <p className="eyebrow">Questions</p>
-            <h2 className="display mt-3 text-[clamp(2rem,3.4vw,3rem)]">A few honest answers.</h2>
+            <p className="eyebrow">{t("how.faq.eyebrow")}</p>
+            <h2 className="display mt-3 text-[clamp(2rem,3.4vw,3rem)]">{t("how.faq.title")}</h2>
             <p className="mt-3 max-w-sm text-[11.5px] leading-relaxed text-muted">
-              Something else on your mind? Write to{" "}
+              {t("how.faq.contactStart")}{" "}
               <a href="mailto:hello@holydo.market" className="font-medium text-ink underline decoration-line underline-offset-2">
                 hello@holydo.market
               </a>
-              .
+              {t("how.faq.contactEnd")}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              <span className="pill"><Star className="h-3 w-3" aria-hidden /> Human reviews</span>
-              <span className="pill"><Sparkles className="h-3 w-3" aria-hidden /> No booking fees</span>
+              <span className="pill"><Star className="h-3 w-3" aria-hidden /> {t("how.faq.pill1")}</span>
+              <span className="pill"><Sparkles className="h-3 w-3" aria-hidden /> {t("how.faq.pill2")}</span>
             </div>
           </div>
           <div className="divide-y divide-line rounded-2xl border border-line bg-paper px-5">

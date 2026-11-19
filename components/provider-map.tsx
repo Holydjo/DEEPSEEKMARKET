@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { MapPoint } from "@/lib/search";
 import { formatMoney } from "@/lib/format";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
 function escapeHtml(value: string): string {
   return value
@@ -17,12 +19,14 @@ export function ProviderMap({
   points,
   origin,
   radiusKm,
+  locale,
   heightClass = "h-[430px]",
   activeSlug,
 }: {
   points: MapPoint[];
   origin: { lat: number; lng: number };
   radiusKm: number;
+  locale: Locale;
   heightClass?: string;
   activeSlug?: string;
 }) {
@@ -99,8 +103,8 @@ export function ProviderMap({
           .bindPopup(
             `<div style="font-family:Inter,system-ui,sans-serif;min-width:150px">
               <strong style="font-size:12px;display:block;margin-bottom:2px">${escapeHtml(point.name)}</strong>
-              <span style="font-size:10px;color:#6f665a">${point.minPriceCents !== null ? `From ${escapeHtml(formatMoney(point.minPriceCents))}` : "Ask for pricing"}</span>
-              <a href="/providers/${encodeURIComponent(point.slug)}" style="display:inline-block;margin-top:6px;font-size:10px;font-weight:600;color:#17130f;text-decoration:underline">View profile →</a>
+              <span style="font-size:10px;color:#6f665a">${point.minPriceCents !== null ? escapeHtml(translate(locale, "price.from", { price: formatMoney(point.minPriceCents) })) : escapeHtml(translate(locale, "home.card.askPricing"))}</span>
+              <a href="/providers/${encodeURIComponent(point.slug)}" style="display:inline-block;margin-top:6px;font-size:10px;font-weight:600;color:#17130f;text-decoration:underline">${escapeHtml(translate(locale, "common.viewProfile"))} →</a>
             </div>`,
           );
       }
@@ -118,14 +122,14 @@ export function ProviderMap({
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pointsKey, origin.lat, origin.lng, radiusKm, activeSlug]);
+  }, [pointsKey, origin.lat, origin.lng, radiusKm, activeSlug, locale]);
 
   return (
     <div className={`relative w-full overflow-hidden rounded-card border border-line bg-[#e8e6df] ${heightClass}`}>
-      <div ref={containerRef} className="absolute inset-0 z-0" aria-label="Map of nearby providers" />
+      <div ref={containerRef} className="absolute inset-0 z-0" aria-label={translate(locale, "map.aria")} />
       {!ready && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-2/70">
-          <span className="pill">Loading map…</span>
+          <span className="pill">{translate(locale, "map.loading")}</span>
         </div>
       )}
     </div>

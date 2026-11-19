@@ -6,6 +6,7 @@ import {
   formatServicePrice,
   initials,
   isOpenNow,
+  todayInToronto,
   torontoNowParts,
 } from "./format";
 
@@ -79,5 +80,21 @@ describe("initials", () => {
     expect(initials("Nadia Bélanger")).toBe("NB");
     expect(initials("Amina")).toBe("A");
     expect(initials("  Marc   Olivier  ")).toBe("MO");
+  });
+});
+
+
+describe("market dates", () => {
+  it("returns the Toronto date even when UTC has rolled over", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-19T04:30:00Z")); // 18 Nov, 23:30 in Montréal
+    expect(todayInToronto()).toBe("2026-11-18");
+    expect(todayInToronto(1)).toBe("2026-11-19");
+  });
+
+  it("offsets across a month boundary", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-30T17:00:00Z")); // 30 Nov, 12:00 in Montréal
+    expect(todayInToronto(2)).toBe("2026-12-02");
   });
 });

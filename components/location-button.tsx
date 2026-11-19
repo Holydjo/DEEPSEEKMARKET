@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LocateFixed, Loader2 } from "lucide-react";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
 export function LocationButton({
+  locale,
   query = "",
   radius = 5,
   className = "",
 }: {
+  locale: Locale;
   query?: string;
   radius?: number;
   className?: string;
@@ -48,11 +52,13 @@ export function LocationButton({
         ) : (
           <LocateFixed className="h-3.5 w-3.5" aria-hidden />
         )}
-        {status === "locating" ? "Finding you…" : "Use my location"}
+        {status === "locating"
+          ? translate(locale, "location.finding")
+          : translate(locale, "location.use")}
       </button>
       {status === "error" && (
         <span role="status" className="text-[10px] text-clay">
-          Location unavailable — pick a neighbourhood instead.
+          {translate(locale, "location.error")}
         </span>
       )}
     </span>

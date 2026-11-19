@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Search, Heart, UserRound } from "lucide-react";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
 const tabs = [
-  { href: "/", label: "Explore", icon: Compass, auth: false },
-  { href: "/search", label: "Search", icon: Search, auth: false },
-  { href: "/saved", label: "Saved", icon: Heart, auth: true },
-  { href: "/account", label: "Account", icon: UserRound, auth: true },
-];
+  { href: "/", label: "tab.explore", icon: Compass, auth: false },
+  { href: "/search", label: "tab.search", icon: Search, auth: false },
+  { href: "/saved", label: "tab.saved", icon: Heart, auth: true },
+  { href: "/account", label: "tab.account", icon: UserRound, auth: true },
+] as const;
 
-export function MobileTabBar({ isAuthed }: { isAuthed: boolean }) {
+export function MobileTabBar({ isAuthed, locale }: { isAuthed: boolean; locale: Locale }) {
   const pathname = usePathname();
 
   // Detail pages use a sticky request bar instead of the tab bar.
@@ -20,7 +22,7 @@ export function MobileTabBar({ isAuthed }: { isAuthed: boolean }) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-ink bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
-      aria-label="Main navigation"
+      aria-label={translate(locale, "nav.main")}
     >
       <div className="grid grid-cols-4">
         {tabs.map((tab) => {
@@ -36,7 +38,7 @@ export function MobileTabBar({ isAuthed }: { isAuthed: boolean }) {
               }`}
             >
               <Icon className={`h-[18px] w-[18px] ${active ? "stroke-[2.4]" : ""}`} aria-hidden />
-              {tab.label}
+              {translate(locale, tab.label)}
             </Link>
           );
         })}

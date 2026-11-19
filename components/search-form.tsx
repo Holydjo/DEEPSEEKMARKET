@@ -1,13 +1,17 @@
 import { Search, MapPin, ChevronDown } from "lucide-react";
 import { MONTREAL, RADIUS_OPTIONS } from "@/lib/location";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 import { LocationButton } from "./location-button";
 
 export function SearchForm({
+  locale,
   variant = "hero",
   defaultQuery = "",
   defaultHood = "le-plateau",
   defaultRadius = 5,
 }: {
+  locale: Locale;
   variant?: "hero" | "strip";
   defaultQuery?: string;
   defaultHood?: string;
@@ -29,14 +33,14 @@ export function SearchForm({
           <Search className="h-4 w-4 shrink-0 text-muted" aria-hidden />
           <div className="min-w-0 flex-1">
             <label htmlFor={`q-${variant}`} className="block font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted">
-              What do you need?
+              {translate(locale, "search.form.what")}
             </label>
             <input
               id={`q-${variant}`}
               type="search"
               name="q"
               defaultValue={defaultQuery}
-              placeholder="Braids, deep clean, phone repair…"
+              placeholder={translate(locale, "search.form.placeholder")}
               className="w-full bg-transparent text-[13px] font-medium text-ink outline-none placeholder:font-normal placeholder:text-muted/65"
             />
           </div>
@@ -48,7 +52,7 @@ export function SearchForm({
           <MapPin className="h-4 w-4 shrink-0 text-muted" aria-hidden />
           <div className="min-w-0 flex-1">
             <label htmlFor={`hood-${variant}`} className="block font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted">
-              Where?
+              {translate(locale, "search.form.where")}
             </label>
             <div className="relative">
               <select
@@ -57,7 +61,7 @@ export function SearchForm({
                 defaultValue={defaultHood}
                 className="w-full appearance-none bg-transparent pr-5 text-[12.5px] font-medium text-ink outline-none"
               >
-                <option value="">All of Montréal</option>
+                <option value="">{translate(locale, "search.form.allMontreal")}</option>
                 {MONTREAL.neighbourhoods.map((hood) => (
                   <option key={hood.slug} value={hood.slug}>
                     {hood.name}
@@ -74,7 +78,7 @@ export function SearchForm({
             <div className="mx-3.5 h-px bg-line sm:mx-0 sm:h-9 sm:w-px" />
             <div className="hidden items-center gap-2 px-3.5 py-2.5 sm:flex">
               <label htmlFor={`radius-${variant}`} className="font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted">
-                Radius
+                {translate(locale, "search.form.radius")}
               </label>
               <select
                 id={`radius-${variant}`}
@@ -97,14 +101,14 @@ export function SearchForm({
           className={`btn btn-primary shrink-0 gap-1.5 ${hero ? "m-1 py-3.5 sm:px-6" : "m-1.5 py-2.5 btn-sm"}`}
         >
           <Search className="h-4 w-4 sm:hidden" aria-hidden />
-          <span>Search</span>
+          <span>{translate(locale, "search.form.submit")}</span>
         </button>
       </div>
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1">
-        <LocationButton query={defaultQuery} radius={defaultRadius} />
+        <LocationButton locale={locale} query={defaultQuery} radius={defaultRadius} />
         <span className="hidden text-[10px] text-muted sm:inline">
-          Every profile reviewed by a person · No booking fees
+          {translate(locale, "search.form.note")}
         </span>
       </div>
     </form>

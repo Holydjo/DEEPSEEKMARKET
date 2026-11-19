@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { createSession, destroySession, getCurrentUser, safeNextPath } from "@/lib/auth";
+import { getLocale } from "@/lib/i18n/server";
 import { uniqueSlug } from "@/lib/slug";
 import { MONTREAL } from "@/lib/location";
 import type { ActionState } from "@/lib/types";
@@ -35,6 +36,8 @@ export async function loginAction(_state: ActionState, formData: FormData): Prom
     return { error: "Email or password is incorrect." };
   }
 
+  const locale = await getLocale();
+  await db.user.update({ where: { id: user.id }, data: { locale } }).catch(() => undefined);
   await createSession(user.id);
 
   const explicitNext = parsed.data.next?.trim();
@@ -64,12 +67,14 @@ export async function signupAction(_state: ActionState, formData: FormData): Pro
     return { error: "An account with this email already exists. Try logging in instead." };
   }
 
+  const locale = await getLocale();
   const user = await db.user.create({
     data: {
       name: parsed.data.name,
       email: parsed.data.email,
       passwordHash: await hashPassword(parsed.data.password),
       role: "CUSTOMER",
+      locale,
     },
   });
 
@@ -135,6 +140,7 @@ export async function providerJoinAction(
   if (!category) return { error: "Choose a valid category." };
 
   const passwordHash = await hashPassword(parsed.data.password);
+  const locale = await getLocale();
 
   const user = await db.$transaction(async (tx) => {
     const createdUser = await tx.user.create({
@@ -144,6 +150,7 @@ export async function providerJoinAction(
         passwordHash,
         phone: parsed.data.phone,
         role: "PROVIDER",
+        locale,
       },
     });
 

@@ -8,6 +8,15 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireProvider } from "@/lib/auth";
+import { getLocale, localeForUser } from "@/lib/i18n/server";
+import { translate, type MessageKey } from "@/lib/i18n/dictionary";
+import {
+  notifyAdmins,
+  notifyUser,
+  queueEmail,
+  windowLabel,
+} from "@/lib/notifications";
+import { formatDateForLocale } from "@/lib/format";
 import { getNeighbourhood, getCity } from "@/lib/location";
 import type { ActionState } from "@/lib/types";
 
@@ -405,6 +414,14 @@ export async function submitProviderApplication(
     },
   });
 
+  await notifyAdmins({
+    type: "PROVIDER_APPLICATION",
+    titleKey: "notifications.application.title",
+    bodyKey: "notifications.application.body",
+    vars: { provider: provider.displayName },
+    href: `/admin/applications/${provider.id}`,
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/applications");
   revalidatePath("/provider/dashboard");
@@ -490,6 +507,10 @@ export async function updateRequestStatusAction(formData: FormData): Promise<voi
 
   const request = await db.bookingRequest.findFirst({
     where: { id: requestId, providerId: provider.id },
+    include: {
+      service: { select: { name: true } },
+      customer: { select: { id: true, email: true, locale: true } },
+    },
   });
   if (!request) redirect("/provider/dashboard/requests?error=notfound");
 
@@ -501,6 +522,60 @@ export async function updateRequestStatusAction(formData: FormData): Promise<voi
       providerNote: note || null,
     },
   });
+
+  const locale = await getLocale();
+  const customerLocale = localeForUser(request.customer, locale);
+  const keys: Record<
+    string,
+    { titleKey: MessageKey; bodyKey: MessageKey }
+  > = {
+    ACCEPTED: {
+      titleKey: "notifications.requestAccepted.title",
+      bodyKey: "notifications.requestAccepted.body",
+    },
+    DECLINED: {
+      titleKey: "notifications.requestDeclined.title",
+      bodyKey: "notifications.requestDeclined.body",
+    },
+    COMPLETED: {
+      titleKey: "notifications.requestCompleted.title",
+      bodyKey: "notifications.requestCompleted.body",
+    },
+    CANCELLED: {
+      titleKey: "notifications.requestCancelledByProvider.title",
+      bodyKey: "notifications.requestCancelledByProvider.body",
+    },
+  };
+  const message = keys[status];
+  if (message) {
+    const vars = {
+      provider: provider.displayName,
+      service: request.service?.name ?? "service",
+      date: formatDateForLocale(request.preferredDate, customerLocale),
+      window: windowLabel(customerLocale, request.preferredWindow),
+    };
+    if (request.customerUserId) {
+      await notifyUser({
+        userId: request.customerUserId,
+        locale: request.customer?.locale,
+        type: `BOOKING_${status}`,
+        titleKey: message.titleKey,
+        bodyKey: message.bodyKey,
+        vars,
+        href: `/requests/${request.reference}`,
+        email: request.email,
+      });
+    } else {
+      await queueEmail({
+        to: request.email,
+        subject: translate(customerLocale, message.titleKey, vars),
+        body: translate(customerLocale, message.bodyKey, vars),
+        template: `BOOKING_${status}`,
+        locale: customerLocale,
+        href: `/requests/${request.reference}`,
+      });
+    }
+  }
 
   revalidatePath("/provider/dashboard");
   revalidatePath("/provider/dashboard/requests");

@@ -5,6 +5,10 @@ import type { ProviderCardData } from "@/lib/search";
 import { PLACE_OPTIONS } from "@/lib/constants";
 import { formatDistance } from "@/lib/location";
 import { formatMoney } from "@/lib/format";
+import { translate } from "@/lib/i18n/dictionary";
+import { categoryLabel } from "@/lib/i18n/categories";
+import { placeLabel } from "@/lib/i18n/labels";
+import type { Locale } from "@/lib/i18n/config";
 import { CategoryIcon } from "./category-icon";
 import { Rating } from "./rating";
 import { VerifiedBadge } from "./verified-badge";
@@ -14,6 +18,7 @@ export function ProviderCard({
   provider,
   distanceKm,
   minPriceCents,
+  locale,
   openNow,
   priority = false,
   saved = false,
@@ -22,12 +27,14 @@ export function ProviderCard({
   provider: ProviderCardData;
   distanceKm: number | null;
   minPriceCents: number | null;
+  locale: Locale;
   openNow?: boolean;
   priority?: boolean;
   saved?: boolean;
   isAuthed?: boolean;
 }) {
   const photo = provider.photos[0]?.url ?? provider.coverUrl;
+  const category = categoryLabel(locale, provider.category.slug, provider.category.name);
   const placeTags = PLACE_OPTIONS.filter((option) => {
     if (option.key === "home") return provider.servesAtHome;
     if (option.key === "salon") return provider.servesAtSalon;
@@ -40,12 +47,12 @@ export function ProviderCard({
       <Link
         href={`/providers/${provider.slug}`}
         className="relative block aspect-[16/11] overflow-hidden bg-surface-2"
-        aria-label={`View ${provider.displayName}`}
+        aria-label={`${translate(locale, "common.view")} ${provider.displayName}`}
       >
         {photo ? (
           <Image
             src={photo}
-            alt={provider.photos[0]?.alt || `${provider.displayName} — ${provider.category.name}`}
+            alt={provider.photos[0]?.alt || `${provider.displayName} — ${category}`}
             fill
             priority={priority}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
@@ -55,15 +62,15 @@ export function ProviderCard({
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[linear-gradient(135deg,var(--color-marigold-soft),var(--color-surface-2))] text-ink/70">
             <CategoryIcon name={provider.category.icon} className="h-8 w-8" />
             <span className="font-mono text-[9px] uppercase tracking-[0.14em]">
-              {provider.category.name}
+              {category}
             </span>
           </div>
         )}
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-          <VerifiedBadge compact />
+          <VerifiedBadge compact locale={locale} />
           {openNow && (
             <span className="pill border-pine/20 bg-pine-soft text-[9px] font-semibold text-pine">
-              <span className="status-dot" /> Open today
+              <span className="status-dot" /> {translate(locale, "common.openToday")}
             </span>
           )}
         </div>
@@ -77,6 +84,7 @@ export function ProviderCard({
           providerId={provider.id}
           initialSaved={saved}
           isAuthed={isAuthed}
+          locale={locale}
         />
       </div>
 
@@ -89,7 +97,7 @@ export function ProviderCard({
               </Link>
             </h3>
             <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11.5px] text-muted">
-              <span>{provider.category.name}</span>
+              <span>{category}</span>
               <span aria-hidden>·</span>
               <span className="inline-flex items-center gap-0.5">
                 <MapPin className="h-3 w-3" aria-hidden />
@@ -98,25 +106,25 @@ export function ProviderCard({
               {distanceKm !== null && (
                 <>
                   <span aria-hidden>·</span>
-                  <span className="font-medium text-ink">{formatDistance(distanceKm)}</span>
+                  <span className="font-medium text-ink">{formatDistance(distanceKm, locale)}</span>
                 </>
               )}
             </p>
           </div>
           <div className="shrink-0 pt-0.5">
-            <Rating value={provider.ratingAvg} count={provider.ratingCount} />
+            <Rating value={provider.ratingAvg} count={provider.ratingCount} locale={locale} />
           </div>
         </div>
 
         <div className="mt-3 flex flex-wrap gap-1.5">
           {placeTags.slice(0, 3).map((tag) => (
             <span key={tag.key} className="rounded-full bg-surface-2 px-2 py-1 text-[10px] text-ink-soft">
-              {tag.short}
+              {placeLabel(locale, tag.key)}
             </span>
           ))}
           {provider.responseTimeHours && (
             <span className="rounded-full bg-surface-2 px-2 py-1 text-[10px] text-ink-soft">
-              Replies in ~{provider.responseTimeHours} h
+              {translate(locale, "provider.repliesIn", { hours: provider.responseTimeHours })}
             </span>
           )}
         </div>
@@ -125,12 +133,14 @@ export function ProviderCard({
           <span className="text-sm font-semibold">
             {minPriceCents !== null ? (
               <>
-                <span className="text-[10px] font-normal uppercase tracking-wide text-muted">From </span>
+                <span className="text-[10px] font-normal uppercase tracking-wide text-muted">
+                  {translate(locale, "common.from")}{" "}
+                </span>
                 {formatMoney(minPriceCents)}
               </>
             ) : (
               <span className="inline-flex items-center gap-1 text-[11px] font-normal text-muted">
-                <Sparkles className="h-3 w-3" /> Ask for pricing
+                <Sparkles className="h-3 w-3" /> {translate(locale, "home.card.askPricing")}
               </span>
             )}
           </span>
@@ -138,7 +148,7 @@ export function ProviderCard({
             href={`/providers/${provider.slug}`}
             className="btn btn-sm border-line bg-surface hover:border-ink"
           >
-            View profile
+            {translate(locale, "common.viewProfile")}
           </Link>
         </div>
       </div>

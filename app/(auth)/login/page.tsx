@@ -2,74 +2,83 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
+import { getTranslator } from "@/lib/i18n/server";
 import { ActionForm } from "@/components/action-form";
 import { SubmitButton } from "@/components/submit-button";
 import { loginAction } from "@/app/actions/auth";
 
-const demoAccounts = [
-  {
-    role: "Customer",
-    email: "amina@example.com",
-    password: "Customer123!",
-    note: "Requests and reviews",
-  },
-  {
-    role: "Provider",
-    email: "nadia@example.com",
-    password: "Provider123!",
-    note: "Approved profile & inbox",
-  },
-  {
-    role: "Pending provider",
-    email: "naya@example.com",
-    password: "Provider123!",
-    note: "See the review state",
-  },
-  {
-    role: "Draft provider",
-    email: "rose@example.com",
-    password: "Provider123!",
-    note: "Try the 7-step application",
-  },
-  {
-    role: "Admin",
-    email: "admin@holydo.market",
-    password: "Admin123!",
-    note: "Approval queue",
-  },
-];
-
-export const metadata = { title: "Log in" };
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("auth.meta.login") };
+}
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; reset?: string }>;
 }) {
   const user = await getCurrentUser();
   if (user) {
     redirect(user.role === "ADMIN" ? "/admin" : user.role === "PROVIDER" ? "/provider/dashboard" : "/account");
   }
-  const { next } = await searchParams;
+  const { next, reset } = await searchParams;
+  const { locale, t } = await getTranslator();
+
+  const demoAccounts = [
+    {
+      role: t("auth.demo.customer"),
+      email: "amina@example.com",
+      password: "Customer123!",
+      note: t("auth.demo.note.customer"),
+    },
+    {
+      role: t("auth.demo.provider"),
+      email: "nadia@example.com",
+      password: "Provider123!",
+      note: t("auth.demo.note.provider"),
+    },
+    {
+      role: t("auth.demo.pending"),
+      email: "naya@example.com",
+      password: "Provider123!",
+      note: t("auth.demo.note.pending"),
+    },
+    {
+      role: t("auth.demo.draft"),
+      email: "rose@example.com",
+      password: "Provider123!",
+      note: t("auth.demo.note.draft"),
+    },
+    {
+      role: t("auth.demo.admin"),
+      email: "admin@holydo.market",
+      password: "Admin123!",
+      note: t("auth.demo.note.admin"),
+    },
+  ];
 
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[1fr_0.92fr] lg:gap-14">
       <section className="mx-auto w-full max-w-lg">
-        <p className="eyebrow">Welcome back</p>
+        <p className="eyebrow">{t("auth.welcome")}</p>
         <h1 className="display mt-3 text-[clamp(2.4rem,5vw,4rem)]">
-          Good to see you
+          {t("auth.loginTitle")}
           <span className="text-clay">.</span>
         </h1>
         <p className="mt-3 max-w-md text-sm leading-relaxed text-muted">
-          Log in to manage appointment requests, update your provider profile, or
-          leave a review.
+          {t("auth.loginIntro")}
         </p>
 
         <div className="card mt-7 p-5 md:p-7">
-          <ActionForm action={loginAction} className="grid gap-4">
+          {reset === "success" && (
+            <div role="status" className="mb-4 rounded-xl border border-pine/20 bg-pine-soft px-3.5 py-2.5 text-xs font-medium text-pine">
+              {t("email.reset.success")}
+            </div>
+          )}
+          <ActionForm action={loginAction} className="grid gap-4" locale={locale}>
             {next && <input type="hidden" name="next" value={next} />}
             <div>
-              <label htmlFor="email" className="label">Email address</label>
+              <label htmlFor="email" className="label">{t("auth.emailAddress")}</label>
               <input
                 id="email"
                 name="email"
@@ -81,7 +90,7 @@ export default async function LoginPage({
               />
             </div>
             <div>
-              <label htmlFor="password" className="label">Password</label>
+              <label htmlFor="password" className="label">{t("auth.password")}</label>
               <input
                 id="password"
                 name="password"
@@ -92,21 +101,26 @@ export default async function LoginPage({
                 className="input"
               />
             </div>
-            <SubmitButton className="btn btn-primary btn-block mt-1" pendingLabel="Logging in…">
-              Log in
+            <SubmitButton className="btn btn-primary btn-block mt-1" pendingLabel={t("common.loading")}>
+              {t("auth.loginSubmit")}
             </SubmitButton>
           </ActionForm>
+          <p className="mt-3 text-center text-xs">
+            <Link href="/forgot-password" className="font-medium text-muted underline decoration-line underline-offset-4 hover:text-ink">
+              {t("auth.forgot")}
+            </Link>
+          </p>
 
           <p className="mt-5 text-center text-xs text-muted">
-            New to HOLYDO?{" "}
+            {t("auth.newHere")}{" "}
             <Link href="/signup" className="font-semibold text-ink underline decoration-line underline-offset-4">
-              Create a customer account
+              {t("auth.createCustomer")}
             </Link>
           </p>
           <p className="mt-1 text-center text-xs text-muted">
-            Offer services?{" "}
+            {t("auth.offerServices")}{" "}
             <Link href="/provider/join" className="font-semibold text-ink underline decoration-line underline-offset-4">
-              Apply as a provider
+              {t("auth.applyProvider")}
             </Link>
           </p>
         </div>
@@ -116,13 +130,12 @@ export default async function LoginPage({
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-marigold" aria-hidden />
           <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/60">
-            Demo accounts
+            {t("auth.demo.eyebrow")}
           </p>
         </div>
-        <h2 className="mt-3 text-2xl text-paper">Try every side of the marketplace.</h2>
+        <h2 className="mt-3 text-2xl text-paper">{t("auth.demo.title")}</h2>
         <p className="mt-2 text-xs leading-relaxed text-paper/65">
-          This is a seeded v1 environment. Use one of these accounts to explore the
-          customer, provider or admin experience.
+          {t("auth.demo.body")}
         </p>
 
         <div className="mt-5 grid gap-2.5">
@@ -143,8 +156,8 @@ export default async function LoginPage({
 
         <p className="mt-5 text-[10px] leading-relaxed text-paper/50">
           <ArrowUpRight className="mr-1 inline h-3 w-3" aria-hidden />
-          Demo credentials are seeded in <code>prisma/seed.ts</code>. Change them before any
-          public deployment.
+          {t("auth.demo.seededStart")} <code>prisma/seed.ts</code>
+          {t("auth.demo.seededEnd")}
         </p>
       </aside>
     </div>

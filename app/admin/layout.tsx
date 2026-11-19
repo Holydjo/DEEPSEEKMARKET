@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { logoutAction } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
 import { AdminNav } from "@/components/admin-nav";
+import { NotificationBell } from "@/components/notification-bell";
 import { initials } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
             Admin
           </span>
           <div className="ml-auto flex items-center gap-2">
+            <NotificationBell />
             <span className="hidden text-[10px] text-muted sm:block">{admin.email}</span>
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-[8px] font-bold text-paper">
               {initials(admin.name)}

@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { logoutAction } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
 import { ProviderNav } from "@/components/provider-nav";
+import { NotificationBell } from "@/components/notification-bell";
 import { initials } from "@/lib/format";
 import { PROVIDER_STATUS_LABEL } from "@/lib/constants";
 
@@ -47,6 +48,7 @@ export default async function ProviderDashboardLayout({
             ) : (
               <span className="hidden text-[10px] text-muted sm:block">Private until approved</span>
             )}
+            <NotificationBell />
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-[8px] font-bold text-paper">
               {initials(user.name)}
             </span>

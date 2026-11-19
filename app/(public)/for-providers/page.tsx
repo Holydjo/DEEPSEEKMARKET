@@ -13,63 +13,116 @@ import {
   Sparkles,
   Wallet,
 } from "lucide-react";
+import { getTranslator } from "@/lib/i18n/server";
+import { formatDistance } from "@/lib/location";
+import { categoryLabel } from "@/lib/i18n/categories";
 
-export const metadata = {
-  title: "For providers",
-  description:
-    "Create a free verified profile on HOLYDO MARKET. Add services, prices, photos and hours, and receive appointment requests from nearby customers.",
-};
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return {
+    title: t("providers.meta.title"),
+    description: t("providers.meta.description"),
+  };
+}
 
-const steps = [
-  {
-    n: "01",
-    title: "Create your account",
-    text: "Name, email, phone and password. Choose independent provider or business.",
-    time: "2 min",
-  },
-  {
-    n: "02",
-    title: "Build your storefront",
-    text: "Services, prices, photos, opening hours, service settings and travel area.",
-    time: "8 min",
-  },
-  {
-    n: "03",
-    title: "Submit for review",
-    text: "A HOLYDO reviewer checks your profile. You see exactly what is missing.",
-    time: "under 48 h",
-  },
-  {
-    n: "04",
-    title: "Go live & manage requests",
-    text: "Share your link, receive requests, edit services and availability from your dashboard.",
-    time: "ongoing",
-  },
-];
+export default async function ForProvidersPage() {
+  const { locale, t } = await getTranslator();
 
-export default function ForProvidersPage() {
+  const steps = [
+    {
+      n: "01",
+      title: t("providers.steps.1.title"),
+      text: t("providers.steps.1.text"),
+      time: t("providers.steps.1.time"),
+    },
+    {
+      n: "02",
+      title: t("providers.steps.2.title"),
+      text: t("providers.steps.2.text"),
+      time: t("providers.steps.2.time"),
+    },
+    {
+      n: "03",
+      title: t("providers.steps.3.title"),
+      text: t("providers.steps.3.text"),
+      time: t("providers.steps.3.time"),
+    },
+    {
+      n: "04",
+      title: t("providers.steps.4.title"),
+      text: t("providers.steps.4.text"),
+      time: t("providers.steps.4.time"),
+    },
+  ];
+
+  const benefits = [
+    {
+      icon: Eye,
+      title: t("providers.benefits.1.title"),
+      text: t("providers.benefits.1.text"),
+    },
+    {
+      icon: CalendarCheck,
+      title: t("providers.benefits.2.title"),
+      text: t("providers.benefits.2.text"),
+    },
+    {
+      icon: Wallet,
+      title: t("providers.benefits.3.title"),
+      text: t("providers.benefits.3.text"),
+    },
+    {
+      icon: Camera,
+      title: t("providers.benefits.4.title"),
+      text: t("providers.benefits.4.text"),
+    },
+    {
+      icon: Heart,
+      title: t("providers.benefits.5.title"),
+      text: t("providers.benefits.5.text"),
+    },
+    {
+      icon: Clock,
+      title: t("providers.benefits.6.title"),
+      text: t("providers.benefits.6.text"),
+    },
+  ];
+
+  const approvalItems: Array<[string, string]> = [
+    [t("providers.approval.1.title"), t("providers.approval.1.text")],
+    [t("providers.approval.2.title"), t("providers.approval.2.text")],
+    [t("providers.approval.3.title"), t("providers.approval.3.text")],
+    [t("providers.approval.4.title"), t("providers.approval.4.text")],
+    [t("providers.approval.5.title"), t("providers.approval.5.text")],
+    [t("providers.approval.6.title"), t("providers.approval.6.text")],
+  ];
+
   return (
     <div>
       <section className="relative overflow-hidden border-b border-line">
         <div className="container-hd grid gap-10 py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center md:py-20">
           <div>
-            <p className="eyebrow">For independent providers & small businesses</p>
+            <p className="eyebrow">{t("providers.hero.eyebrow")}</p>
             <h1 className="display mt-4 text-[clamp(2.6rem,5.8vw,5.2rem)]">
-              Your work deserves a{" "}
-              <span className="italic text-clay">front door.</span>
+              {t("providers.hero.titleStart")}{" "}
+              <span className="italic text-clay">{t("providers.hero.titleAccent")}</span>
             </h1>
             <p className="mt-5 max-w-[500px] text-sm leading-relaxed text-muted">
-              Stop being a well-kept secret. HOLYDO gives your services a verified,
-              mobile-first profile that nearby customers can find, understand and request.
+              {t("providers.hero.body")}
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-2">
               <Link href="/provider/join" className="btn btn-primary">
-                Create your free profile <ArrowRight className="h-4 w-4" aria-hidden />
+                {t("providers.hero.cta")} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <span className="text-[10px] text-muted">Free during launch · no commission</span>
+              <span className="text-[10px] text-muted">{t("providers.hero.note")}</span>
             </div>
             <div className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-[10px] text-muted">
-              {["Human-reviewed", "Own your prices", "No booking fees", "Cancel anytime"].map((item) => (
+              {[
+                t("providers.hero.check1"),
+                t("providers.hero.check2"),
+                t("providers.hero.check3"),
+                t("providers.hero.check4"),
+              ].map((item) => (
                 <span key={item} className="inline-flex items-center gap-1.5">
                   <Check className="h-3 w-3 text-pine" aria-hidden /> {item}
                 </span>
@@ -82,7 +135,7 @@ export default function ForProvidersPage() {
               <div className="relative aspect-[4/3]">
                 <Image
                   src="/images/providers/nadia-2.jpg"
-                  alt="A finished braid style"
+                  alt={t("providers.hero.imageAlt")}
                   fill
                   priority
                   sizes="(max-width: 768px) 90vw, 430px"
@@ -91,25 +144,35 @@ export default function ForProvidersPage() {
               </div>
               <div className="p-4">
                 <div className="flex items-center justify-between">
-                  <span className="verified"><BadgeCheck className="h-3 w-3" aria-hidden /> Verified by HOLYDO</span>
-                  <span className="pill pill-pine !text-[8px]">Profile live</span>
+                  <span className="verified">
+                    <BadgeCheck className="h-3 w-3" aria-hidden /> {t("providers.mock.verified")}
+                  </span>
+                  <span className="pill pill-pine !text-[8px]">{t("providers.mock.live")}</span>
                 </div>
                 <p className="mt-2 font-display text-xl">Nadia Braids Studio</p>
-                <p className="text-[10px] text-muted">Braids · Le Plateau · 1.2 km</p>
+                <p className="text-[10px] text-muted">
+                  {t("providers.mock.meta", {
+                    category: categoryLabel(locale, "braids", "Braids"),
+                    hood: "Le Plateau",
+                    distance: formatDistance(1.2, locale),
+                  })}
+                </p>
                 <div className="mt-3 flex items-center justify-between border-t border-line pt-3">
-                  <span className="text-[10px] text-muted">Knotless braids</span>
-                  <span className="text-sm font-semibold">From $120</span>
+                  <span className="text-[10px] text-muted">{t("providers.mock.service")}</span>
+                  <span className="text-sm font-semibold">
+                    {t("price.from", { price: "$120" })}
+                  </span>
                 </div>
               </div>
             </div>
             <div className="absolute -right-3 -top-4 flex h-20 w-20 rotate-[-8deg] flex-col items-center justify-center rounded-full border border-dashed border-ink bg-paper text-center font-mono text-[6px] uppercase leading-tight">
-              <span>Approved by</span>
+              <span>{t("home.collage.approvedBy")}</span>
               <span className="font-display text-[12px] font-semibold normal-case">HOLYDO</span>
               <span>2026</span>
             </div>
             <div className="absolute -bottom-3 -left-3 rounded-xl border border-ink bg-marigold px-3 py-2 shadow-[3px_3px_0_var(--color-ink)]">
-              <p className="font-mono text-[7px] uppercase tracking-wide">This month</p>
-              <p className="text-sm font-semibold">148 profile views</p>
+              <p className="font-mono text-[7px] uppercase tracking-wide">{t("providers.mock.month")}</p>
+              <p className="text-sm font-semibold">{t("providers.mock.views", { count: 148 })}</p>
             </div>
           </div>
         </div>
@@ -118,47 +181,15 @@ export default function ForProvidersPage() {
       {/* Benefits */}
       <section className="container-hd section-pad">
         <div className="max-w-2xl">
-          <p className="eyebrow">Why list</p>
-          <h2 className="display mt-3 text-section">Built for people who do the work.</h2>
+          <p className="eyebrow">{t("providers.benefits.eyebrow")}</p>
+          <h2 className="display mt-3 text-section">{t("providers.benefits.title")}</h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted">
-            No bidding wars, no race to the bottom, no algorithm that hides you because
-            you took a day off. A clear profile and a fair request inbox.
+            {t("providers.benefits.body")}
           </p>
         </div>
 
         <div className="mt-8 grid gap-3 md:grid-cols-3">
-          {[
-            {
-              icon: Eye,
-              title: "Found by neighbours",
-              text: "Category and neighbourhood pages, location search and a real profile URL you can share anywhere.",
-            },
-            {
-              icon: CalendarCheck,
-              title: "Requests that fit your work",
-              text: "Customers send a service, date and time window. You accept, decline, or suggest another time.",
-            },
-            {
-              icon: Wallet,
-              title: "Your prices, your business",
-              text: "No commission on appointment requests during launch. You agree on payment directly with the customer.",
-            },
-            {
-              icon: Camera,
-              title: "Let the work speak",
-              text: "A photo gallery and service list that show what you actually do — not a generic directory entry.",
-            },
-            {
-              icon: Heart,
-              title: "Reviewed reviews",
-              text: "Reviews from customers with a completed HOLYDO request are marked verified. You can flag abuse.",
-            },
-            {
-              icon: Clock,
-              title: "Control availability",
-              text: "Opening hours, service settings and travel radius are yours to edit. Your exact address stays private.",
-            },
-          ].map((item) => (
+          {benefits.map((item) => (
             <div key={item.title} className="rounded-2xl border border-line bg-surface p-5">
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-ink bg-marigold-soft">
                 <item.icon className="h-4 w-4" aria-hidden />
@@ -175,10 +206,12 @@ export default function ForProvidersPage() {
         <div className="container-hd section-pad">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Getting listed</p>
-              <h2 className="display mt-3 text-section">Four steps, one human review.</h2>
+              <p className="eyebrow">{t("providers.steps.eyebrow")}</p>
+              <h2 className="display mt-3 text-section">{t("providers.steps.title")}</h2>
             </div>
-            <span className="pill"><Clock className="h-3 w-3" aria-hidden /> About 12 minutes + review</span>
+            <span className="pill">
+              <Clock className="h-3 w-3" aria-hidden /> {t("providers.steps.badge")}
+            </span>
           </div>
 
           <div className="mt-8 grid gap-3 md:grid-cols-4">
@@ -196,11 +229,9 @@ export default function ForProvidersPage() {
 
           <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-paper px-4 py-3">
             <MapPin className="h-4 w-4 text-muted" aria-hidden />
-            <p className="text-[11px] text-muted">
-              Serving Montréal first. Le Plateau, Rosemont, Villeray, Little Burgundy and nearby.
-            </p>
+            <p className="text-[11px] text-muted">{t("providers.steps.location")}</p>
             <Link href="/provider/join" className="btn btn-primary btn-sm ml-auto">
-              Start application
+              {t("providers.steps.start")}
             </Link>
           </div>
         </div>
@@ -210,21 +241,19 @@ export default function ForProvidersPage() {
       <section className="container-hd section-pad">
         <div className="grid gap-4 md:grid-cols-[1fr_0.9fr] md:items-center">
           <div>
-            <p className="eyebrow">Launch pricing</p>
-            <h2 className="display mt-3 text-section">Free to be found. No commission.</h2>
+            <p className="eyebrow">{t("providers.pricing.eyebrow")}</p>
+            <h2 className="display mt-3 text-section">{t("providers.pricing.title")}</h2>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted">
-              During the launch period, a provider profile costs nothing. HOLYDO does not
-              take a percentage of your appointments and does not require a card to apply.
-              If we introduce paid plans later, existing free profiles will be told in advance.
+              {t("providers.pricing.body")}
             </p>
             <div className="mt-5 grid gap-2 text-[11px] text-muted sm:grid-cols-2">
               {[
-                "No setup fee",
-                "No commission on requests",
-                "No card required",
-                "Unlimited services & photos",
-                "Your own profile URL",
-                "Edit anytime, re-review if needed",
+                t("providers.pricing.check1"),
+                t("providers.pricing.check2"),
+                t("providers.pricing.check3"),
+                t("providers.pricing.check4"),
+                t("providers.pricing.check5"),
+                t("providers.pricing.check6"),
               ].map((item) => (
                 <span key={item} className="inline-flex items-center gap-1.5">
                   <Check className="h-3 w-3 text-pine" aria-hidden /> {item}
@@ -234,16 +263,19 @@ export default function ForProvidersPage() {
           </div>
           <div className="rounded-card border border-ink bg-pine p-6 text-paper shadow-[5px_5px_0_var(--color-ink)] md:p-8">
             <Sparkles className="h-6 w-6 text-marigold" aria-hidden />
-            <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/55">Launch plan</p>
-            <p className="mt-1 font-display text-5xl">$0<span className="text-base text-paper/50"> / month</span></p>
+            <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/55">
+              {t("providers.pricing.plan")}
+            </p>
+            <p className="mt-1 font-display text-5xl">
+              $0<span className="text-base text-paper/50">{t("providers.pricing.month")}</span>
+            </p>
             <p className="mt-2 text-[11px] leading-relaxed text-paper/65">
-              For independent providers and small businesses in Montréal. Manual review
-              applies to every profile.
+              {t("providers.pricing.planBody")}
             </p>
             <Link href="/provider/join" className="btn btn-primary btn-block mt-5">
-              Create your profile
+              {t("providers.pricing.cta")}
             </Link>
-            <p className="mt-2 text-center text-[9px] text-paper/50">No card. No commitment.</p>
+            <p className="mt-2 text-center text-[9px] text-paper/50">{t("providers.pricing.note")}</p>
           </div>
         </div>
       </section>
@@ -252,20 +284,13 @@ export default function ForProvidersPage() {
       <section className="border-t border-line bg-surface">
         <div className="container-hd grid gap-8 py-12 md:grid-cols-[0.85fr_1.15fr] md:py-16">
           <div>
-            <p className="eyebrow">The approval process</p>
+            <p className="eyebrow">{t("providers.approval.eyebrow")}</p>
             <h2 className="display mt-3 text-[clamp(2rem,3.4vw,2.8rem)]">
-              You’ll know exactly what we’re checking.
+              {t("providers.approval.title")}
             </h2>
           </div>
           <div className="grid gap-2.5 sm:grid-cols-2">
-            {[
-              ["Account & contact", "Your name, phone and email."],
-              ["Public profile", "Name, category, about, location."],
-              ["At least one service", "Real price and duration."],
-              ["At least one photo", "Original work, no stock faces."],
-              ["Location & area", "Neighbourhood and travel radius."],
-              ["Opening hours", "At least one open interval."],
-            ].map(([title, text]) => (
+            {approvalItems.map(([title, text]) => (
               <div key={title} className="flex gap-2.5 rounded-xl border border-line bg-paper p-3">
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-pine-soft text-pine">
                   <Check className="h-2.5 w-2.5" aria-hidden />
@@ -284,17 +309,17 @@ export default function ForProvidersPage() {
       <section className="border-y border-ink bg-marigold">
         <div className="container-hd flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center">
           <div>
-            <p className="eyebrow !text-ink/55 before:!bg-ink">Ready when you are</p>
+            <p className="eyebrow !text-ink/55 before:!bg-ink">{t("providers.cta.eyebrow")}</p>
             <h2 className="display mt-2 text-[clamp(1.9rem,3.4vw,2.8rem)]">
-              Bring your work to the neighbourhood.
+              {t("providers.cta.title")}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/provider/join" className="btn btn-dark">
-              Create your provider profile <ArrowRight className="h-4 w-4" aria-hidden />
+              {t("providers.cta.button")} <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link href="/how-it-works#approval" className="btn btn-outline bg-transparent">
-              How approval works
+              {t("providers.cta.how")}
             </Link>
           </div>
         </div>

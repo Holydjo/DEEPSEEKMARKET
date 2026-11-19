@@ -125,10 +125,11 @@ export function haversineKm(
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-export function formatDistance(km: number | null): string {
+export function formatDistance(km: number | null, locale: "en" | "fr" = "en"): string {
   if (km === null) return "";
   if (km < 1) return `${Math.max(50, Math.round(km * 1000 / 50) * 50)} m`;
-  return `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
+  const value = km < 10 ? km.toFixed(1) : String(Math.round(km));
+  return `${locale === "fr" ? value.replace(".", ",") : value} km`;
 }
 
 export function neighbourhoodBySlug(slug: string): Neighbourhood | undefined {

@@ -4,24 +4,27 @@ import "@fontsource-variable/fraunces";
 import "@fontsource-variable/fraunces/wght-italic.css";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
+import { getLocale } from "@/lib/i18n/server";
+import { translate } from "@/lib/i18n/dictionary";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: {
-    default: "HOLYDO MARKET — Local services, humanly verified",
-    template: "%s · HOLYDO MARKET",
-  },
-  description:
-    "Find trusted local service providers near you — hair, braids, beauty, cleaning, repairs and more. Every profile reviewed by a person.",
-  openGraph: {
-    title: "HOLYDO MARKET — Local services, humanly verified",
-    description:
-      "Find trusted local service providers near you. Hair, braids, beauty, cleaning, repairs and more.",
-    type: "website",
-    locale: "en_CA",
-  },
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+    title: {
+      default: translate(locale, "meta.defaultTitle"),
+      template: "%s · HOLYDO MARKET",
+    },
+    description: translate(locale, "meta.description"),
+    openGraph: {
+      title: translate(locale, "meta.defaultTitle"),
+      description: translate(locale, "meta.ogDescription"),
+      type: "website",
+      locale: locale === "fr" ? "fr_CA" : "en_CA",
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#f6f0e4",
@@ -29,11 +32,12 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>{children}</body>
     </html>
   );

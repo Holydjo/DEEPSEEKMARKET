@@ -14,12 +14,18 @@ import {
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 import { formatDate, formatRelative, initials } from "@/lib/format";
-import { BOOKING_STATUS_LABEL, PREFERRED_WINDOW_LABEL } from "@/lib/constants";
+import { getTranslator } from "@/lib/i18n/server";
+import { categoryLabel } from "@/lib/i18n/categories";
+import { bookingStatusLabel, windowLabel } from "@/lib/i18n/labels";
 import { logoutAction } from "@/app/actions/auth";
 import { StarRow } from "@/components/rating";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Your account", robots: { index: false } };
+
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("account.meta.title"), robots: { index: false } };
+}
 
 function statusTone(status: string): string {
   if (status === "ACCEPTED") return "pill-pine";
@@ -29,7 +35,7 @@ function statusTone(status: string): string {
 }
 
 export default async function AccountPage() {
-  const user = await getCurrentUser();
+  const [{ locale, t }, user] = await Promise.all([getTranslator(), getCurrentUser()]);
   if (!user) redirect("/login?next=/account");
   if (user.role === "ADMIN") redirect("/admin");
 
@@ -55,24 +61,29 @@ export default async function AccountPage() {
   const pending = requests.filter((request) => request.status === "PENDING").length;
   const accepted = requests.filter((request) => request.status === "ACCEPTED").length;
 
+  const stats: Array<[string, number, string]> = [
+    [t("account.stats.requests"), requests.length, t("account.stats.requestsNote")],
+    [t("account.stats.waiting"), pending, t("account.stats.waitingNote")],
+    [t("account.stats.accepted"), accepted, t("account.stats.acceptedNote")],
+  ];
+
   return (
     <div className="container-hd py-8 md:py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow">Your account</p>
+          <p className="eyebrow">{t("account.eyebrow")}</p>
           <h1 className="display mt-3 text-[clamp(2.2rem,5vw,3.8rem)]">
-            Hi, {user.name.split(" ")[0]}.
+            {t("account.greeting", { name: user.name.split(" ")[0] })}
           </h1>
-          <p className="mt-1 text-sm text-muted">
-            Requests, reviews and the details providers need to reach you.
-          </p>
+          <p className="mt-1 text-sm text-muted">{t("account.subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/saved" className="btn btn-outline btn-sm">
-            <Heart className="h-3.5 w-3.5" aria-hidden /> Saved {savedCount > 0 && <span className="text-muted">({savedCount})</span>}
+            <Heart className="h-3.5 w-3.5" aria-hidden /> {t("account.savedLink")}{" "}
+            {savedCount > 0 && <span className="text-muted">({savedCount})</span>}
           </Link>
           <Link href="/search" className="btn btn-primary btn-sm">
-            Find a service <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            {t("account.findService")} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
       </div>
@@ -81,21 +92,17 @@ export default async function AccountPage() {
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-pine/20 bg-pine-soft p-4">
           <div className="flex items-center gap-2 text-pine">
             <LayoutDashboard className="h-4 w-4" aria-hidden />
-            <p className="text-xs font-semibold">You also have a provider profile.</p>
+            <p className="text-xs font-semibold">{t("account.providerProfile")}</p>
           </div>
           <Link href="/provider/dashboard" className="btn btn-dark btn-sm">
-            Open provider dashboard
+            {t("account.openDashboard")}
           </Link>
         </div>
       )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {[
-          ["Requests", requests.length, "all time"],
-          ["Waiting", pending, "for a reply"],
-          ["Accepted", accepted, "confirmed by provider"],
-        ].map(([label, value, note]) => (
-          <div key={String(label)} className="rounded-2xl border border-line bg-surface p-4">
+        {stats.map(([label, value, note]) => (
+          <div key={label} className="rounded-2xl border border-line bg-surface p-4">
             <p className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted">{label}</p>
             <p className="mt-1 font-display text-3xl">{value}</p>
             <p className="text-[10px] text-muted">{note}</p>
@@ -107,8 +114,8 @@ export default async function AccountPage() {
         <div id="requests" className="scroll-mt-24">
           <div className="flex items-end justify-between">
             <div>
-              <p className="eyebrow">Appointment requests</p>
-              <h2 className="display mt-2 text-2xl">Your requests</h2>
+              <p className="eyebrow">{t("account.requests.eyebrow")}</p>
+              <h2 className="display mt-2 text-2xl">{t("account.requests.title")}</h2>
             </div>
           </div>
 
@@ -130,7 +137,11 @@ export default async function AccountPage() {
                       />
                     ) : (
                       <span className="flex h-full items-center justify-center text-[9px] text-muted">
-                        {request.provider.category.name}
+                        {categoryLabel(
+                          locale,
+                          request.provider.category.slug,
+                          request.provider.category.name,
+                        )}
                       </span>
                     )}
                   </Link>
@@ -140,16 +151,17 @@ export default async function AccountPage() {
                         {request.provider.displayName}
                       </Link>
                       <span className={`pill !text-[8px] ${statusTone(request.status)}`}>
-                        {BOOKING_STATUS_LABEL[request.status] ?? request.status}
+                        {bookingStatusLabel(locale, request.status)}
                       </span>
                     </div>
                     <p className="mt-0.5 text-[10px] text-muted">
-                      {request.service?.name ?? "Service to confirm"}
+                      {request.service?.name ?? t("account.serviceConfirm")}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[9.5px] text-muted">
                       <span className="inline-flex items-center gap-1">
                         <CalendarDays className="h-3 w-3" aria-hidden />
-                        {formatDate(request.preferredDate)} · {PREFERRED_WINDOW_LABEL[request.preferredWindow] ?? request.preferredWindow}
+                        {formatDate(request.preferredDate, locale)} ·{" "}
+                        {windowLabel(locale, request.preferredWindow)}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <MapPin className="h-3 w-3" aria-hidden />
@@ -158,13 +170,13 @@ export default async function AccountPage() {
                     </p>
                     {request.providerNote && (
                       <p className="mt-1 line-clamp-2 text-[9px] leading-relaxed text-pine">
-                        Provider note: {request.providerNote}
+                        {t("account.providerNote", { note: request.providerNote })}
                       </p>
                     )}
                     <div className="mt-1.5 flex flex-wrap items-center justify-between gap-1">
                       <span className="font-mono text-[8.5px] text-muted">{request.reference}</span>
                       <Link href={`/requests/${request.reference}`} className="text-[9px] font-medium underline decoration-line underline-offset-2">
-                        View request →
+                        {t("account.viewRequest")}
                       </Link>
                     </div>
                   </div>
@@ -174,12 +186,12 @@ export default async function AccountPage() {
           ) : (
             <div className="mt-4 rounded-2xl border border-dashed border-line bg-surface p-8 text-center">
               <CalendarDays className="mx-auto h-6 w-6 text-muted" aria-hidden />
-              <p className="mt-3 text-sm font-semibold">No requests yet</p>
+              <p className="mt-3 text-sm font-semibold">{t("account.noRequests")}</p>
               <p className="mx-auto mt-1 max-w-sm text-[11px] text-muted">
-                Find someone nearby, open their profile, and send a request. It only takes a minute.
+                {t("account.noRequestsBody")}
               </p>
               <Link href="/search" className="btn btn-primary btn-sm mt-4">
-                Browse providers
+                {t("account.browse")}
               </Link>
             </div>
           )}
@@ -193,38 +205,42 @@ export default async function AccountPage() {
               </span>
               <div>
                 <p className="text-sm font-semibold">{user.name}</p>
-                <p className="text-[10px] text-muted">Customer account</p>
+                <p className="text-[10px] text-muted">{t("account.customer")}</p>
               </div>
             </div>
             <div className="mt-4 grid gap-2 border-t border-line pt-3 text-[11px]">
               <p className="flex items-center gap-2 text-muted"><UserRound className="h-3.5 w-3.5" aria-hidden /> {user.email}</p>
-              {user.phone && <p className="text-muted">Phone: {user.phone}</p>}
+              {user.phone && (
+                <p className="text-muted">{t("account.phone", { phone: user.phone })}</p>
+              )}
             </div>
             <form action={logoutAction} className="mt-4">
               <button className="btn btn-outline btn-sm w-full">
-                <LogOut className="h-3.5 w-3.5" aria-hidden /> Log out
+                <LogOut className="h-3.5 w-3.5" aria-hidden /> {t("account.logout")}
               </button>
             </form>
           </div>
 
           <Link href="/saved" className="card block p-5 transition-colors hover:border-ink">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg">Saved providers</h2>
+              <h2 className="text-lg">{t("account.saved.title")}</h2>
               <Heart className="h-4 w-4 text-clay" aria-hidden />
             </div>
             <p className="mt-1 text-[10px] leading-relaxed text-muted">
               {savedCount > 0
-                ? `${savedCount} saved ${savedCount === 1 ? "provider" : "providers"} for later.`
-                : "Tap the heart on any provider to keep them here."}
+                ? savedCount === 1
+                  ? t("account.saved.countOne", { count: savedCount })
+                  : t("account.saved.countMany", { count: savedCount })
+                : t("account.saved.empty")}
             </p>
             <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-ink">
-              View saved <ArrowRight className="h-3 w-3" aria-hidden />
+              {t("account.saved.view")} <ArrowRight className="h-3 w-3" aria-hidden />
             </span>
           </Link>
 
           <div className="card p-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg">Your reviews</h2>
+              <h2 className="text-lg">{t("account.reviews.title")}</h2>
               <Star className="h-4 w-4 text-muted" aria-hidden />
             </div>
             {reviews.length > 0 ? (
@@ -235,23 +251,25 @@ export default async function AccountPage() {
                       <Link href={`/providers/${review.provider.slug}`} className="text-[11px] font-semibold hover:underline">
                         {review.provider.displayName}
                       </Link>
-                      <StarRow value={review.rating} />
+                      <StarRow value={review.rating} locale={locale} />
                     </div>
                     <p className="mt-1 line-clamp-2 text-[9.5px] leading-relaxed text-muted">{review.body}</p>
-                    <p className="mt-1 text-[8px] text-muted">{formatRelative(review.createdAt)}</p>
+                    <p className="mt-1 text-[8px] text-muted">
+                      {formatRelative(review.createdAt, locale)}
+                    </p>
                   </div>
                 ))}
               </div>
             ) : (
               <p className="mt-2 text-[10px] leading-relaxed text-muted">
-                No reviews yet. After an appointment, you can share what it was like.
+                {t("account.reviews.empty")}
               </p>
             )}
           </div>
 
           <div className="rounded-2xl border border-line bg-surface-2 p-4 text-[9.5px] leading-relaxed text-muted">
-            <strong className="text-ink">Your privacy.</strong> Your contact details are only
-            shared with a provider when you send them a request. HOLYDO does not sell your data.
+            <strong className="text-ink">{t("account.privacyTitle")}</strong>{" "}
+            {t("account.privacyBody")}
           </div>
         </aside>
       </div>

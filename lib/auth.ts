@@ -46,6 +46,7 @@ export type SessionUser = {
   email: string;
   phone: string | null;
   role: string;
+  locale: string;
   provider: { id: string; slug: string; status: string; displayName: string } | null;
 };
 
@@ -68,6 +69,7 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
           email: true,
           phone: true,
           role: true,
+          locale: true,
           provider: {
             select: { id: true, slug: true, status: true, displayName: true },
           },

@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ClipboardCheck, LayoutDashboard, MessageSquareText, Store } from "lucide-react";
+import { ClipboardCheck, LayoutDashboard, Mail, MessageSquareText, Store } from "lucide-react";
 
 const items = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/admin/applications", label: "Applications", icon: ClipboardCheck },
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquareText },
+  { href: "/admin/emails", label: "Emails", icon: Mail },
   { href: "/admin/providers", label: "All providers", icon: Store },
 ];
 
@@ -15,7 +16,7 @@ export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="grid grid-cols-4 gap-1 lg:grid-cols-1" aria-label="Admin">
+    <nav className="grid grid-cols-5 gap-1 lg:grid-cols-1" aria-label="Admin">
       {items.map((item) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
         const Icon = item.icon;

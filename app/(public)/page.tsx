@@ -20,6 +20,8 @@ import {
 } from "@/lib/search";
 import { MONTREAL, formatDistance } from "@/lib/location";
 import { initials } from "@/lib/format";
+import { getTranslator } from "@/lib/i18n/server";
+import { categoryLabel } from "@/lib/i18n/categories";
 import { SearchForm } from "@/components/search-form";
 import { CategoryIcon } from "@/components/category-icon";
 import { ProviderCard } from "@/components/provider-card";
@@ -35,16 +37,8 @@ const FEATURED_HOODS = [
   { slug: "little-burgundy", image: "/images/places/little-burgundy.jpg" },
 ];
 
-const POPULAR = [
-  { label: "Knotless braids", q: "knotless" },
-  { label: "Deep cleaning", q: "deep clean" },
-  { label: "Phone repair", q: "phone" },
-  { label: "Silk press", q: "silk press" },
-  { label: "Kids braids", q: "kids braids" },
-];
-
 export default async function HomePage() {
-  const user = await getCurrentUser();
+  const [{ locale, t }, user] = await Promise.all([getTranslator(), getCurrentUser()]);
   const [categories, featured, hoodCounts, providerStats, reviewCount, savedIds] = await Promise.all([
     getCategoriesWithCounts(),
     getFeaturedProviders(3),
@@ -61,7 +55,58 @@ export default async function HomePage() {
   const heroProvider =
     featured.find((item) => item.provider.slug === "nadia-braids-studio") ?? featured[0];
   const approvedCount = providerStats._count._all;
-  const avgRating = providerStats._avg.ratingAvg?.toFixed(1) ?? "—";
+  const avgRating =
+    providerStats._avg.ratingAvg
+      ?.toFixed(1)
+      .replace(".", locale === "fr" ? "," : ".") ?? "—";
+
+  const popular = [
+    { label: t("home.popular.knotless"), q: "knotless" },
+    { label: t("home.popular.deepClean"), q: "deep clean" },
+    { label: t("home.popular.phoneRepair"), q: "phone" },
+    { label: t("home.popular.silkPress"), q: "silk press" },
+    { label: t("home.popular.kidsBraids"), q: "kids braids" },
+  ];
+
+  const trustChecks = [
+    t("home.trust.check1"),
+    t("home.trust.check2"),
+    t("home.trust.check3"),
+    t("home.trust.check4"),
+  ];
+
+  const applicationChecks: Array<[string, string]> = [
+    [t("home.application.check1"), t("home.application.date1")],
+    [t("home.application.check2"), t("home.application.date1")],
+    [t("home.application.check3"), t("home.application.date2")],
+  ];
+
+  const dashboardRequests: Array<[string, string, string, boolean]> = [
+    [t("home.dash.service1"), t("home.dash.when1"), t("home.dash.new"), true],
+    [t("home.dash.service2"), t("home.dash.when2"), t("home.dash.new"), true],
+    [t("home.dash.service3"), t("home.dash.when3"), t("home.dash.accepted"), false],
+  ];
+
+  const howSteps = [
+    {
+      n: "01",
+      title: t("home.how.step1.title"),
+      text: t("home.how.step1.text"),
+      icon: Search,
+    },
+    {
+      n: "02",
+      title: t("home.how.step2.title"),
+      text: t("home.how.step2.text"),
+      icon: Star,
+    },
+    {
+      n: "03",
+      title: t("home.how.step3.title"),
+      text: t("home.how.step3.text"),
+      icon: BadgeCheck,
+    },
+  ];
 
   return (
     <>
@@ -73,11 +118,11 @@ export default async function HomePage() {
         />
         <div className="container-hd relative grid items-center gap-10 py-10 md:grid-cols-[1.05fr_0.95fr] md:gap-12 md:py-16 lg:py-20">
           <div className="animate-rise">
-            <p className="eyebrow">Local services, humanly verified</p>
+            <p className="eyebrow">{t("home.hero.eyebrow")}</p>
             <h1 className="display text-hero mt-4">
-              Good work, right around{" "}
+              {t("home.hero.titleStart")}{" "}
               <span className="relative inline-block italic text-clay">
-                the corner.
+                {t("home.hero.titleAccent")}
                 <svg
                   viewBox="0 0 300 14"
                   className="absolute -bottom-2 left-0 h-3 w-full text-marigold"
@@ -89,22 +134,20 @@ export default async function HomePage() {
               </span>
             </h1>
             <p className="mt-6 max-w-[470px] text-[15px] leading-relaxed text-muted">
-              Hair, braids, beauty, cleaning, repairs — find trusted people and small
-              businesses near you. Real prices, real photos, and a real person behind
-              every profile.
+              {t("home.hero.body")}
             </p>
 
             <div className="mt-6 max-w-[620px]">
-              <SearchForm variant="hero" />
+              <SearchForm locale={locale} variant="hero" />
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-1.5">
               <span className="mr-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted">
-                Popular
+                {t("home.popular")}
               </span>
-              {POPULAR.map((item) => (
+              {popular.map((item) => (
                 <Link
-                  key={item.label}
+                  key={item.q}
                   href={`/search?q=${encodeURIComponent(item.q)}&hood=le-plateau`}
                   className="rounded-full border border-line bg-surface px-2.5 py-1.5 text-[10.5px] transition-colors hover:border-ink"
                 >
@@ -126,8 +169,13 @@ export default async function HomePage() {
                 ))}
               </div>
               <p className="text-[11px] text-muted">
-                <span className="font-semibold text-ink">{approvedCount} approved providers</span> across{" "}
-                {MONTREAL.neighbourhoods.length} neighbourhoods · {avgRating} average rating
+                <span className="font-semibold text-ink">
+                  {t("home.hero.statProviders", { count: approvedCount })}
+                </span>{" "}
+                {t("home.hero.statRest", {
+                  hoods: MONTREAL.neighbourhoods.length,
+                  rating: avgRating,
+                })}
               </p>
             </div>
           </div>
@@ -137,7 +185,7 @@ export default async function HomePage() {
             <div className="absolute right-0 top-0 h-[82%] w-[78%] overflow-hidden rounded-[30px] border border-ink bg-surface-2 shadow-[6px_6px_0_var(--color-ink)]">
               <Image
                 src="/images/hero-main.jpg"
-                alt="Braider at work in a Montréal studio"
+                alt={t("home.hero.imageAlt")}
                 fill
                 priority
                 sizes="(max-width: 768px) 80vw, 400px"
@@ -147,7 +195,7 @@ export default async function HomePage() {
             <div className="absolute bottom-[6%] left-0 h-[38%] w-[42%] overflow-hidden rounded-2xl border-[3px] border-paper bg-surface-2 shadow-[0_10px_30px_-12px_rgba(23,19,15,.5)]">
               <Image
                 src="/images/hero-detail.jpg"
-                alt="Detail of a finished braid style"
+                alt={t("home.hero.imageAlt2")}
                 fill
                 sizes="200px"
                 className="object-cover"
@@ -155,9 +203,9 @@ export default async function HomePage() {
             </div>
 
             <div className="absolute right-3 top-[6%] flex h-[86px] w-[86px] rotate-[-9deg] flex-col items-center justify-center rounded-full border-[1.5px] border-dashed border-ink bg-paper/90 text-center font-mono text-[6.5px] uppercase leading-tight tracking-[0.08em]">
-              <span>Approved by</span>
+              <span>{t("home.collage.approvedBy")}</span>
               <span className="my-0.5 font-display text-[13px] font-semibold normal-case tracking-tight">HOLYDO</span>
-              <span>Nov 2026</span>
+              <span>{t("home.collage.date")}</span>
             </div>
 
             {heroProvider && (
@@ -166,8 +214,12 @@ export default async function HomePage() {
                 className="absolute bottom-[6%] right-0 w-[62%] max-w-[250px] rounded-2xl border border-ink bg-surface p-3 shadow-[4px_4px_0_var(--color-ink)] transition-transform hover:-translate-y-0.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <Rating value={heroProvider.provider.ratingAvg} count={heroProvider.provider.ratingCount} />
-                  <VerifiedBadge compact />
+                  <Rating
+                    value={heroProvider.provider.ratingAvg}
+                    count={heroProvider.provider.ratingCount}
+                    locale={locale}
+                  />
+                  <VerifiedBadge compact locale={locale} />
                 </div>
                 <p className="mt-1.5 truncate font-sans text-sm font-semibold">
                   {heroProvider.provider.displayName}
@@ -176,15 +228,17 @@ export default async function HomePage() {
                   <MapPin className="h-3 w-3" aria-hidden />
                   {heroProvider.provider.neighbourhood}
                   {heroProvider.distanceKm !== null && (
-                    <> · {formatDistance(heroProvider.distanceKm)}</>
+                    <> · {formatDistance(heroProvider.distanceKm, locale)}</>
                   )}
                 </p>
                 <p className="mt-2 flex items-center justify-between border-t border-line pt-2 text-[11px]">
                   <span className="font-semibold">
-                    {heroProvider.minPriceCents !== null ? `From $${Math.round(heroProvider.minPriceCents / 100)}` : "Ask for pricing"}
+                    {heroProvider.minPriceCents !== null
+                      ? `${t("common.from")} $${Math.round(heroProvider.minPriceCents / 100)}`
+                      : t("home.card.askPricing")}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[10px] font-medium">
-                    View <ArrowUpRight className="h-3 w-3" aria-hidden />
+                    {t("common.view")} <ArrowUpRight className="h-3 w-3" aria-hidden />
                   </span>
                 </p>
               </Link>
@@ -198,15 +252,17 @@ export default async function HomePage() {
         <div className="container-hd grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           <div className="flex items-baseline gap-2 px-1 py-3.5 sm:px-6">
             <span className="font-display text-2xl">{approvedCount}</span>
-            <span className="text-[11px] text-muted">approved providers</span>
+            <span className="text-[11px] text-muted">{t("home.proof.providers")}</span>
           </div>
           <div className="flex items-baseline gap-2 px-1 py-3.5 sm:px-6">
             <span className="font-display text-2xl">{MONTREAL.neighbourhoods.length}</span>
-            <span className="text-[11px] text-muted">Montréal neighbourhoods</span>
+            <span className="text-[11px] text-muted">{t("home.proof.hoods")}</span>
           </div>
           <div className="flex items-baseline gap-2 px-1 py-3.5 sm:px-6">
             <span className="font-display text-2xl">{avgRating}<span className="text-sm">/5</span></span>
-            <span className="text-[11px] text-muted">average provider rating · {reviewCount} recent reviews</span>
+            <span className="text-[11px] text-muted">
+              {t("home.proof.rating", { count: reviewCount })}
+            </span>
           </div>
         </div>
       </div>
@@ -216,11 +272,12 @@ export default async function HomePage() {
         <div className="container-hd">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Start here</p>
-              <h2 className="display text-section mt-3">What do you need a hand with?</h2>
+              <p className="eyebrow">{t("home.categories.eyebrow")}</p>
+              <h2 className="display text-section mt-3">{t("home.categories.title")}</h2>
             </div>
             <Link href="/search" className="link-underline inline-flex items-center gap-1.5 text-xs font-semibold">
-              All 12 categories <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              {t("home.categories.all", { count: categories.length })}{" "}
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </Link>
           </div>
 
@@ -235,9 +292,13 @@ export default async function HomePage() {
                   <CategoryIcon name={category.icon} className="h-[18px] w-[18px]" strokeWidth={1.7} />
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[13px] font-semibold">{category.name}</span>
+                  <span className="block truncate text-[13px] font-semibold">
+                    {categoryLabel(locale, category.slug, category.name)}
+                  </span>
                   <span className="block text-[10px] text-muted">
-                    {category.providerCount} {category.providerCount === 1 ? "provider" : "providers"}
+                    {category.providerCount === 1
+                      ? t("home.category.providerOne", { count: category.providerCount })
+                      : t("home.category.providerMany", { count: category.providerCount })}
                   </span>
                 </span>
                 <ArrowUpRight className="ml-auto h-3.5 w-3.5 shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
@@ -252,14 +313,14 @@ export default async function HomePage() {
         <div className="container-hd section-pad">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Within 5 km of Le Plateau</p>
-              <h2 className="display text-section mt-3">Good help, close to home.</h2>
+              <p className="eyebrow">{t("home.featured.eyebrow")}</p>
+              <h2 className="display text-section mt-3">{t("home.featured.title")}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <span className="pill pill-dark">Nearby</span>
-              <span className="pill">Top rated</span>
+              <span className="pill pill-dark">{t("home.featured.nearby")}</span>
+              <span className="pill">{t("home.featured.topRated")}</span>
               <Link href="/search?hood=le-plateau" className="link-underline ml-2 text-xs font-semibold">
-                See all →
+                {t("home.featured.seeAll")}
               </Link>
             </div>
           </div>
@@ -275,6 +336,7 @@ export default async function HomePage() {
                 priority={index === 0}
                 saved={savedIds.has(item.provider.id)}
                 isAuthed={Boolean(user)}
+                locale={locale}
               />
             ))}
           </div>
@@ -282,10 +344,10 @@ export default async function HomePage() {
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3">
             <p className="text-[11px] text-muted">
               <Sparkles className="mr-1.5 inline h-3.5 w-3.5 text-clay" aria-hidden />
-              Not sure who to choose? Tell us what you need and we’ll point you to the right profile.
+              {t("home.featured.help")}
             </p>
             <Link href="/search" className="text-[11px] font-semibold underline decoration-line underline-offset-4">
-              Browse all providers →
+              {t("home.featured.browseAll")}
             </Link>
           </div>
         </div>
@@ -295,21 +357,15 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-pine text-paper">
         <div className="container-hd grid items-center gap-10 py-14 md:py-20 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="eyebrow !text-paper/55 before:!bg-paper/40">Why you can relax a little</p>
+            <p className="eyebrow !text-paper/55 before:!bg-paper/40">{t("home.trust.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[560px] text-[clamp(2.1rem,4vw,3.4rem)] text-paper">
-              Every profile is checked by a person, not a bot.
+              {t("home.trust.title")}
             </h2>
             <p className="mt-4 max-w-[470px] text-sm leading-relaxed text-paper/70">
-              Before a provider appears in search, a HOLYDO reviewer checks who they are,
-              what they offer, and the photos they use. If something changes, we look again.
+              {t("home.trust.body")}
             </p>
             <div className="mt-6 grid max-w-[500px] gap-2.5 sm:grid-cols-2">
-              {[
-                "Identity & contact confirmed",
-                "Services & prices reviewed",
-                "Photos checked for accuracy",
-                "Re-reviewed after major changes",
-              ].map((item) => (
+              {trustChecks.map((item) => (
                 <span key={item} className="flex items-center gap-2 text-[11.5px] text-paper/85">
                   <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-paper/40">
                     <Check className="h-2.5 w-2.5" aria-hidden />
@@ -322,7 +378,7 @@ export default async function HomePage() {
               href="/how-it-works#approval"
               className="mt-6 inline-flex items-center gap-1.5 text-[11.5px] font-semibold underline decoration-paper/30 underline-offset-4 hover:decoration-paper"
             >
-              How approval works <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              {t("home.trust.link")} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </Link>
           </div>
 
@@ -330,9 +386,9 @@ export default async function HomePage() {
             <div className="rounded-2xl border border-ink bg-surface p-4 text-ink shadow-[6px_6px_0_rgba(0,0,0,.35)] sm:p-5">
               <div className="flex items-center justify-between gap-3 border-b border-line pb-3">
                 <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted">
-                  Application · HD-1042
+                  {t("home.application.label")}
                 </span>
-                <span className="pill pill-pine !text-[9px]">● Approved</span>
+                <span className="pill pill-pine !text-[9px]">{t("home.application.approved")}</span>
               </div>
               <div className="flex items-center gap-3 py-4">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ink text-[11px] font-bold text-paper">
@@ -341,17 +397,16 @@ export default async function HomePage() {
                 <div>
                   <p className="text-sm font-semibold">{heroProvider.provider.displayName}</p>
                   <p className="text-[10px] text-muted">
-                    {heroProvider.provider.type === "BUSINESS" ? "Business" : "Independent"} ·{" "}
-                    {heroProvider.provider.category.name} · {heroProvider.provider.neighbourhood}
+                    {heroProvider.provider.type === "BUSINESS"
+                      ? t("common.business")
+                      : t("common.independent")}{" "}
+                    · {categoryLabel(locale, heroProvider.provider.category.slug, heroProvider.provider.category.name)}{" "}
+                    · {heroProvider.provider.neighbourhood}
                   </p>
                 </div>
               </div>
               <div className="grid gap-2.5 border-t border-line pt-3 text-[11px]">
-                {[
-                  ["Photos and portfolio checked", "12 Nov"],
-                  ["Services, prices and duration reviewed", "12 Nov"],
-                  ["Identity and travel area confirmed", "13 Nov"],
-                ].map(([label, date]) => (
+                {applicationChecks.map(([label, date]) => (
                   <div key={label} className="flex items-center gap-2">
                     <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-pine-soft text-pine">
                       <Check className="h-2.5 w-2.5" aria-hidden />
@@ -363,11 +418,12 @@ export default async function HomePage() {
               </div>
               <div className="mt-4 flex items-center justify-between border-t border-line pt-3">
                 <span className="text-[10px] text-muted">
-                  Reviewed by <span className="font-semibold text-ink">Amélie · Trust team</span>
+                  {t("home.application.reviewedBy")}{" "}
+                  <span className="font-semibold text-ink">{t("home.application.reviewer")}</span>
                 </span>
                 <span className="flex h-11 w-11 rotate-[-8deg] flex-col items-center justify-center rounded-full border border-dashed border-ink text-center font-mono text-[5px] uppercase leading-tight">
                   <span className="font-display text-[8px] font-semibold">HOLYDO</span>
-                  APPROVED
+                  {t("home.application.stamp")}
                 </span>
               </div>
             </div>
@@ -379,19 +435,18 @@ export default async function HomePage() {
       <section className="border-y border-ink bg-marigold">
         <div className="container-hd grid items-center gap-8 py-12 md:grid-cols-[1.05fr_0.95fr] md:py-14">
           <div>
-            <p className="eyebrow !text-ink/55 before:!bg-ink">For independent providers & small businesses</p>
+            <p className="eyebrow !text-ink/55 before:!bg-ink">{t("home.cta.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[600px] text-[clamp(2rem,3.8vw,3.2rem)]">
-              Do what you do best. We’ll bring the neighbourhood.
+              {t("home.cta.title")}
             </h2>
             <p className="mt-3 max-w-[470px] text-[13px] leading-relaxed text-ink/75">
-              Free profile during launch. No commission on appointment requests. You keep
-              your prices, your clients, and your independence.
+              {t("home.cta.body")}
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Link href="/provider/join" className="btn btn-dark">
-                Create your provider profile <ArrowRight className="h-4 w-4" aria-hidden />
+                {t("home.cta.button")} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <span className="text-[10px] text-ink/65">Takes about 12 minutes · reviewed by a person</span>
+              <span className="text-[10px] text-ink/65">{t("home.cta.note")}</span>
             </div>
           </div>
 
@@ -399,30 +454,26 @@ export default async function HomePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-mono text-[8px] uppercase tracking-[0.1em] text-muted">
-                  Your dashboard · today
+                  {t("home.dash.eyebrow")}
                 </p>
-                <p className="font-display text-lg">3 new requests</p>
+                <p className="font-display text-lg">{t("home.dash.requests")}</p>
               </div>
-              <span className="pill pill-pine">Profile live</span>
+              <span className="pill pill-pine">{t("home.dash.live")}</span>
             </div>
             <div className="mt-3 border-t border-line pt-3">
-              {[
-                ["Knotless braids", "Sat, 2–5 pm", "New"],
-                ["Deep clean", "Fri morning", "New"],
-                ["Kids braids", "Sun, 10 am", "Accepted"],
-              ].map(([service, when, status]) => (
+              {dashboardRequests.map(([service, when, status, isNew]) => (
                 <div key={service} className="flex items-center justify-between gap-2 border-b border-line py-2.5 last:border-0 last:pb-0">
                   <div>
                     <p className="text-[11.5px] font-semibold">{service}</p>
                     <p className="text-[9.5px] text-muted">{when}</p>
                   </div>
-                  <span className={`pill !text-[8px] ${status === "New" ? "pill-marigold" : "pill-pine"}`}>
+                  <span className={`pill !text-[8px] ${isNew ? "pill-marigold" : "pill-pine"}`}>
                     {status}
                   </span>
                 </div>
               ))}
               <div className="flex items-center justify-between pt-3">
-                <span className="text-[10px] text-muted">Profile views this week</span>
+                <span className="text-[10px] text-muted">{t("home.dash.views")}</span>
                 <span className="text-xs font-semibold">148 <span className="text-[9px] font-medium text-pine">↑ 22%</span></span>
               </div>
             </div>
@@ -435,11 +486,11 @@ export default async function HomePage() {
         <div className="container-hd">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Browse by place</p>
-              <h2 className="display text-section mt-3">Good help is a short walk away.</h2>
+              <p className="eyebrow">{t("home.hoods.eyebrow")}</p>
+              <h2 className="display text-section mt-3">{t("home.hoods.title")}</h2>
             </div>
             <Link href="/search" className="link-underline text-xs font-semibold">
-              All neighbourhoods →
+              {t("home.hoods.all")}
             </Link>
           </div>
 
@@ -465,7 +516,9 @@ export default async function HomePage() {
                   </div>
                   <div className="p-3.5">
                     <p className="text-[13px] font-semibold">{hood.name}</p>
-                    <p className="mt-0.5 text-[10px] text-muted">{count} verified providers</p>
+                    <p className="mt-0.5 text-[10px] text-muted">
+                      {t(count === 1 ? "home.hoods.countOne" : "home.hoods.count", { count })}
+                    </p>
                   </div>
                 </Link>
               );
@@ -478,32 +531,11 @@ export default async function HomePage() {
       <section className="border-t border-line bg-surface">
         <div className="container-hd section-pad">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="eyebrow justify-center before:hidden">How it works</p>
-            <h2 className="display text-section mt-3">
-              From “I need a hand” to “see you Saturday.”
-            </h2>
+            <p className="eyebrow justify-center before:hidden">{t("home.how.eyebrow")}</p>
+            <h2 className="display text-section mt-3">{t("home.how.title")}</h2>
           </div>
           <div className="mt-8 grid gap-3 md:grid-cols-3">
-            {[
-              {
-                n: "01",
-                title: "Search with a place in mind",
-                text: "Type the service, choose your neighbourhood, and see who is actually close enough to help.",
-                icon: Search,
-              },
-              {
-                n: "02",
-                title: "Compare real profiles",
-                text: "Prices, photos, opening hours, travel area and reviews from people who booked through HOLYDO.",
-                icon: Star,
-              },
-              {
-                n: "03",
-                title: "Request, don’t guess",
-                text: "Send a service, date and time window. The provider confirms the details before anything is booked.",
-                icon: BadgeCheck,
-              },
-            ].map((step) => (
+            {howSteps.map((step) => (
               <div key={step.n} className="rounded-2xl border border-line bg-paper p-5">
                 <div className="flex items-center justify-between">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border border-ink bg-marigold-soft">

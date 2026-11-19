@@ -1,11 +1,22 @@
+import type { Locale } from "./i18n/config";
+import { translate } from "./i18n/dictionary";
+
 export function formatMoney(cents: number): string {
   const dollars = cents / 100;
   return `$${Number.isInteger(dollars) ? dollars : dollars.toFixed(2)}`;
 }
 
-export function formatServicePrice(cents: number, priceType = "FIXED"): string {
-  if (priceType === "FROM") return `From ${formatMoney(cents)}`;
-  if (priceType === "HOURLY") return `${formatMoney(cents)}/hr`;
+export function formatServicePrice(
+  cents: number,
+  priceType = "FIXED",
+  locale: Locale = "en",
+): string {
+  if (priceType === "FROM") {
+    return translate(locale, "price.from", { price: formatMoney(cents) });
+  }
+  if (priceType === "HOURLY") {
+    return translate(locale, "price.perHour", { price: formatMoney(cents) });
+  }
   return formatMoney(cents);
 }
 
@@ -18,16 +29,35 @@ export function formatDuration(minutes?: number | null): string {
   return `${m} min`;
 }
 
-const dateFmt = new Intl.DateTimeFormat("en-CA", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
+export function formatDate(date: Date | string, locale: Locale = "en"): string {
+  return formatDateForLocale(date, locale);
+}
 
-export function formatDate(date: Date | string): string {
-  return dateFmt.format(new Date(date));
+/** ISO date (YYYY-MM-DD) in the launch market, optionally offset by days. */
+export function todayInToronto(offsetDays = 0): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Toronto",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  const date = new Date(Date.UTC(get("year"), get("month") - 1, get("day") + offsetDays));
+  return date.toISOString().slice(0, 10);
+}
+
+/** Locale-aware date for notifications and emails. */
+export function formatDateForLocale(
+  date: Date | string,
+  locale: "en" | "fr",
+): string {
+  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(date));
 }
 
 const shortDateFmt = new Intl.DateTimeFormat("en-CA", {
@@ -40,29 +70,32 @@ export function formatShortDate(date: Date | string): string {
   return shortDateFmt.format(new Date(date));
 }
 
-const torontoDateTimeFmt = new Intl.DateTimeFormat("en-CA", {
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  hour: "numeric",
-  minute: "2-digit",
-  timeZone: "America/Toronto",
-});
-
-export function formatDateTime(date: Date | string): string {
-  return torontoDateTimeFmt.format(new Date(date));
+export function formatDateTime(date: Date | string, locale: Locale = "en"): string {
+  return new Intl.DateTimeFormat(locale === "fr" ? "fr-CA" : "en-CA", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZone: "America/Toronto",
+  }).format(new Date(date));
 }
 
-export function formatRelative(date: Date | string): string {
+export function formatRelative(date: Date | string, locale: Locale = "en"): string {
   const then = new Date(date).getTime();
   const days = Math.floor((Date.now() - then) / 86_400_000);
-  if (days <= 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 30) return `${days} days ago`;
+  if (days <= 0) return translate(locale, "format.relative.today");
+  if (days === 1) return translate(locale, "format.relative.yesterday");
+  if (days < 30) return translate(locale, "format.relative.daysAgo", { count: days });
   const months = Math.floor(days / 30);
-  if (months === 1) return "1 month ago";
-  if (months < 12) return `${months} months ago`;
-  return `${Math.floor(months / 12)} year${months >= 24 ? "s" : ""} ago`;
+  if (months === 1) return translate(locale, "format.relative.monthAgo");
+  if (months < 12) return translate(locale, "format.relative.monthsAgo", { count: months });
+  const years = Math.floor(months / 12);
+  return translate(
+    locale,
+    years === 1 ? "format.relative.yearAgo" : "format.relative.yearsAgo",
+    { count: years },
+  );
 }
 
 export function initials(name: string): string {
@@ -84,13 +117,35 @@ const WEEKDAYS = [
   "Saturday",
 ] as const;
 
+const WEEKDAYS_FR = [
+  "dimanche",
+  "lundi",
+  "mardi",
+  "mercredi",
+  "jeudi",
+  "vendredi",
+  "samedi",
+] as const;
+
+const WEEKDAYS_FR_SHORT = [
+  "dim.",
+  "lun.",
+  "mar.",
+  "mer.",
+  "jeu.",
+  "ven.",
+  "sam.",
+] as const;
+
 export const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0] as const;
 
-export function dayName(day: number): string {
+export function dayName(day: number, locale: Locale = "en"): string {
+  if (locale === "fr") return WEEKDAYS_FR[day] ?? "";
   return WEEKDAYS[day] ?? "";
 }
 
-export function dayShort(day: number): string {
+export function dayShort(day: number, locale: Locale = "en"): string {
+  if (locale === "fr") return WEEKDAYS_FR_SHORT[day] ?? "";
   return dayName(day).slice(0, 3);
 }
 

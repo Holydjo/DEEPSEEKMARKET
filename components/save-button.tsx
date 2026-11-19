@@ -4,18 +4,22 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Heart, Loader2 } from "lucide-react";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 import { toggleSavedProviderAction } from "@/app/actions/saved";
 
 export function SaveButton({
   providerId,
   initialSaved,
   isAuthed,
+  locale,
   variant = "icon",
   className = "",
 }: {
   providerId: string;
   initialSaved: boolean;
   isAuthed: boolean;
+  locale: Locale;
   variant?: "icon" | "button";
   className?: string;
 }) {
@@ -34,12 +38,12 @@ export function SaveButton({
     return (
       <Link
         href={loginHref}
-        aria-label="Log in to save this provider"
-        title="Log in to save"
+        aria-label={translate(locale, "save.loginAria")}
+        title={translate(locale, "save.loginTitle")}
         className={`${base} ${className}`}
       >
         <Heart className="h-3.5 w-3.5" aria-hidden />
-        {variant === "button" && <span>Save</span>}
+        {variant === "button" && <span>{translate(locale, "common.save")}</span>}
       </Link>
     );
   }
@@ -65,8 +69,8 @@ export function SaveButton({
       onClick={toggle}
       disabled={pending}
       aria-pressed={saved}
-      aria-label={saved ? "Remove from saved providers" : "Save this provider"}
-      title={saved ? "Saved — remove" : "Save provider"}
+      aria-label={translate(locale, saved ? "save.removeAria" : "save.saveAria")}
+      title={translate(locale, saved ? "save.savedTitle" : "save.title")}
       className={`${base} ${saved ? "border-clay/40 bg-clay-soft text-clay" : ""} ${className}`}
     >
       {pending ? (
@@ -77,7 +81,9 @@ export function SaveButton({
           aria-hidden
         />
       )}
-      {variant === "button" && <span>{saved ? "Saved" : "Save"}</span>}
+      {variant === "button" && (
+        <span>{translate(locale, saved ? "common.saved" : "common.save")}</span>
+      )}
     </button>
   );
 }

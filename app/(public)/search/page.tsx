@@ -15,6 +15,10 @@ import {
 import { MONTREAL, neighbourhoodBySlug } from "@/lib/location";
 import { getCurrentUser } from "@/lib/auth";
 import { getSavedProviderIds } from "@/lib/saved";
+import { getTranslator } from "@/lib/i18n/server";
+import { translate, type MessageKey } from "@/lib/i18n/dictionary";
+import { categoryLabel } from "@/lib/i18n/categories";
+import { nearPlace } from "@/lib/i18n/labels";
 import { SearchForm } from "@/components/search-form";
 import { FilterPanel } from "@/components/filter-panel";
 import { SearchResultCard } from "@/components/search-result-card";
@@ -23,17 +27,19 @@ import { CategoryIcon } from "@/components/category-icon";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Search local services",
-  description:
-    "Search verified local service providers by category, neighbourhood and distance across Montréal.",
-};
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return {
+    title: t("search.meta.title"),
+    description: t("search.meta.description"),
+  };
+}
 
-const SORT_LABELS: Record<string, string> = {
-  recommended: "Recommended",
-  distance: "Nearest",
-  rating: "Top rated",
-  price: "Lowest price",
+const SORT_KEYS: Record<string, MessageKey> = {
+  recommended: "search.sort.recommended",
+  distance: "search.sort.distance",
+  rating: "search.sort.rating",
+  price: "search.sort.price",
 };
 
 function activeFilterCount(filters: SearchFilters): number {
@@ -53,7 +59,7 @@ export default async function SearchPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const user = await getCurrentUser();
+  const [{ locale, t }, user] = await Promise.all([getTranslator(), getCurrentUser()]);
   const [search, categories, savedIds] = await Promise.all([
     searchProviders(params),
     getCategoriesWithCounts(),
@@ -62,10 +68,30 @@ export default async function SearchPage({
 
   const { filters, origin } = search;
   const selectedCategory = categories.find((category) => category.slug === filters.category);
+  const selectedCategoryLabel = selectedCategory
+    ? categoryLabel(locale, selectedCategory.slug, selectedCategory.name)
+    : null;
   const hood = neighbourhoodBySlug(filters.hood);
   const filterCount = activeFilterCount(filters);
   const locationLabel =
-    filters.lat && filters.lng ? "your location" : hood?.name ?? `${MONTREAL.name} centre`;
+    filters.lat && filters.lng
+      ? t("search.location.yours")
+      : hood?.name ?? t("search.location.centre", { city: MONTREAL.name });
+  const locationNear =
+    locale === "fr"
+      ? filters.lat && filters.lng
+        ? `de ${t("search.location.yours")}`
+        : hood
+          ? nearPlace(locale, hood.name)
+          : `du ${t("search.location.centre", { city: MONTREAL.name })}`
+      : locationLabel;
+
+  const placeLabels: Record<string, string> = {
+    home: translate(locale, "place.home"),
+    salon: translate(locale, "place.salon"),
+    shop: translate(locale, "place.shop"),
+    travel: translate(locale, "place.travel"),
+  };
 
   const chips: Array<{ label: string; href: string }> = [];
   const addChip = (label: string, overrides: Record<string, string | number | undefined>) => {
@@ -73,21 +99,27 @@ export default async function SearchPage({
   };
 
   if (filters.q) addChip(`“${filters.q}”`, { q: undefined });
-  if (selectedCategory) addChip(selectedCategory.name, { category: undefined });
-  if (filters.type) addChip(filters.type === "BUSINESS" ? "Business" : "Independent", { type: undefined });
-  if (filters.place) {
-    const labels: Record<string, string> = {
-      home: "Home studio",
-      salon: "Salon",
-      shop: "Shop",
-      travel: "Travels to you",
-    };
-    addChip(labels[filters.place] ?? filters.place, { place: undefined });
+  if (selectedCategoryLabel) addChip(selectedCategoryLabel, { category: undefined });
+  if (filters.type) {
+    addChip(
+      filters.type === "BUSINESS" ? t("common.business") : t("common.independent"),
+      { type: undefined },
+    );
   }
-  if (filters.priceMax) addChip(`Under $${filters.priceMax}`, { priceMax: undefined });
-  if (filters.rating) addChip(`${filters.rating}★ & up`, { rating: undefined });
-  if (filters.openNow) addChip("Open today", { openNow: undefined });
-  if (filters.lat && filters.lng) addChip("Near my location", { lat: undefined, lng: undefined });
+  if (filters.place) {
+    addChip(placeLabels[filters.place] ?? filters.place, { place: undefined });
+  }
+  if (filters.priceMax) addChip(t("search.chip.under", { amount: filters.priceMax }), { priceMax: undefined });
+  if (filters.rating) {
+    addChip(
+      t("search.chip.rating", {
+        rating: locale === "fr" ? String(filters.rating).replace(".", ",") : filters.rating,
+      }),
+      { rating: undefined },
+    );
+  }
+  if (filters.openNow) addChip(t("search.chip.openToday"), { openNow: undefined });
+  if (filters.lat && filters.lng) addChip(t("search.chip.nearMe"), { lat: undefined, lng: undefined });
 
   const searchDefaults = {
     q: filters.q,
@@ -95,12 +127,18 @@ export default async function SearchPage({
     radius: filters.radius,
   };
 
+  const sortLabel = t(SORT_KEYS[filters.sort] ?? "search.sort.recommended");
+  const sortMeta = sortLabel.toLowerCase();
+  const titleLocation = locale === "fr" ? locationNear : locationLabel;
+  const mailtoQuery = filters.q || selectedCategoryLabel || t("search.mailto.localService");
+
   return (
     <div className="border-b border-line">
       {/* Search header */}
       <section className="border-b border-line bg-surface">
         <div className="container-hd py-4 md:py-5">
           <SearchForm
+            locale={locale}
             variant="strip"
             defaultQuery={searchDefaults.q}
             defaultHood={searchDefaults.hood}
@@ -108,13 +146,13 @@ export default async function SearchPage({
           />
           <div className="no-scrollbar mt-3 flex items-center gap-1.5 overflow-x-auto pb-0.5">
             <span className="mr-1 shrink-0 font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted">
-              Categories
+              {t("search.categories")}
             </span>
             <Link
               href={`/search${filtersToQuery(filters, { category: undefined, page: 1 })}`}
               className={`pill shrink-0 ${!filters.category ? "pill-dark" : "hover:border-ink"}`}
             >
-              All
+              {t("search.all")}
             </Link>
             {categories.slice(0, 8).map((category) => (
               <Link
@@ -122,7 +160,7 @@ export default async function SearchPage({
                 href={`/search${filtersToQuery(filters, { category: category.slug, page: 1 })}`}
                 className={`pill shrink-0 ${filters.category === category.slug ? "pill-dark" : "hover:border-ink"}`}
               >
-                {category.name}
+                {categoryLabel(locale, category.slug, category.name)}
                 <span className="opacity-55">{category.providerCount}</span>
               </Link>
             ))}
@@ -135,27 +173,32 @@ export default async function SearchPage({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="eyebrow !text-[9px]">Results</span>
-              <span className="pill pill-pine !text-[8.5px]">Approved only</span>
+              <span className="eyebrow !text-[9px]">{t("search.results")}</span>
+              <span className="pill pill-pine !text-[8.5px]">{t("search.approvedOnly")}</span>
             </div>
             <h1 className="display mt-2 text-[clamp(1.8rem,3.2vw,2.7rem)]">
-              {search.total} {search.total === 1 ? "provider" : "providers"} near {locationLabel}
+              {search.total === 1
+                ? t("search.title.one", { count: search.total, location: titleLocation })
+                : t("search.title.many", { count: search.total, location: titleLocation })}
             </h1>
             <p className="mt-1 text-[11.5px] text-muted">
-              {selectedCategory ? `${selectedCategory.name} · ` : ""}
-              within {filters.radius} km · sorted by {SORT_LABELS[filters.sort]?.toLowerCase() ?? "recommended"}
-              {filters.q ? ` · matching “${filters.q}”` : ""}
+              {selectedCategoryLabel ? `${selectedCategoryLabel} · ` : ""}
+              {t("search.meta.line", {
+                radius: filters.radius,
+                sort: sortMeta,
+              })}
+              {filters.q ? t("search.meta.matching", { query: filters.q }) : ""}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <details className="relative">
               <summary className="pill cursor-pointer list-none !py-2 hover:border-ink [&::-webkit-details-marker]:hidden">
-                Sort: {SORT_LABELS[filters.sort] ?? "Recommended"}
+                {t("search.sort.label", { sort: sortLabel })}
                 <ChevronDown className="h-3 w-3" aria-hidden />
               </summary>
               <div className="absolute right-0 top-[calc(100%+6px)] z-30 w-44 rounded-xl border border-ink bg-surface p-1.5 shadow-[3px_3px_0_var(--color-ink)]">
-                {Object.entries(SORT_LABELS).map(([value, label]) => (
+                {Object.entries(SORT_KEYS).map(([value, key]) => (
                   <Link
                     key={value}
                     href={`/search${filtersToQuery(filters, { sort: value === "recommended" ? undefined : value, page: 1 })}`}
@@ -163,7 +206,7 @@ export default async function SearchPage({
                       filters.sort === value ? "bg-ink text-paper" : "hover:bg-surface-2"
                     }`}
                   >
-                    {label}
+                    {translate(locale, key)}
                   </Link>
                 ))}
               </div>
@@ -185,7 +228,7 @@ export default async function SearchPage({
               </Link>
             ))}
             <Link href="/search" className="ml-1 text-[10px] font-medium underline decoration-line underline-offset-2">
-              Clear all
+              {t("search.chip.clearAll")}
             </Link>
           </div>
         )}
@@ -197,15 +240,15 @@ export default async function SearchPage({
             <details className="group lg:hidden">
               <summary className="btn btn-outline btn-sm w-full list-none [&::-webkit-details-marker]:hidden">
                 <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
-                Filters {filterCount > 0 && <span className="rounded-full bg-clay px-1.5 py-0.5 text-[9px] font-bold text-white">{filterCount}</span>}
+                {t("filter.title")} {filterCount > 0 && <span className="rounded-full bg-clay px-1.5 py-0.5 text-[9px] font-bold text-white">{filterCount}</span>}
                 <ChevronDown className="ml-auto h-3.5 w-3.5 transition-transform group-open:rotate-180" aria-hidden />
               </summary>
               <div className="mt-2 overflow-hidden rounded-2xl border border-line bg-surface">
-                <FilterPanel filters={filters} idPrefix="mobile" />
+                <FilterPanel filters={filters} idPrefix="mobile" locale={locale} />
               </div>
             </details>
             <div className="hidden overflow-hidden rounded-2xl border border-line bg-surface lg:block">
-              <FilterPanel filters={filters} idPrefix="desktop" />
+              <FilterPanel filters={filters} idPrefix="desktop" locale={locale} />
             </div>
           </aside>
 
@@ -215,27 +258,33 @@ export default async function SearchPage({
               points={search.mapPoints}
               origin={{ lat: origin.lat, lng: origin.lng }}
               radiusKm={filters.radius}
+              locale={locale}
             />
             <div className="mt-2 hidden items-center justify-between text-[9.5px] text-muted lg:flex">
               <span>
                 <MapPin className="mr-1 inline h-3 w-3" aria-hidden />
-                {search.mapPoints.length} pins · {filters.radius} km radius
+                {t("search.map.pins", {
+                  count: search.mapPoints.length,
+                  radius: filters.radius,
+                })}
               </span>
-              <span>Approximate locations</span>
+              <span>{t("search.map.approx")}</span>
             </div>
             <div className="mt-3 hidden items-center gap-2.5 rounded-2xl border border-line bg-surface p-3 lg:flex">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-marigold-soft">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden />
               </span>
               <div>
-                <p className="text-[10.5px] font-semibold">Can’t find the right fit?</p>
-                <p className="text-[9px] text-muted">Tell us what you need — we’ll look.</p>
+                <p className="text-[10.5px] font-semibold">{t("search.ask.title")}</p>
+                <p className="text-[9px] text-muted">{t("search.ask.body")}</p>
               </div>
               <a
-                href={`mailto:hello@holydo.market?subject=${encodeURIComponent(`Service request${filters.q ? `: ${filters.q}` : ""}`)}`}
+                href={`mailto:hello@holydo.market?subject=${encodeURIComponent(
+                  `${t("search.mailto.subject")}${filters.q ? `: ${filters.q}` : ""}`,
+                )}`}
                 className="btn btn-sm ml-auto !px-2.5 !py-1.5 text-[9px]"
               >
-                Ask
+                {t("search.ask.button")}
               </a>
             </div>
           </aside>
@@ -245,13 +294,14 @@ export default async function SearchPage({
             <div className="mb-2.5 flex items-center justify-between">
               <span className="text-[9.5px] text-muted">
                 {search.total === 0
-                  ? "No matches"
-                  : `Showing ${(search.page - 1) * search.pageSize + 1}–${Math.min(
-                      search.page * search.pageSize,
-                      search.total,
-                    )} of ${search.total}`}
+                  ? t("search.noMatches")
+                  : t("search.showing", {
+                      from: (search.page - 1) * search.pageSize + 1,
+                      to: Math.min(search.page * search.pageSize, search.total),
+                      total: search.total,
+                    })}
               </span>
-              <span className="text-[9.5px] text-muted">CAD · taxes may apply</span>
+              <span className="text-[9.5px] text-muted">{t("search.currency")}</span>
             </div>
 
             {search.results.length > 0 ? (
@@ -265,6 +315,7 @@ export default async function SearchPage({
                     openNow={result.openNow}
                     saved={savedIds.has(result.provider.id)}
                     isAuthed={Boolean(user)}
+                    locale={locale}
                   />
                 ))}
               </div>
@@ -274,33 +325,45 @@ export default async function SearchPage({
                   <SearchX className="h-5 w-5" aria-hidden />
                 </span>
                 <h2 className="mt-4 text-2xl">
-                  No {selectedCategory?.name.toLowerCase() ?? "providers"} within {filters.radius} km
+                  {selectedCategoryLabel
+                    ? t("search.empty.titleCategory", {
+                        category:
+                          locale === "en"
+                            ? (selectedCategory?.name.toLowerCase() ?? "")
+                            : selectedCategoryLabel,
+                        radius: filters.radius,
+                      })
+                    : t("search.empty.titleProviders", { radius: filters.radius })}
                 </h2>
                 <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted">
-                  Try extending the radius, removing a filter, or looking across all of Montréal.
-                  We only show providers that match what you asked for.
+                  {t("search.empty.body")}
                 </p>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <Link
                     href={`/search${filtersToQuery(filters, { radius: Math.min(filters.radius * 2, 25), page: 1 })}`}
                     className="btn btn-primary btn-sm"
                   >
-                    Extend to {Math.min(filters.radius * 2, 25)} km
+                    {t("search.empty.extend", { radius: Math.min(filters.radius * 2, 25) })}
                   </Link>
                   <Link href="/search" className="btn btn-outline btn-sm">
-                    Start over
+                    {t("search.empty.startOver")}
                   </Link>
                   <a
-                    href={`mailto:hello@holydo.market?subject=${encodeURIComponent("Provider request")}&body=${encodeURIComponent(
-                      `I'm looking for ${filters.q || selectedCategory?.name || "a local service"} near ${locationLabel}.`,
+                    href={`mailto:hello@holydo.market?subject=${encodeURIComponent(t("search.mailto.providerSubject"))}&body=${encodeURIComponent(
+                      t("search.mailto.providerBody", {
+                        query: mailtoQuery,
+                        location: titleLocation,
+                      }),
                     )}`}
                     className="btn btn-ghost btn-sm"
                   >
-                    Request a provider
+                    {t("search.empty.request")}
                   </a>
                 </div>
                 <div className="mt-6 border-t border-line pt-4">
-                  <p className="mb-2 text-[9px] uppercase tracking-[0.12em] text-muted">Browse nearby categories</p>
+                  <p className="mb-2 text-[9px] uppercase tracking-[0.12em] text-muted">
+                    {t("search.empty.browseCategories")}
+                  </p>
                   <div className="flex flex-wrap justify-center gap-1.5">
                     {categories.slice(0, 5).map((category) => (
                       <Link
@@ -309,7 +372,7 @@ export default async function SearchPage({
                         className="pill hover:border-ink"
                       >
                         <CategoryIcon name={category.icon} className="h-3 w-3" aria-hidden />
-                        {category.name}
+                        {categoryLabel(locale, category.slug, category.name)}
                       </Link>
                     ))}
                   </div>
@@ -324,17 +387,20 @@ export default async function SearchPage({
                   aria-disabled={search.page === 1}
                   className={`btn btn-sm ${search.page === 1 ? "pointer-events-none opacity-40" : "btn-outline"}`}
                 >
-                  ← Previous
+                  {t("search.pagination.previous")}
                 </Link>
                 <span className="text-[10px] text-muted">
-                  Page {search.page} of {search.pageCount}
+                  {t("search.pagination.page", {
+                    page: search.page,
+                    pages: search.pageCount,
+                  })}
                 </span>
                 <Link
                   href={`/search${filtersToQuery(filters, { page: Math.min(search.pageCount, search.page + 1) })}`}
                   aria-disabled={search.page === search.pageCount}
                   className={`btn btn-sm ${search.page === search.pageCount ? "pointer-events-none opacity-40" : "btn-outline"}`}
                 >
-                  Next →
+                  {t("search.pagination.next")}
                 </Link>
               </div>
             )}

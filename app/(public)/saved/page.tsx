@@ -6,16 +6,21 @@ import { db } from "@/lib/db";
 import { providerCardInclude } from "@/lib/search";
 import { MONTREAL, haversineKm } from "@/lib/location";
 import { isOpenNow } from "@/lib/format";
+import { getTranslator } from "@/lib/i18n/server";
 import { ProviderCard } from "@/components/provider-card";
 
 export const dynamic = "force-dynamic";
-export const metadata = {
-  title: "Saved providers",
-  robots: { index: false, follow: false },
-};
+
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return {
+    title: t("saved.meta.title"),
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function SavedProvidersPage() {
-  const user = await getCurrentUser();
+  const [{ locale, t }, user] = await Promise.all([getTranslator(), getCurrentUser()]);
   if (!user) redirect("/login?next=/saved");
 
   const saved = await db.savedProvider.findMany({
@@ -30,18 +35,20 @@ export default async function SavedProvidersPage() {
     <div className="container-hd py-8 md:py-12">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="eyebrow">Your shortlist</p>
+          <p className="eyebrow">{t("saved.eyebrow")}</p>
           <h1 className="display mt-3 text-[clamp(2.2rem,5vw,3.8rem)]">
-            Saved for later.
+            {t("saved.title")}
           </h1>
           <p className="mt-1 text-sm text-muted">
             {saved.length > 0
-              ? `${saved.length} ${saved.length === 1 ? "provider" : "providers"} you kept for another day. Only you can see this list.`
-              : "Tap the heart on any provider and they’ll appear here."}
+              ? saved.length === 1
+                ? t("saved.subtitle.one", { count: saved.length })
+                : t("saved.subtitle.many", { count: saved.length })
+              : t("saved.subtitle.empty")}
           </p>
         </div>
         <Link href="/search" className="btn btn-primary btn-sm">
-          <Search className="h-3.5 w-3.5" aria-hidden /> Find more
+          <Search className="h-3.5 w-3.5" aria-hidden /> {t("saved.findMore")}
         </Link>
       </div>
 
@@ -61,6 +68,7 @@ export default async function SavedProvidersPage() {
                 openNow={isOpenNow(provider.hours)}
                 saved
                 isAuthed
+                locale={locale}
               />
             );
           })}
@@ -70,20 +78,18 @@ export default async function SavedProvidersPage() {
           <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-clay-soft text-clay">
             <Heart className="h-5 w-5" aria-hidden />
           </span>
-          <h2 className="mt-4 text-2xl">Nothing saved yet</h2>
+          <h2 className="mt-4 text-2xl">{t("saved.emptyTitle")}</h2>
           <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted">
-            Use the heart on a provider card or profile. Saving is private and helps you
-            compare a few people before you request.
+            {t("saved.emptyBody")}
           </p>
           <Link href="/search" className="btn btn-primary btn-sm mt-5">
-            Browse providers
+            {t("saved.browse")}
           </Link>
         </div>
       )}
 
       <p className="mt-6 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-[9.5px] leading-relaxed text-muted">
-        <strong className="text-ink">About saved providers:</strong> saving does not notify the
-        provider or reserve a time. It simply keeps the profile on your private list.
+        <strong className="text-ink">{t("saved.noteTitle")}</strong> {t("saved.noteBody")}
       </p>
     </div>
   );

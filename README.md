@@ -4,11 +4,12 @@
 customers with independent providers and small businesses — hair, braids, beauty,
 cleaning, repairs and more.
 
-> **Status: v1 is built and runnable, with a v1.1 hardening pass.** The repository began
-> empty; this is an original implementation based on the [v1 plan](docs/V1-PLAN.md) and the
-> four approved [wireframes](wireframes/index.html). Core customer, provider and admin
-> journeys have been tested end-to-end. v1.1 adds saved providers, admin review moderation
-> and basic public-form rate limiting.
+> **Status: v1.2 is built and runnable.** The repository began empty; this is an original
+> implementation based on the [v1 plan](docs/V1-PLAN.md) and the four approved
+> [wireframes](wireframes/index.html). Core customer, provider and admin journeys have been
+> tested end-to-end. v1.1 added saved providers, admin review moderation and rate limiting.
+> v1.2 adds in-app notifications, an email outbox, password reset, request
+> cancellation/rescheduling, and an FR/EN language option for the customer-facing site.
 
 ![HOLYDO MARKET homepage](docs/screenshots/home.png)
 
@@ -55,6 +56,8 @@ before any public deployment.**
 | ![Mobile home](docs/screenshots/mobile-home.png) | ![Mobile search](docs/screenshots/mobile-search.png) |
 | **Saved providers** | **Admin review moderation** |
 | ![Saved providers](docs/screenshots/saved.png) | ![Admin reviews](docs/screenshots/admin-reviews.png) |
+| **Version française — accueil** | **Recherche en français** |
+| ![Accueil en français](docs/screenshots/fr-home.png) | ![Recherche en français](docs/screenshots/fr-search.png) |
 
 ## What is included
 
@@ -73,6 +76,13 @@ before any public deployment.**
 - Customer account with requests, provider notes, reviews, and logout.
 - Saved providers: a private shortlist at `/saved`, a heart control on cards and profiles,
   and a saved-provider shortcut in the header and mobile tab bar.
+- Notifications: an unread bell and `/notifications` page for request activity, provider
+  decisions and reviews.
+- Request lifecycle: cancel or suggest a new time from the confirmation page. The provider is
+  notified and the request returns to pending when rescheduled.
+- FR/EN language switch with browser-language detection and a cookie preference. The public
+  customer journey is translated; internal provider/admin dashboards remain English for now.
+- Password reset by email link (one hour, single use, sessions invalidated).
 - Sign-up / login, installable web app manifest, sitemap, robots rules and JSON-LD.
 
 ### Providers
@@ -87,6 +97,8 @@ before any public deployment.**
 - Service CRUD with live/hidden state and prices.
 - Request inbox with accept, decline, complete and cancel actions plus a reply note.
 - Review list, verified-review indicators and reputation summary.
+- Notifications for new requests, cancellations, reschedules and reviews, with an email copy
+  recorded in the outbox.
 - Status-aware experience for draft, in review, approved, changes requested and suspended.
 
 ### Administrators
@@ -97,6 +109,8 @@ before any public deployment.**
 - Approve & publish, request changes with a required note, suspend and reinstate.
 - Review moderation: hide or restore any review. Hidden reviews disappear from the public
   profile and the provider's weighted rating is recalculated in both directions.
+- Email outbox at `/admin/emails`: every transactional message is recorded with recipient,
+  subject, body and template. No SMTP provider is configured in this demo.
 - Every decision is written to an `AdminAction` audit trail and attributed to the admin.
 
 ### Only approved profiles are public
@@ -122,7 +136,7 @@ Draft, pending, rejected and suspended providers return 404 publicly.
 | Maps | Leaflet + OpenStreetMap, dynamically imported |
 | Validation | Zod on every server action |
 | Icons | Lucide |
-| Tests | Vitest (45 unit tests) |
+| Tests | Vitest (54 unit tests) |
 
 ### Why scrypt instead of Argon2id?
 
@@ -136,16 +150,17 @@ Argon2id, hashes can be re-derived on next login without changing the user model
 ```
 app/
   (public)/              public layout, home, search, provider profile, account, saved,
-                         requests, how-it-works, for-providers
-  (auth)/                login, signup, minimal auth layout
+                         notifications, requests, how-it-works, for-providers
+  (auth)/                login, signup, forgot-password, reset-password
   provider/join/         step 1 of the provider application
   provider/onboarding/   7-step application (server actions, uploaded photos)
   provider/dashboard/    overview, profile, services, requests, reviews
-  admin/                 overview, applications queue, application detail, reviews, all providers
+  admin/                 overview, applications, application detail, reviews, emails, providers
   actions/               auth, provider, request/review and admin server actions
   api/                   (none — server actions are used throughout)
 components/              shared UI: header/footer, cards, filters, map, booking sheet, forms
-lib/                     Prisma client, auth, location, formatting, search, validation helpers
+lib/                     Prisma client, auth, i18n, messaging, notifications, password reset,
+                         location, formatting, search, validation helpers
 prisma/                  schema, seed data, SQLite database
 public/images/           demo photography and image credits
 wireframes/              approved wireframes and screenshots
@@ -164,6 +179,9 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 - [`lib/saved.ts`](lib/saved.ts) — the customer's private saved-provider set.
 - [`lib/reviews.ts`](lib/reviews.ts) — weighted rating recalculation for moderation.
 - [`lib/rate-limit.ts`](lib/rate-limit.ts) — in-process rate limiting for public forms.
+- [`lib/i18n`](lib/i18n) — EN/FR catalogs, cookie detection and the language switcher.
+- [`lib/notifications.ts`](lib/notifications.ts) — in-app notifications and the queued email outbox.
+- [`lib/password-reset.ts`](lib/password-reset.ts) — hashed, expiring, single-use reset tokens.
 - [`app/actions/provider.ts`](app/actions/provider.ts) — the full provider lifecycle.
 - [`app/actions/admin.ts`](app/actions/admin.ts) — approval and moderation with audit logging.
 
@@ -216,7 +234,7 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 ## Verification performed
 
 - `npm run build` succeeds; all routes compile.
-- `npm run typecheck`, `npm run lint` and `npm test` (45 tests) pass.
+- `npm run typecheck`, `npm run lint` and `npm test` (54 tests) pass.
 - Browser-tested customer request flow through the booking sheet → confirmation page.
 - Browser-tested a brand-new provider through all 7 onboarding steps, photo upload, submit,
   admin approval, and the resulting public profile.
@@ -224,18 +242,22 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
   and admin login.
 - Browser-tested saving/unsaving providers, the private `/saved` page, and admin hide/publish
   review moderation with rating recalculation (48 → 47 → 48 reviews).
+- Browser-tested request notifications, the email outbox, password reset through a real
+  one-time token, rescheduling and cancellation.
+- Browser-tested the FR language switch and French header/footer/navigation.
 - Mobile viewport checks at 390 × 844: no horizontal overflow on home, search, profile, join,
   login, onboarding or dashboard.
 
 ## Known limitations (intentional for v1)
 
-- **No email/SMS delivery.** Requests and status changes live in the app; the provider replies
-  through the contact details shown. Email verification and notifications are the next
-  infrastructure step.
+- **Email is queued, not delivered.** v1.2 records every transactional email in
+  `/admin/emails`; connecting an SMTP/transactional provider requires configuration and a
+  delivery worker. There is no email verification yet.
 - **No payments, deposits, payouts or commission.** Appointments are requests confirmed
   directly by the provider.
 - **No calendar sync or real-time availability.** Opening hours are a guide.
-- **No password reset or OAuth.** Email + password only.
+- **No OAuth.** Email + password with a working reset link. FR covers the customer-facing site;
+  provider/admin internal dashboards remain English in this pass.
 - **Local image storage.** `public/uploads` is for the demo; production should use object
   storage with image processing and virus/MIME scanning.
 - **SQLite.** The schema avoids SQLite-specific features and is ready for Postgres, but v1 runs
@@ -253,12 +275,12 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 
 ## Next steps
 
-1. Transactional email (request received, approved, rejected, status changes) and password reset.
-2. Postgres + object storage + image processing.
-3. Rate limiting, CAPTCHA on requests, and email verification.
-4. Real availability / calendar slots and provider response templates.
-5. Distributed rate limiting, CAPTCHA on public forms, and supply-demand analytics.
-6. French localisation and a bilingual content model.
+1. Connect a transactional email provider and a delivery worker to the outbox.
+2. Email verification, OAuth and account security hardening.
+3. Postgres + object storage + image processing.
+4. Distributed rate limiting, CAPTCHA on public forms, and supply-demand analytics.
+5. Real availability / calendar slots and provider response templates.
+6. Translate the provider/admin dashboards and add bilingual category/content fields.
 
 ## Planning documents
 

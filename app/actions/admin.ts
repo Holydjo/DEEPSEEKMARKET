@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { ratingAfterHide, ratingAfterPublish } from "@/lib/reviews";
+import { notifyUser } from "@/lib/notifications";
 
 function revalidateProvider(providerId: string, slug: string) {
   revalidatePath("/admin");
@@ -27,7 +28,10 @@ export async function approveProviderAction(formData: FormData): Promise<void> {
   const parsed = actionSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) redirect("/admin/applications?error=invalid");
 
-  const provider = await db.provider.findUnique({ where: { id: parsed.data.providerId } });
+  const provider = await db.provider.findUnique({
+    where: { id: parsed.data.providerId },
+    include: { user: { select: { id: true, email: true, locale: true } } },
+  });
   if (!provider || (provider.status !== "PENDING" && provider.status !== "REJECTED")) {
     redirect("/admin/applications?error=state");
   }
@@ -53,6 +57,17 @@ export async function approveProviderAction(formData: FormData): Promise<void> {
     }),
   ]);
 
+  await notifyUser({
+    userId: provider.user.id,
+    locale: provider.user.locale,
+    type: "PROVIDER_APPROVED",
+    titleKey: "notifications.providerApproved.title",
+    bodyKey: "notifications.providerApproved.body",
+    vars: { provider: provider.displayName },
+    href: "/provider/dashboard",
+    email: provider.email,
+  });
+
   revalidateProvider(provider.id, provider.slug);
   redirect(`/admin/applications/${provider.id}?done=approved`);
 }
@@ -67,7 +82,10 @@ export async function rejectProviderAction(formData: FormData): Promise<void> {
     redirect(`/admin/applications/${parsed.data.providerId}?error=note`);
   }
 
-  const provider = await db.provider.findUnique({ where: { id: parsed.data.providerId } });
+  const provider = await db.provider.findUnique({
+    where: { id: parsed.data.providerId },
+    include: { user: { select: { id: true, email: true, locale: true } } },
+  });
   if (!provider || provider.status !== "PENDING") {
     redirect("/admin/applications?error=state");
   }
@@ -91,6 +109,17 @@ export async function rejectProviderAction(formData: FormData): Promise<void> {
       },
     }),
   ]);
+
+  await notifyUser({
+    userId: provider.user.id,
+    locale: provider.user.locale,
+    type: "PROVIDER_REJECTED",
+    titleKey: "notifications.providerRejected.title",
+    bodyKey: "notifications.providerRejected.body",
+    vars: { provider: provider.displayName },
+    href: "/provider/dashboard",
+    email: provider.email,
+  });
 
   revalidateProvider(provider.id, provider.slug);
   redirect(`/admin/applications/${provider.id}?done=rejected`);
@@ -160,7 +189,10 @@ export async function suspendProviderAction(formData: FormData): Promise<void> {
   const parsed = actionSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) redirect("/admin/providers?error=invalid");
 
-  const provider = await db.provider.findUnique({ where: { id: parsed.data.providerId } });
+  const provider = await db.provider.findUnique({
+    where: { id: parsed.data.providerId },
+    include: { user: { select: { id: true, email: true, locale: true } } },
+  });
   if (!provider || provider.status !== "APPROVED") {
     redirect("/admin/providers?error=state");
   }
@@ -185,6 +217,17 @@ export async function suspendProviderAction(formData: FormData): Promise<void> {
     }),
   ]);
 
+  await notifyUser({
+    userId: provider.user.id,
+    locale: provider.user.locale,
+    type: "PROVIDER_SUSPENDED",
+    titleKey: "notifications.providerSuspended.title",
+    bodyKey: "notifications.providerSuspended.body",
+    vars: { provider: provider.displayName },
+    href: "/provider/dashboard",
+    email: provider.email,
+  });
+
   revalidateProvider(provider.id, provider.slug);
   redirect(`/admin/providers?done=suspended`);
 }
@@ -194,7 +237,10 @@ export async function reinstateProviderAction(formData: FormData): Promise<void>
   const parsed = actionSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) redirect("/admin/providers?error=invalid");
 
-  const provider = await db.provider.findUnique({ where: { id: parsed.data.providerId } });
+  const provider = await db.provider.findUnique({
+    where: { id: parsed.data.providerId },
+    include: { user: { select: { id: true, email: true, locale: true } } },
+  });
   if (!provider || provider.status !== "SUSPENDED") {
     redirect("/admin/providers?error=state");
   }
@@ -218,6 +264,17 @@ export async function reinstateProviderAction(formData: FormData): Promise<void>
       },
     }),
   ]);
+
+  await notifyUser({
+    userId: provider.user.id,
+    locale: provider.user.locale,
+    type: "PROVIDER_REINSTATED",
+    titleKey: "notifications.providerReinstated.title",
+    bodyKey: "notifications.providerReinstated.body",
+    vars: { provider: provider.displayName },
+    href: "/provider/dashboard",
+    email: provider.email,
+  });
 
   revalidateProvider(provider.id, provider.slug);
   redirect(`/admin/providers?done=reinstated`);

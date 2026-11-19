@@ -23,8 +23,10 @@ import { getSavedProviderIds } from "@/lib/saved";
 import { SaveButton } from "@/components/save-button";
 import { formatDateTime, formatDuration, formatRelative, formatServicePrice, dayName, dayShort, initials, isOpenNow, nextOpenDay, todayHours, torontoNowParts, WEEK_ORDER } from "@/lib/format";
 import { formatDistance } from "@/lib/location";
-import { PROVIDER_TYPE_LABEL } from "@/lib/constants";
 import { getProviderForPublicPage } from "@/lib/search";
+import { getTranslator } from "@/lib/i18n/server";
+import { categoryLabel } from "@/lib/i18n/categories";
+import { providerTypeLabel } from "@/lib/i18n/labels";
 import { BookingDialog } from "@/components/booking-dialog";
 import { ActionForm } from "@/components/action-form";
 import { SubmitButton } from "@/components/submit-button";
@@ -52,14 +54,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const { locale, t } = await getTranslator();
   const provider = await db.provider.findFirst({
     where: { slug, status: "APPROVED" },
     include: { photos: { take: 1 }, category: true },
   });
 
-  if (!provider) return { title: "Provider not found" };
+  if (!provider) return { title: t("provider.notFound") };
 
-  const title = `${provider.displayName} — ${provider.category.name} in ${provider.neighbourhood}`;
+  const title = t("provider.meta.title", {
+    name: provider.displayName,
+    category: categoryLabel(locale, provider.category?.slug, provider.category?.name ?? ""),
+    neighbourhood: provider.neighbourhood,
+  });
   const description = provider.about.slice(0, 155);
 
   return {
@@ -86,6 +93,7 @@ export default async function ProviderPage({
   const data = await getProviderForPublicPage(slug);
   if (!data) notFound();
 
+  const { locale, t } = await getTranslator();
   const { provider, similar, distanceFromPlateau } = data;
   const user = await getCurrentUser();
   const savedIds = await getSavedProviderIds(user?.id);
@@ -114,20 +122,27 @@ export default async function ProviderPage({
     : null;
   const gallery = provider.photos.map((photo) => photo.url);
   const autoOpen = request === "1";
+  const category = categoryLabel(locale, provider.category.slug, provider.category.name);
 
   const openLabel = open
-    ? `Open today until ${today?.closesAt}`
+    ? t("provider.open.until", { time: today?.closesAt ?? "" })
     : today?.isClosed
-      ? "Closed today"
+      ? t("provider.open.closedToday")
       : next
-        ? `Opens ${dayShort(next.dayOfWeek)} at ${next.opensAt}`
-        : "Hours unavailable";
+        ? t("provider.open.opensAt", {
+            day: dayShort(next.dayOfWeek, locale),
+            time: next.opensAt,
+          })
+        : t("provider.open.hoursUnavailable");
 
   const placeFacts = [
-    provider.servesAtHome && { label: "Home studio", icon: Home },
-    provider.servesAtSalon && { label: "Salon", icon: Store },
-    provider.servesAtShop && { label: "Shop", icon: Store },
-    provider.travelsToClient && { label: `Travels up to ${provider.travelRadiusKm} km`, icon: Truck },
+    provider.servesAtHome && { label: t("provider.fact.home"), icon: Home },
+    provider.servesAtSalon && { label: t("provider.fact.salon"), icon: Store },
+    provider.servesAtShop && { label: t("provider.fact.shop"), icon: Store },
+    provider.travelsToClient && {
+      label: t("provider.fact.travels", { radius: provider.travelRadiusKm }),
+      icon: Truck,
+    },
   ].filter(Boolean) as Array<{ label: string; icon: typeof Home }>;
 
   const jsonLd = {
@@ -144,7 +159,7 @@ export default async function ProviderPage({
       addressCountry: "CA",
     },
     areaServed: provider.areas.map((area) => area.label),
-    priceRange: lowestPrice ? `From $${Math.round(lowestPrice / 100)}` : undefined,
+    priceRange: lowestPrice ? t("price.from", { price: `$${Math.round(lowestPrice / 100)}` }) : undefined,
     aggregateRating:
       provider.ratingCount > 0
         ? {
@@ -162,6 +177,15 @@ export default async function ProviderPage({
     })),
   };
 
+  const approvalChecks = [
+    t("provider.aside.checkIdentity"),
+    t("provider.aside.checkServices", { count: provider.services.length }),
+    t("provider.aside.checkPhotos", { count: gallery.length }),
+    t("provider.aside.checkApproved", {
+      when: formatRelative(provider.reviewedAt ?? provider.createdAt, locale),
+    }),
+  ];
+
   return (
     <div className="pb-28 md:pb-0">
       <script
@@ -170,11 +194,11 @@ export default async function ProviderPage({
       />
 
       <div className="container-hd pt-4">
-        <nav className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-ink">Home</Link>
+        <nav className="flex flex-wrap items-center gap-1.5 text-[10px] text-muted" aria-label={t("provider.breadcrumb")}>
+          <Link href="/" className="hover:text-ink">{t("provider.breadcrumb.home")}</Link>
           <span aria-hidden>/</span>
           <Link href={`/search?category=${provider.category.slug}`} className="hover:text-ink">
-            {provider.category.name}
+            {category}
           </Link>
           <span aria-hidden>/</span>
           <span className="text-ink">{provider.displayName}</span>
@@ -186,7 +210,7 @@ export default async function ProviderPage({
             {gallery[0] ? (
               <Image
                 src={gallery[0]}
-                alt={provider.photos[0]?.alt || `${provider.displayName} at work`}
+                alt={provider.photos[0]?.alt || t("provider.photoAlt", { name: provider.displayName })}
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 800px"
@@ -198,7 +222,9 @@ export default async function ProviderPage({
               </div>
             )}
             <span className="absolute bottom-3 right-3 rounded-full border border-ink bg-surface/95 px-2.5 py-1 text-[9.5px] font-medium">
-              {gallery.length || 1} {gallery.length === 1 ? "photo" : "photos"}
+              {gallery.length === 1
+                ? t("provider.photos.one", { count: gallery.length || 1 })
+                : t("provider.photos.many", { count: gallery.length || 1 })}
             </span>
           </div>
           <div className="grid grid-cols-2 gap-1.5 md:grid-cols-1 md:grid-rows-2">
@@ -207,7 +233,7 @@ export default async function ProviderPage({
                 <div key={index} className="relative aspect-square overflow-hidden rounded-[14px] border border-line bg-surface-2 md:aspect-auto md:h-full">
                   <Image
                     src={gallery[index]}
-                    alt={provider.photos[index]?.alt || `${provider.displayName} work ${index}`}
+                    alt={provider.photos[index]?.alt || t("provider.photoAltWork", { name: provider.displayName, index })}
                     fill
                     sizes="(max-width: 768px) 50vw, 300px"
                     className="object-cover"
@@ -227,8 +253,8 @@ export default async function ProviderPage({
           <main>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                <VerifiedBadge />
-                <span className="pill">{PROVIDER_TYPE_LABEL[provider.type] ?? "Provider"}</span>
+                <VerifiedBadge locale={locale} />
+                <span className="pill">{providerTypeLabel(locale, provider.type)}</span>
                 <span className={`pill ${open ? "pill-pine" : ""}`}>
                   <span className="status-dot" /> {openLabel}
                 </span>
@@ -237,6 +263,7 @@ export default async function ProviderPage({
                 providerId={provider.id}
                 initialSaved={isSaved}
                 isAuthed={Boolean(user)}
+                locale={locale}
                 variant="button"
               />
             </div>
@@ -246,16 +273,20 @@ export default async function ProviderPage({
             </h1>
 
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-muted">
-              <Rating value={provider.ratingAvg} count={provider.ratingCount} size="md" />
+              <Rating value={provider.ratingAvg} count={provider.ratingCount} size="md" locale={locale} />
               <span aria-hidden>·</span>
-              <span>{provider.category.name}</span>
+              <span>{category}</span>
               <span aria-hidden>·</span>
               <span className="inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" aria-hidden />
                 {provider.neighbourhood}, {provider.city}
               </span>
               <span aria-hidden>·</span>
-              <span className="font-medium text-ink">{formatDistance(distanceFromPlateau)} from Le Plateau</span>
+              <span className="font-medium text-ink">
+                {t("provider.distanceFromPlateau", {
+                  distance: formatDistance(distanceFromPlateau, locale),
+                })}
+              </span>
             </div>
 
             <p className="mt-4 max-w-[680px] text-[14px] leading-relaxed text-ink-soft">
@@ -272,25 +303,29 @@ export default async function ProviderPage({
               {provider.responseTimeHours && (
                 <span className="pill">
                   <Clock className="h-3 w-3" aria-hidden />
-                  Replies in ~{provider.responseTimeHours} h
+                  {t("provider.repliesIn", { hours: provider.responseTimeHours })}
                 </span>
               )}
               <span className="pill">
                 <Languages className="h-3 w-3" aria-hidden />
                 {provider.languages}
               </span>
-              <span className="pill">Since {new Date(provider.createdAt).getFullYear()}</span>
+              <span className="pill">
+                {t("provider.since", { year: new Date(provider.createdAt).getFullYear() })}
+              </span>
             </div>
 
             <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-y border-line py-3 text-[10px] text-muted">
               <span className="inline-flex items-center gap-1.5">
-                <LockKeyhole className="h-3 w-3" aria-hidden /> Exact address shared after you request
+                <LockKeyhole className="h-3 w-3" aria-hidden /> {t("provider.addressPrivate")}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Check className="h-3 w-3" aria-hidden /> {provider.services.length} services reviewed
+                <Check className="h-3 w-3" aria-hidden />{" "}
+                {t("provider.servicesReviewed", { count: provider.services.length })}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Check className="h-3 w-3" aria-hidden /> {gallery.length} photos checked
+                <Check className="h-3 w-3" aria-hidden />{" "}
+                {t("provider.photosChecked", { count: gallery.length })}
               </span>
             </div>
 
@@ -298,13 +333,15 @@ export default async function ProviderPage({
             <section id="services" className="mt-7 scroll-mt-24">
               <div className="flex flex-wrap items-end justify-between gap-2">
                 <div>
-                  <p className="eyebrow">Services &amp; prices</p>
-                  <h2 className="display mt-2 text-[clamp(1.8rem,3vw,2.5rem)]">Choose your service.</h2>
+                  <p className="eyebrow">{t("provider.services.eyebrow")}</p>
+                  <h2 className="display mt-2 text-[clamp(1.8rem,3vw,2.5rem)]">
+                    {t("provider.services.title")}
+                  </h2>
                 </div>
-                <span className="text-[10px] text-muted">CAD · taxes may apply</span>
+                <span className="text-[10px] text-muted">{t("provider.services.currency")}</span>
               </div>
               <p className="mt-1.5 text-[11px] text-muted">
-                Final price and duration are confirmed by {provider.displayName.split(" ")[0]} before the appointment.
+                {t("provider.services.confirm", { name: provider.displayName.split(" ")[0] })}
               </p>
 
               {provider.services.length > 0 ? (
@@ -317,7 +354,11 @@ export default async function ProviderPage({
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className="text-[15px] font-semibold">{item.name}</h3>
-                          {index === 0 && <span className="pill pill-marigold !text-[8px]">Most requested</span>}
+                          {index === 0 && (
+                            <span className="pill pill-marigold !text-[8px]">
+                              {t("provider.services.mostRequested")}
+                            </span>
+                          )}
                         </div>
                         {item.description && (
                           <p className="mt-0.5 text-[11px] leading-relaxed text-muted">{item.description}</p>
@@ -330,21 +371,21 @@ export default async function ProviderPage({
                       </div>
                       <div className="shrink-0 sm:w-28 sm:text-right">
                         <p className="text-sm font-semibold">
-                          {formatServicePrice(item.priceCents, item.priceType)}
+                          {formatServicePrice(item.priceCents, item.priceType, locale)}
                         </p>
                       </div>
                       <Link
                         href={`/providers/${provider.slug}?request=1&service=${item.id}`}
                         className="btn btn-primary btn-sm shrink-0 justify-center"
                       >
-                        Request
+                        {t("provider.services.request")}
                       </Link>
                     </div>
                   ))}
                 </div>
               ) : (
                 <p className="mt-4 rounded-2xl border border-line bg-surface p-5 text-sm text-muted">
-                  Services are being updated. You can still send a request and ask for details.
+                  {t("provider.services.empty")}
                 </p>
               )}
             </section>
@@ -353,12 +394,13 @@ export default async function ProviderPage({
             <section className="mt-8 grid gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-line bg-surface p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-xl">Opening hours</h2>
+                  <h2 className="text-xl">{t("provider.hours.title")}</h2>
                   <span className={`pill ${open ? "pill-pine" : ""}`}>
-                    <span className="status-dot" /> {open ? "Open now" : "Closed"}
+                    <span className="status-dot" />{" "}
+                    {open ? t("provider.open.openNow") : t("provider.open.closed")}
                   </span>
                 </div>
-                <p className="mt-1 text-[10px] text-muted">Appointments only · last booking one hour before close</p>
+                <p className="mt-1 text-[10px] text-muted">{t("provider.hours.note")}</p>
                 <div className="mt-3 text-[11px]">
                   {WEEK_ORDER.map((day) => {
                     const row = provider.hours.find((hour) => hour.dayOfWeek === day);
@@ -371,30 +413,37 @@ export default async function ProviderPage({
                           isToday ? "-mx-2 rounded-md bg-marigold-soft px-2 font-semibold" : ""
                         }`}
                       >
-                        <span>{dayName(day)}</span>
-                        <span>{row.isClosed ? "Closed" : `${row.opensAt} – ${row.closesAt}`}</span>
+                        <span>{dayName(day, locale)}</span>
+                        <span>
+                          {row.isClosed
+                            ? t("provider.open.closed")
+                            : `${row.opensAt} – ${row.closesAt}`}
+                        </span>
                       </div>
                     );
                   })}
                 </div>
                 <p className="mt-3 text-[9px] leading-relaxed text-muted">
-                  Hours are set by the provider. A request is not a confirmed booking until they reply.
+                  {t("provider.hours.disclaimer")}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-line bg-surface p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <h2 className="text-xl">Service area</h2>
-                  <span className="text-[9.5px] text-muted">~{provider.travelRadiusKm} km</span>
+                  <h2 className="text-xl">{t("provider.area.title")}</h2>
+                  <span className="text-[9.5px] text-muted">
+                    {t("provider.area.radius", { radius: provider.travelRadiusKm })}
+                  </span>
                 </div>
                 <p className="mt-1 text-[10px] text-muted">
-                  Based in {provider.neighbourhood}. Approximate area shown.
+                  {t("provider.area.based", { hood: provider.neighbourhood })}
                 </p>
                 <div className="mt-3">
                   <ProviderMap
                     points={[]}
                     origin={{ lat: provider.lat, lng: provider.lng }}
                     radiusKm={provider.travelRadiusKm}
+                    locale={locale}
                     heightClass="h-[168px]"
                   />
                 </div>
@@ -404,8 +453,7 @@ export default async function ProviderPage({
                   ))}
                 </div>
                 <p className="mt-3 text-[9px] leading-relaxed text-muted">
-                  Travel fee, if any, is stated before you confirm. Your exact address is only
-                  shared after the provider accepts.
+                  {t("provider.area.fee")}
                 </p>
               </div>
             </section>
@@ -414,27 +462,35 @@ export default async function ProviderPage({
             <section id="reviews" className="mt-8 scroll-mt-24">
               <div className="flex flex-wrap items-end justify-between gap-2">
                 <div>
-                  <p className="eyebrow">Reviews</p>
-                  <h2 className="display mt-2 text-[clamp(1.8rem,3vw,2.5rem)]">What clients say.</h2>
+                  <p className="eyebrow">{t("provider.reviews.eyebrow")}</p>
+                  <h2 className="display mt-2 text-[clamp(1.8rem,3vw,2.5rem)]">
+                    {t("provider.reviews.title")}
+                  </h2>
                 </div>
                 <span className="text-[10px] text-muted">
-                  {provider.ratingCount} reviews · recent ones shown
+                  {t("provider.reviews.count", { count: provider.ratingCount })}
                 </span>
               </div>
 
               {review === "success" && (
                 <div role="status" className="mt-4 rounded-xl border border-pine/25 bg-pine-soft px-4 py-3 text-xs font-medium text-pine">
-                  Thank you — your review is live.
+                  {t("provider.reviews.thanks")}
                 </div>
               )}
 
               <div className="mt-4 grid gap-4 sm:grid-cols-[160px_minmax(0,1fr)]">
                 <div className="rounded-2xl border border-line bg-surface p-4 text-center">
-                  <p className="display text-5xl">{provider.ratingAvg.toFixed(1)}</p>
-                  <div className="mt-1 flex justify-center"><StarRow value={provider.ratingAvg} /></div>
-                  <p className="mt-1 text-[10px] text-muted">{provider.ratingCount} reviews</p>
+                  <p className="display text-5xl">{provider.ratingAvg.toFixed(1).replace(".", locale === "fr" ? "," : ".")}</p>
+                  <div className="mt-1 flex justify-center">
+                    <StarRow value={provider.ratingAvg} locale={locale} />
+                  </div>
+                  <p className="mt-1 text-[10px] text-muted">
+                    {t("provider.reviews.countShort", { count: provider.ratingCount })}
+                  </p>
                   <p className="mt-2 border-t border-line pt-2 text-[9px] text-pine">
-                    {provider.reviews.filter((r) => r.isVerified).length} recent verified
+                    {t("provider.reviews.verifiedRecent", {
+                      count: provider.reviews.filter((r) => r.isVerified).length,
+                    })}
                   </p>
                 </div>
                 <div className="grid gap-2">
@@ -448,13 +504,17 @@ export default async function ProviderPage({
                             </span>
                             <div>
                               <p className="text-[11px] font-semibold">{item.author.name}</p>
-                              <p className="text-[8.5px] text-muted">{formatRelative(item.createdAt)}</p>
+                              <p className="text-[8.5px] text-muted">
+                                {formatRelative(item.createdAt, locale)}
+                              </p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <StarRow value={item.rating} />
+                            <StarRow value={item.rating} locale={locale} />
                             {item.isVerified && (
-                              <p className="mt-1 text-[7.5px] font-semibold text-pine">Booked via HOLYDO</p>
+                              <p className="mt-1 text-[7.5px] font-semibold text-pine">
+                                {t("provider.reviews.bookedVia")}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -465,8 +525,8 @@ export default async function ProviderPage({
                     <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-line bg-surface p-6 text-center">
                       <div>
                         <Star className="mx-auto h-5 w-5 text-muted" aria-hidden />
-                        <p className="mt-2 text-sm font-semibold">New on HOLYDO</p>
-                        <p className="mt-1 text-[10px] text-muted">Be the first to book and review.</p>
+                        <p className="mt-2 text-sm font-semibold">{t("provider.reviews.newTitle")}</p>
+                        <p className="mt-1 text-[10px] text-muted">{t("provider.reviews.newBody")}</p>
                       </div>
                     </div>
                   )}
@@ -474,24 +534,26 @@ export default async function ProviderPage({
               </div>
 
               <div className="mt-4 rounded-2xl border border-line bg-surface p-4">
-                <h3 className="text-lg">Leave a review</h3>
+                <h3 className="text-lg">{t("provider.reviews.formTitle")}</h3>
                 {!user ? (
                   <p className="mt-1 text-[11px] text-muted">
                     <Link href={`/login?next=/providers/${provider.slug}`} className="font-semibold text-ink underline decoration-line underline-offset-4">
-                      Log in
+                      {t("provider.reviews.login")}
                     </Link>{" "}
-                    to share your experience. Reviews linked to a completed request are marked verified.
+                    {t("provider.reviews.loginSuffix")}
                   </p>
                 ) : existingReview ? (
                   <p className="mt-1 text-[11px] text-muted">
-                    You reviewed this provider on {formatDateTime(existingReview.createdAt)}.
+                    {t("provider.reviews.already", {
+                      date: formatDateTime(existingReview.createdAt, locale),
+                    })}
                   </p>
                 ) : (
-                  <ActionForm action={createReview} className="mt-3 grid gap-3">
+                  <ActionForm action={createReview} className="mt-3 grid gap-3" locale={locale}>
                     <input type="hidden" name="providerId" value={provider.id} />
                     <input type="hidden" name="slug" value={provider.slug} />
                     <fieldset>
-                      <legend className="label">Your rating</legend>
+                      <legend className="label">{t("provider.reviews.ratingLabel")}</legend>
                       <div className="flex flex-wrap gap-1.5">
                         {[5, 4, 3, 2, 1].map((value) => (
                           <label
@@ -511,20 +573,25 @@ export default async function ProviderPage({
                       </div>
                     </fieldset>
                     <div>
-                      <label htmlFor="review-body" className="label">Your experience</label>
+                      <label htmlFor="review-body" className="label">
+                        {t("provider.reviews.experienceLabel")}
+                      </label>
                       <textarea
                         id="review-body"
                         name="body"
                         required
                         minLength={10}
                         className="input textarea"
-                        placeholder="What was the service like? Would you recommend it to a neighbour?"
+                        placeholder={t("provider.reviews.placeholder")}
                       />
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-[9px] text-muted">One review per provider. Be honest and specific.</p>
-                      <SubmitButton className="btn btn-dark btn-sm" pendingLabel="Publishing…">
-                        Publish review
+                      <p className="text-[9px] text-muted">{t("provider.reviews.note")}</p>
+                      <SubmitButton
+                        className="btn btn-dark btn-sm"
+                        pendingLabel={t("provider.reviews.publishing")}
+                      >
+                        {t("provider.reviews.publish")}
                       </SubmitButton>
                     </div>
                   </ActionForm>
@@ -537,11 +604,11 @@ export default async function ProviderPage({
               <section className="mt-9">
                 <div className="flex items-end justify-between gap-2">
                   <div>
-                    <p className="eyebrow">Nearby</p>
-                    <h2 className="display mt-2 text-2xl">Similar providers</h2>
+                    <p className="eyebrow">{t("provider.similar.eyebrow")}</p>
+                    <h2 className="display mt-2 text-2xl">{t("provider.similar.title")}</h2>
                   </div>
                   <Link href={`/search?category=${provider.category.slug}`} className="link-underline text-[11px] font-semibold">
-                    See all →
+                    {t("provider.similar.seeAll")}
                   </Link>
                 </div>
                 <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
@@ -554,6 +621,7 @@ export default async function ProviderPage({
                       openNow={isOpenNow(item.provider.hours)}
                       saved={savedIds.has(item.provider.id)}
                       isAuthed={Boolean(user)}
+                      locale={locale}
                     />
                   ))}
                 </div>
@@ -566,15 +634,17 @@ export default async function ProviderPage({
             <div className="rounded-card border border-ink bg-surface p-5 shadow-[5px_5px_0_var(--color-ink)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <span className="text-[9px] uppercase tracking-[0.1em] text-muted">From</span>
+                  <span className="text-[9px] uppercase tracking-[0.1em] text-muted">
+                    {t("provider.aside.from")}
+                  </span>
                   <p className="display text-3xl">
-                    {lowestPrice !== null ? `$${Math.round(lowestPrice / 100)}` : "Ask"}
+                    {lowestPrice !== null ? `$${Math.round(lowestPrice / 100)}` : t("provider.aside.ask")}
                   </p>
                 </div>
-                <Rating value={provider.ratingAvg} count={provider.ratingCount} size="md" />
+                <Rating value={provider.ratingAvg} count={provider.ratingCount} size="md" locale={locale} />
               </div>
               <p className="mt-1 text-[10.5px] text-muted">
-                {provider.services.length} services · final price confirmed before booking
+                {t("provider.aside.servicesNote", { count: provider.services.length })}
               </p>
 
               <div className="mt-3">
@@ -588,6 +658,7 @@ export default async function ProviderPage({
                     priceType: item.priceType,
                     durationMin: item.durationMin,
                   }))}
+                  locale={locale}
                   initialServiceId={service}
                   autoOpen={autoOpen}
                   defaultName={user?.name ?? ""}
@@ -598,42 +669,48 @@ export default async function ProviderPage({
                 />
               </div>
               <Link href="#services" className="btn btn-outline btn-block mt-2">
-                <MessageSquare className="h-3.5 w-3.5" aria-hidden /> See services first
+                <MessageSquare className="h-3.5 w-3.5" aria-hidden /> {t("provider.aside.seeServices")}
               </Link>
 
               <div className="mt-3 flex items-center justify-center gap-2 text-[9px] text-muted">
                 <CalendarDays className="h-3 w-3" aria-hidden />
-                Usually replies in ~{provider.responseTimeHours ?? 4} h · free to request
+                {t("provider.aside.responseNote", { hours: provider.responseTimeHours ?? 4 })}
               </div>
 
               <div className="mt-4 grid gap-2 border-t border-line pt-3 text-[10px]">
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-muted">Today</span>
+                  <span className="text-muted">{t("provider.aside.today")}</span>
                   <span className="text-right font-medium">
-                    {today ? (today.isClosed ? "Closed" : `${today.opensAt} – ${today.closesAt}`) : "Not listed"}
+                    {today
+                      ? today.isClosed
+                        ? t("provider.open.closed")
+                        : `${today.opensAt} – ${today.closesAt}`
+                      : t("provider.aside.notListed")}
                   </span>
                 </div>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-muted">Service area</span>
+                  <span className="text-muted">{t("provider.aside.serviceArea")}</span>
                   <span className="text-right font-medium">
                     {provider.neighbourhood} + ~{provider.travelRadiusKm} km
                   </span>
                 </div>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-muted">At your place?</span>
-                  <span className="text-right font-medium">{provider.travelsToClient ? "Yes" : "No"}</span>
+                  <span className="text-muted">{t("provider.aside.atYourPlace")}</span>
+                  <span className="text-right font-medium">
+                    {provider.travelsToClient ? t("common.yes") : t("common.no")}
+                  </span>
                 </div>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="text-muted">Languages</span>
+                  <span className="text-muted">{t("provider.aside.languages")}</span>
                   <span className="text-right font-medium">{provider.languages}</span>
                 </div>
               </div>
 
               <div className="mt-3 rounded-xl bg-surface-2 px-3 py-2.5 text-[9px] leading-relaxed text-muted">
                 <span className="flex items-center gap-1.5 font-semibold text-ink">
-                  <LockKeyhole className="h-3 w-3" aria-hidden /> Contact stays private
+                  <LockKeyhole className="h-3 w-3" aria-hidden /> {t("provider.aside.privateTitle")}
                 </span>
-                Your phone and email are shared with this provider only after you send a request.
+                {t("provider.aside.privateBody")}
               </div>
             </div>
 
@@ -641,36 +718,32 @@ export default async function ProviderPage({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="flex items-center gap-1.5 text-xs font-semibold">
-                    <BadgeCheck className="h-4 w-4" aria-hidden /> Checked by HOLYDO
+                    <BadgeCheck className="h-4 w-4" aria-hidden /> {t("provider.aside.checked")}
                   </p>
-                  <p className="mt-1 text-[9px] text-muted">Application · HD-{provider.id.slice(-4).toUpperCase()}</p>
+                  <p className="mt-1 text-[9px] text-muted">
+                    {t("provider.aside.application", { id: provider.id.slice(-4).toUpperCase() })}
+                  </p>
                 </div>
                 <span className="flex h-12 w-12 rotate-[-8deg] flex-col items-center justify-center rounded-full border border-dashed border-ink text-center font-mono text-[4.5px] uppercase leading-tight">
                   <span className="font-display text-[7px] font-semibold">HOLYDO</span>
-                  APPROVED
+                  {t("provider.aside.stamp")}
                 </span>
               </div>
               <div className="mt-3 grid gap-1.5 text-[9.5px]">
-                {[
-                  "Identity & contact confirmed",
-                  `${provider.services.length} services & prices reviewed`,
-                  `${gallery.length} photos checked`,
-                  `Approved ${formatRelative(provider.reviewedAt ?? provider.createdAt)}`,
-                ].map((line) => (
+                {approvalChecks.map((line) => (
                   <span key={line} className="flex items-center gap-1.5">
                     <Check className="h-3 w-3 text-pine" aria-hidden /> {line}
                   </span>
                 ))}
               </div>
               <Link href="/how-it-works#approval" className="mt-2 inline-block text-[9px] font-medium underline decoration-line underline-offset-2">
-                How approval works →
+                {t("provider.aside.howApproval")}
               </Link>
             </div>
 
             <div className="mt-3 rounded-2xl border border-marigold/60 bg-marigold-soft/60 p-3.5 text-[9.5px] leading-relaxed text-ink/80">
-              <strong className="font-semibold text-ink">Safety first.</strong> Never send a
-              deposit before the provider confirms the appointment details in writing. Report
-              anything that feels off to hello@holydo.market.
+              <strong className="font-semibold text-ink">{t("provider.aside.safetyTitle")}</strong>{" "}
+              {t("provider.aside.safetyBody")}
             </div>
           </aside>
         </div>
@@ -680,16 +753,16 @@ export default async function ProviderPage({
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-ink bg-surface/95 px-3 py-2.5 backdrop-blur-md md:hidden">
         <div className="flex items-center gap-2">
           <div className="min-w-0">
-            <p className="text-[8px] uppercase tracking-wide text-muted">From</p>
+            <p className="text-[8px] uppercase tracking-wide text-muted">{t("provider.aside.from")}</p>
             <p className="text-base font-semibold">
-              {lowestPrice !== null ? `$${Math.round(lowestPrice / 100)}` : "Ask"}
+              {lowestPrice !== null ? `$${Math.round(lowestPrice / 100)}` : t("provider.aside.ask")}
             </p>
           </div>
           <Link
             href={`/providers/${provider.slug}?request=1`}
             className="btn btn-primary flex-1 !py-2.5 text-xs"
           >
-            Request appointment <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+            {t("provider.mobile.request")} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
         </div>
       </div>

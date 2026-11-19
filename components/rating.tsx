@@ -1,20 +1,24 @@
 import { Star } from "lucide-react";
+import { translate } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
 export function Rating({
   value,
   count,
   size = "sm",
   showEmpty = false,
+  locale = "en",
 }: {
   value: number;
   count?: number;
   size?: "sm" | "md";
   showEmpty?: boolean;
+  locale?: Locale;
 }) {
   if (!value && count === 0) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted">
-        <Star className="h-3 w-3" aria-hidden /> New
+        <Star className="h-3 w-3" aria-hidden /> {translate(locale, "rating.new")}
       </span>
     );
   }
@@ -29,7 +33,7 @@ export function Rating({
         className={`${size === "md" ? "h-4 w-4" : "h-3 w-3"} fill-ink text-ink`}
         aria-hidden
       />
-      {value.toFixed(1)}
+      {value.toFixed(1).replace(".", locale === "fr" ? "," : ".")}
       {typeof count === "number" && count > 0 && (
         <span className="font-normal text-muted">
           {showEmpty ? "" : `(${count})`}
@@ -39,9 +43,22 @@ export function Rating({
   );
 }
 
-export function StarRow({ value, className = "" }: { value: number; className?: string }) {
+export function StarRow({
+  value,
+  className = "",
+  locale = "en",
+}: {
+  value: number;
+  className?: string;
+  locale?: Locale;
+}) {
   return (
-    <span className={`inline-flex items-center gap-0.5 ${className}`} aria-label={`${value} out of 5`}>
+    <span
+      className={`inline-flex items-center gap-0.5 ${className}`}
+      aria-label={translate(locale, "rating.outOf", {
+        value: value.toFixed(1).replace(".", locale === "fr" ? "," : "."),
+      })}
+    >
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
