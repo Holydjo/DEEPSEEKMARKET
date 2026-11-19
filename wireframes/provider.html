@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HOLYDO MARKET — Wireframe 03 · Provider profile</title>
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-head">
+    <div class="doc-kicker">Wireframe 03 / 04 · Public</div>
+    <h1 class="doc-title">Provider profile</h1>
+    <p class="doc-intro">The decision page. It has to feel like a real person you could trust with your
+      hair, your home, or your phone — while making the price, hours, travel area and next step
+      unmistakable. Everything on this page belongs to an approved provider.</p>
+    <div class="doc-meta">
+      <span>Route · /providers/nadia-braids-studio</span><span>APPROVED only · 404 otherwise</span><span>Sticky request card</span><span>Reviews · verified bookings</span>
+    </div>
+  </header>
+
+  <nav class="doc-nav">
+    <a href="home.html">01 · Homepage</a>
+    <a href="search.html">02 · Search results</a>
+    <a class="on" href="provider.html">03 · Provider profile</a>
+    <a href="join.html">04 · Provider sign-up</a>
+    <a href="index.html">All wireframes</a>
+    <a href="../docs/WIREFRAMES.md">Notes</a>
+  </nav>
+
+  <div class="legend">
+    <b>Legend</b>
+    <span><i class="swatch" style="background:#f3b846"></i>Primary action</span>
+    <span><i class="swatch" style="background:#dbd4c7"></i>Image / map placeholder</span>
+    <span><span class="mk">n</span> Annotation → notes below</span>
+    <span>Example data · Nadia Braids Studio</span>
+  </div>
+
+  <!-- ============================================================
+       DESKTOP
+       ============================================================ -->
+  <section class="wf-section" id="desktop">
+    <div class="wf-section-head">
+      <h2><span>03A</span>Desktop</h2>
+      <p class="intent">Photo-led, then facts, then proof. The sticky right rail keeps the request action
+        visible through services, hours and reviews without a modal forcing the decision.</p>
+    </div>
+
+    <div class="sheet-label"><b>1180 × ~1850</b><span>Scroll ↓</span></div>
+
+    <div class="frame-desktop">
+      <div class="browser-bar">
+        <div class="browser-dots"><i></i><i></i><i></i></div>
+        <div class="browser-url">holydomarket.ca/providers/nadia-braids-studio</div>
+        <div class="browser-actions"></div>
+      </div>
+
+      <div class="desk">
+        <header class="site-header" style="padding:10px 24px;">
+          <a class="logo" href="home.html" style="text-decoration:none;"><b>HOLYDO</b><span>MARKET</span></a>
+          <nav class="nav"><span>Discover</span><span>Categories</span><span>How it works</span><span>For providers</span></nav>
+          <div class="header-right"><span class="loc-pill">Le Plateau, Montréal ▾</span><span class="btn btn-ghost btn-sm">Log in</span><span class="btn btn-primary btn-sm">List your service</span></div>
+        </header>
+
+        <!-- breadcrumb -->
+        <div class="row between" style="padding:9px 24px;background:var(--surface);border-bottom:1px solid var(--line);">
+          <div class="row" style="gap:6px;font-size:9px;color:var(--muted);">
+            <span>Home</span><span>/</span><span>Braids</span><span>/</span><span style="color:var(--ink);font-weight:600;">Nadia Braids Studio</span>
+          </div>
+          <div class="row" style="gap:12px;font-size:9px;"><span style="text-decoration:underline;">Share</span><span style="text-decoration:underline;">Save ♡</span><span style="text-decoration:underline;">Report</span></div>
+        </div>
+
+        <!-- gallery -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:188px 188px;gap:5px;padding:14px 24px 0;">
+          <div class="ph" data-label="Photo · Nadia at work" style="grid-column:1 / span 2;grid-row:1 / span 2;border-radius:12px 4px 4px 12px;font-size:10px;"></div>
+          <div class="ph" data-label="Photo · knotless braids" style="border-radius:4px 12px 4px 4px;"></div>
+          <div class="ph" data-label="Photo · studio" style="border-radius:4px 4px 12px 4px;position:relative;">
+            <span style="position:absolute;right:8px;bottom:8px;background:var(--surface);border:1px solid var(--ink);border-radius:99px;padding:3px 8px;font-size:8px;color:var(--ink);">+6 photos</span>
+          </div>
+        </div>
+
+        <!-- body -->
+        <div style="display:grid;grid-template-columns:1fr 350px;gap:30px;padding:20px 24px 30px;align-items:start;">
+
+          <!-- main column -->
+          <main>
+            <div class="row wrap" style="gap:7px;margin-bottom:5px;">
+              <span class="verified">Verified by HOLYDO</span>
+              <span class="pill pill-soft">Independent provider</span>
+              <span class="pill" style="background:#e3f0e2;border-color:#a9c2a8;">● Open today until 19:00</span>
+            </div>
+            <h1 class="display" style="font-size:42px;margin:0 0 4px;">Nadia Braids Studio<span class="mk">1</span></h1>
+            <div class="row wrap" style="gap:12px;margin-bottom:11px;font-size:11px;color:var(--muted);">
+              <span class="rating" style="font-size:12px;color:var(--ink);">4.9 <small>(48 reviews)</small></span>
+              <span>Braids &amp; protective styles</span><span class="dot"></span>
+              <span>Le Plateau, Montréal</span><span class="dot"></span>
+              <span style="font-weight:600;color:var(--ink);">⌖ 1.2 km away</span>
+            </div>
+            <p class="lede" style="max-width:660px;margin-bottom:12px;">I’m Nadia, a braider working from my home studio in Le Plateau. I specialise in knotless
+              braids, protective styles and gentle children’s braiding. Take your time, bring a friend, and leave with hair that feels like you.</p>
+
+            <div class="row wrap" style="gap:6px;margin-bottom:18px;">
+              <span class="pill">⌂ Home studio</span><span class="pill">⌖ Travels up to 8 km</span><span class="pill">◔ Evenings &amp; weekends</span><span class="pill">◎ Replies in ~2 h</span><span class="pill">EN · FR</span><span class="pill">Since 2021</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- services -->
+            <section style="margin-bottom:24px;">
+              <div class="row between" style="margin-bottom:4px;"><h2 class="display" style="font-size:26px;margin:0;">Services &amp; prices<span class="mk">2</span></h2><span class="tiny">CAD · taxes included</span></div>
+              <p class="small" style="margin:0 0 10px;">Choose a service when you request. Final price is confirmed by Nadia before the appointment.</p>
+
+              <div class="card" style="padding:0;">
+                <div class="row" style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                  <div style="flex:1;">
+                    <div class="row" style="gap:6px;"><b style="font-size:12px;">Knotless braids</b><span class="pill pill-soft" style="font-size:7px;padding:1px 5px;">Most requested</span></div>
+                    <div class="small" style="margin-top:2px;">Medium length · included hair · aftercare advice</div>
+                  </div>
+                  <div style="text-align:right;margin-right:14px;"><b style="font-size:12px;">From $120</b><div class="tiny">3–5 h</div></div>
+                  <span class="btn btn-sm btn-primary">Request</span>
+                </div>
+
+                <div class="row" style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                  <div style="flex:1;"><b style="font-size:12px;">Box braids</b><div class="small" style="margin-top:2px;">Small, medium or jumbo · hair provided</div></div>
+                  <div style="text-align:right;margin-right:14px;"><b style="font-size:12px;">From $90</b><div class="tiny">3–4 h</div></div>
+                  <span class="btn btn-sm">Request</span>
+                </div>
+
+                <div class="row" style="padding:12px 14px;border-bottom:1px solid var(--line);">
+                  <div style="flex:1;"><b style="font-size:12px;">Kids braids (under 12)</b><div class="small" style="margin-top:2px;">Gentle styling · French or English</div></div>
+                  <div style="text-align:right;margin-right:14px;"><b style="font-size:12px;">From $55</b><div class="tiny">1.5–2.5 h</div></div>
+                  <span class="btn btn-sm">Request</span>
+                </div>
+
+                <div class="row" style="padding:12px 14px;">
+                  <div style="flex:1;"><b style="font-size:12px;">Braids touch-up</b><div class="small" style="margin-top:2px;">Refresh edges and partings · existing clients</div></div>
+                  <div style="text-align:right;margin-right:14px;"><b style="font-size:12px;">$40</b><div class="tiny">45 min</div></div>
+                  <span class="btn btn-sm">Request</span>
+                </div>
+              </div>
+
+              <div class="row" style="gap:6px;margin-top:8px;"><span class="tiny">Good to know</span><span class="small">Hair is included · Deposit not required · Card or cash on the day</span></div>
+            </section>
+
+            <!-- gallery strip -->
+            <section style="margin-bottom:24px;">
+              <div class="row between" style="margin-bottom:8px;"><h2 class="display" style="font-size:24px;margin:0;">More of Nadia’s work</h2><span class="tiny" style="text-decoration:underline;">View all 9 →</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+                <div class="ph" data-label="Style 01" style="height:104px;border-radius:7px;"></div>
+                <div class="ph" data-label="Style 02" style="height:104px;border-radius:7px;"></div>
+                <div class="ph" data-label="Studio" style="height:104px;border-radius:7px;"></div>
+                <div class="ph" data-label="Style 03" style="height:104px;border-radius:7px;"></div>
+              </div>
+            </section>
+
+            <!-- hours + area -->
+            <section style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+              <div class="card" style="padding:14px;">
+                <div class="row between" style="margin-bottom:3px;"><h3 class="display" style="font-size:22px;margin:0;">Opening hours<span class="mk">3</span></h3><span class="pill" style="background:#e3f0e2;border-color:#a9c2a8;font-size:8px;">Open now</span></div>
+                <div class="small" style="margin-bottom:9px;">Appointments only · last booking 1 h before close</div>
+                <div style="font-size:10px;">
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);"><span>Monday</span><span>Closed</span></div>
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);"><span>Tuesday</span><span>10:00 – 19:00</span></div>
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);"><span>Wednesday</span><span>10:00 – 19:00</span></div>
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);"><span>Thursday</span><span>10:00 – 19:00</span></div>
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);background:var(--accent);margin:0 -5px;padding-left:5px;padding-right:5px;font-weight:700;"><span>Friday</span><span>10:00 – 19:00</span></div>
+                  <div class="row between" style="padding:5px 0;border-bottom:1px solid var(--line);"><span>Saturday</span><span>09:00 – 17:00</span></div>
+                  <div class="row between" style="padding:5px 0;"><span>Sunday</span><span>09:00 – 15:00</span></div>
+                </div>
+                <div class="callout" style="margin-top:10px;font-size:8px;">Hours are set by the provider and reviewed at approval. A request is not a confirmed booking until the provider replies.</div>
+              </div>
+
+              <div class="card" style="padding:14px;">
+                <div class="row between" style="margin-bottom:3px;"><h3 class="display" style="font-size:22px;margin:0;">Service area<span class="mk">4</span></h3><span class="tiny">~8 km</span></div>
+                <div class="small" style="margin-bottom:8px;">Home studio in Le Plateau; travels to these neighbourhoods.</div>
+                <div class="map" style="height:150px;border-radius:8px;border:1px solid var(--line);">
+                  <div class="water"></div><div class="radius-circle" style="width:92px;height:92px;left:48%;top:53%;transform:translate(-50%,-50%);"></div>
+                  <div class="pin active" style="left:48%;top:53%;font-size:7px;height:18px;min-width:18px;">N</div>
+                  <div class="map-label" style="left:50%;top:63%;transform:translateX(-50%);font-size:6.5px;">LE PLATEAU</div>
+                  <div class="map-attrib">© OSM · approximate area</div>
+                </div>
+                <div class="row wrap" style="gap:4px;margin-top:9px;">
+                  <span class="pill" style="font-size:8px;">Le Plateau</span><span class="pill" style="font-size:8px;">Mile End</span><span class="pill" style="font-size:8px;">Rosemont</span><span class="pill" style="font-size:8px;">Villeray</span><span class="pill" style="font-size:8px;">Little Italy</span>
+                </div>
+                <div class="row" style="gap:6px;margin-top:9px;"><span class="tiny">Travel fee</span><span class="small">+$10 beyond 5 km · stated before confirmation</span></div>
+              </div>
+            </section>
+
+            <!-- reviews -->
+            <section style="margin-bottom:24px;">
+              <div class="row between" style="margin-bottom:10px;"><h2 class="display" style="font-size:26px;margin:0;">Reviews<span class="mk">5</span></h2><span class="link">See all 48 →</span></div>
+              <div style="display:grid;grid-template-columns:180px 1fr;gap:18px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;">
+                <div style="text-align:center;border-right:1px solid var(--line);padding-right:14px;">
+                  <div class="display" style="font-size:44px;line-height:1;">4.9</div>
+                  <div class="rating" style="justify-content:center;margin:4px 0;">★★★★★</div>
+                  <div class="small">48 reviews</div>
+                  <div class="tiny" style="margin-top:5px;color:#244a2c;">41 verified bookings</div>
+                </div>
+                <div style="font-size:9px;">
+                  <div class="row" style="gap:7px;margin-bottom:4px;"><span style="width:30px;">5 ★</span><div style="flex:1;height:6px;background:var(--fill);border-radius:3px;"><div style="width:88%;height:6px;background:var(--ink);border-radius:3px;"></div></div><span>42</span></div>
+                  <div class="row" style="gap:7px;margin-bottom:4px;"><span style="width:30px;">4 ★</span><div style="flex:1;height:6px;background:var(--fill);border-radius:3px;"><div style="width:8%;height:6px;background:var(--ink);border-radius:3px;"></div></div><span>4</span></div>
+                  <div class="row" style="gap:7px;margin-bottom:4px;"><span style="width:30px;">3 ★</span><div style="flex:1;height:6px;background:var(--fill);border-radius:3px;"><div style="width:4%;height:6px;background:var(--ink);border-radius:3px;"></div></div><span>2</span></div>
+                  <div class="row" style="gap:7px;margin-bottom:4px;"><span style="width:30px;">2 ★</span><div style="flex:1;height:6px;background:var(--fill);border-radius:3px;"></div><span>0</span></div>
+                  <div class="row" style="gap:7px;margin-bottom:7px;"><span style="width:30px;">1 ★</span><div style="flex:1;height:6px;background:var(--fill);border-radius:3px;"></div><span>0</span></div>
+                  <div class="small">Most mentioned: <b>gentle</b> · <b>on time</b> · <b>beautiful work</b></div>
+                </div>
+              </div>
+
+              <div class="card" style="padding:13px;margin-bottom:8px;">
+                <div class="row between" style="margin-bottom:5px;">
+                  <div class="row" style="gap:8px;"><div class="avatar">SM</div><div><b style="font-size:10.5px;">Sarah M.</b><div class="tiny">Le Plateau · 2 weeks ago</div></div></div>
+                  <div style="text-align:right;"><span class="rating" style="font-size:9px;">5.0</span><div class="verified" style="font-size:7px;margin-top:2px;">Booked via HOLYDO</div></div>
+                </div>
+                <p style="font-size:10.5px;margin:0;line-height:1.55;">Nadia took her time and explained every step. My knotless braids lasted eight weeks and still looked neat.
+                  The studio is calm and clean, and she was great with my daughter too.</p>
+                <div class="row" style="gap:5px;margin-top:7px;"><span class="pill pill-soft" style="font-size:7px;">Knotless braids</span><span class="tiny">Helpful · 6</span></div>
+              </div>
+
+              <div class="card" style="padding:13px;">
+                <div class="row between" style="margin-bottom:5px;">
+                  <div class="row" style="gap:8px;"><div class="avatar">JR</div><div><b style="font-size:10.5px;">Joséphine R.</b><div class="tiny">Villeray · 1 month ago</div></div></div>
+                  <div style="text-align:right;"><span class="rating" style="font-size:9px;">5.0</span><div class="verified" style="font-size:7px;margin-top:2px;">Booked via HOLYDO</div></div>
+                </div>
+                <p style="font-size:10.5px;margin:0;line-height:1.55;">She came to my place for my daughter’s birthday braids. Punctual, patient, and the style was even better than the photo I sent.</p>
+                <div class="row" style="gap:5px;margin-top:7px;"><span class="pill pill-soft" style="font-size:7px;">Kids braids · travelled</span><span class="tiny">Helpful · 3</span></div>
+              </div>
+            </section>
+
+            <!-- similar -->
+            <section>
+              <div class="row between" style="margin-bottom:9px;"><h2 class="display" style="font-size:24px;margin:0;">Similar providers nearby</h2><a class="link" href="search.html">See all →</a></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div class="card" style="display:flex;">
+                  <div class="ph" data-label="Photo" style="width:92px;flex:0 0 92px;border:0;border-right:1px solid var(--line);"></div>
+                  <div style="padding:9px;"><div class="row" style="gap:4px;"><b style="font-size:10.5px;">Awa’s Hair Atelier</b><span class="verified" style="font-size:6.5px;">Verified</span></div><div class="tiny" style="margin-top:2px;">Salon · Rosemont · 2.4 km</div><div class="row between" style="margin-top:6px;"><span class="rating" style="font-size:8px;">4.8</span><span class="price" style="font-size:9px;">From $80</span></div></div>
+                </div>
+                <div class="card" style="display:flex;">
+                  <div class="ph" data-label="Photo" style="width:92px;flex:0 0 92px;border:0;border-right:1px solid var(--line);"></div>
+                  <div style="padding:9px;"><div class="row" style="gap:4px;"><b style="font-size:10.5px;">Mariam à Domicile</b><span class="verified" style="font-size:6.5px;">Verified</span></div><div class="tiny" style="margin-top:2px;">Travels · Villeray · 2.9 km</div><div class="row between" style="margin-top:6px;"><span class="rating" style="font-size:8px;">5.0</span><span class="price" style="font-size:9px;">From $50</span></div></div>
+                </div>
+              </div>
+            </section>
+          </main>
+
+          <!-- sticky rail -->
+          <aside style="position:sticky;top:14px;">
+            <div class="card" style="padding:15px;box-shadow:5px 5px 0 rgba(27,24,21,.12);">
+              <div class="row between" style="margin-bottom:2px;"><span class="price" style="font-size:20px;">From $120</span><span class="rating">4.9 <small>(48)</small></span></div>
+              <div class="small" style="margin-bottom:11px;">Knotless braids · 3–5 h · hair included</div>
+              <button class="btn btn-primary btn-block" style="font-size:12px;padding:11px;">Request an appointment<span class="mk">6</span></button>
+              <button class="btn btn-block" style="margin-top:6px;font-size:11px;">Message Nadia</button>
+              <div class="row" style="justify-content:center;gap:12px;margin-top:8px;font-size:8.5px;color:var(--muted);"><span>Usually replies in ~2 h</span><span>·</span><span>Free to request</span></div>
+              <div class="divider"></div>
+              <div class="row between" style="font-size:9px;margin-bottom:6px;"><span style="color:var(--muted);">Today</span><b>10:00 – 19:00</b></div>
+              <div class="row between" style="font-size:9px;margin-bottom:6px;"><span style="color:var(--muted);">Service area</span><b>Le Plateau + 8 km</b></div>
+              <div class="row between" style="font-size:9px;margin-bottom:6px;"><span style="color:var(--muted);">At your place?</span><b>Yes, +$10 over 5 km</b></div>
+              <div class="row between" style="font-size:9px;"><span style="color:var(--muted);">Languages</span><b>English · French</b></div>
+              <div class="divider"></div>
+              <div class="row between"><span class="small" style="font-weight:650;">Contact</span><span class="row" style="gap:5px;"><span class="btn btn-sm">☎</span><span class="btn btn-sm">✉</span><span class="btn btn-sm">◎</span></span></div>
+              <div class="tiny" style="margin-top:7px;text-transform:none;letter-spacing:0;font-size:8px;">Phone and messaging unlock after you send a request. This protects Nadia’s privacy and keeps conversations in one place.</div>
+            </div>
+
+            <div class="card" style="padding:13px;margin-top:12px;background:#f4efe4;">
+              <div class="row between" style="margin-bottom:6px;"><b style="font-size:10.5px;">Checked by HOLYDO</b><span class="stamp" style="width:44px;height:44px;font-size:5px;"><b style="font-size:6.5px;">HOLYDO</b>APPROVED</span></div>
+              <div class="stack" style="gap:5px;font-size:8.5px;">
+                <span class="check">Identity &amp; contact confirmed</span>
+                <span class="check">4 services &amp; prices reviewed</span>
+                <span class="check">9 photos checked</span>
+                <span class="check">Approved 13 Nov 2026</span>
+              </div>
+              <div class="tiny" style="margin-top:7px;text-decoration:underline;">How approval works →</div>
+            </div>
+
+            <div class="callout" style="margin-top:12px;background:#f6efe2;border-color:var(--accent);color:#5e4a25;"><b>Safety:</b> never send a deposit before the provider confirms the appointment details in writing. Report anything that feels off.</div>
+          </aside>
+        </div>
+
+        <footer style="border-top:1.5px solid var(--ink);padding:20px 24px;display:grid;grid-template-columns:1.3fr .8fr .8fr;gap:20px;">
+          <div><div class="logo"><b>HOLYDO</b><span>MARKET</span></div><p class="small" style="max-width:250px;margin:7px 0 0;">Local services, humanly verified. Montréal, QC.</p></div>
+          <div class="small" style="line-height:1.9;"><b style="font-size:9px;">EXPLORE</b><br>Braids<br>Beauty<br>Cleaning</div>
+          <div class="small" style="line-height:1.9;"><b style="font-size:9px;">TRUST</b><br>How approval works<br>Safety<br>Contact</div>
+        </footer>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h4><span class="n">1</span>Identity in one glance</h4><p>Verified + independent + open state sit above the name. The name is the page's H1; category, neighbourhood, distance and rating follow. A customer arriving from search should immediately recognise the card they clicked.</p></div>
+      <div class="note"><h4><span class="n">2</span>Prices are real and specific</h4><p>Every service has a name, starting price, duration and short inclusion note. “From” is used where length or hair changes the price. The request flow confirms the final price in writing — no surprise charges.</p></div>
+      <div class="note"><h4><span class="n">3</span>Hours communicate availability, not booking</h4><p>Today is highlighted; closed days are explicit. “Open now” is derived from hours, not hand-set. The page says clearly that a request is not yet a confirmed appointment.</p></div>
+      <div class="note"><h4><span class="n">4</span>Travel area without exposing a home</h4><p>The map shows an approximate radius around the neighbourhood, never an exact home pin. Neighbourhood names are listed, with a stated travel fee. The customer knows whether the provider will come to them before requesting.</p></div>
+      <div class="note"><h4><span class="n">5</span>Reviews tied to transactions</h4><p>Only signed-in customers can review; a “Booked via HOLYDO” label appears when a completed request exists. Ratings show count and distribution, not just a score. Providers can flag a review, not delete it.</p></div>
+      <div class="note"><h4><span class="n">6</span>Sticky request rail</h4><p>On desktop the request card remains visible while reading services, hours and reviews. The primary CTA opens a sheet with service, date/window and contact details. “Message” is secondary so requests remain structured.</p></div>
+      <div class="note"><h4><span class="n">7</span>Approval is part of the page</h4><p>The approval card shows what was checked and when, not just a badge. It links to a plain-language explanation. If a provider is suspended, this page returns 404 and requests stop immediately.</p></div>
+      <div class="note"><h4><span class="n">8</span>States &amp; SEO</h4><ul><li>Not approved / suspended → 404 with support link.</li><li>No reviews yet → “New on HOLYDO” with verified profile note.</li><li>No photos → generic category cover, never a stock face.</li><li>Structured data: LocalBusiness + Service + AggregateRating, canonical URL, share image.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MOBILE
+       ============================================================ -->
+  <section class="wf-section" id="mobile">
+    <div class="wf-section-head">
+      <h2><span>03B</span>Mobile</h2>
+      <p class="intent">Photo first, then identity, then a persistent request bar. The page is long by
+        nature; a compact anchor row (Services · Hours · Reviews) lets people jump without a maze.</p>
+    </div>
+
+    <div style="display:flex;gap:30px;align-items:flex-start;flex-wrap:wrap;">
+
+      <div class="frame-mobile">
+        <div class="statusbar"><span>9:41</span><span class="pills"><span>▮▮▮</span><span>WiFi</span><i></i></span></div>
+
+        <!-- gallery -->
+        <div style="position:relative;">
+          <div class="ph" data-label="Photo · Nadia at work" style="height:220px;border:0;border-bottom:1px solid var(--line);"></div>
+          <div class="row" style="position:absolute;top:9px;left:9px;right:9px;justify-content:space-between;">
+            <span class="btn btn-icon" style="width:28px;height:28px;background:var(--surface);">‹</span>
+            <span class="row" style="gap:5px;"><span class="btn btn-icon" style="width:28px;height:28px;background:var(--surface);">♡</span><span class="btn btn-icon" style="width:28px;height:28px;background:var(--surface);">↗</span></span>
+          </div>
+          <div style="position:absolute;bottom:7px;left:0;right:0;display:flex;justify-content:center;gap:4px;"><span style="width:5px;height:5px;border-radius:50%;background:var(--paper);"></span><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);"></span><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);"></span><span style="width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.5);"></span></div>
+          <span style="position:absolute;right:8px;bottom:18px;background:var(--surface);border:1px solid var(--ink);border-radius:99px;padding:2px 6px;font-size:6.5px;">9 photos</span>
+        </div>
+
+        <!-- identity -->
+        <div style="padding:11px 14px 0;">
+          <div class="row wrap" style="gap:4px;margin-bottom:4px;"><span class="verified" style="font-size:7px;">Verified by HOLYDO</span><span class="pill pill-soft" style="font-size:7px;padding:1px 5px;">Independent</span><span class="pill" style="font-size:7px;padding:1px 5px;background:#e3f0e2;border-color:#a9c2a8;">Open until 19:00</span></div>
+          <h1 class="display" style="font-size:26px;margin:0 0 2px;">Nadia Braids Studio<span class="mk">1</span></h1>
+          <div class="row wrap" style="gap:6px;font-size:8.5px;color:var(--muted);">
+            <span class="rating" style="font-size:9px;color:var(--ink);">4.9 <small>(48)</small></span><span>Braids</span><span class="dot"></span><span>Le Plateau</span><span class="dot"></span><b style="color:var(--ink);">1.2 km</b>
+          </div>
+          <p style="font-size:9.5px;color:#5c554a;line-height:1.55;margin:7px 0;">I’m Nadia, a braider working from my home studio in Le Plateau. Knotless braids, protective styles and gentle children’s braiding.</p>
+          <div class="row wrap" style="gap:4px;margin-bottom:8px;">
+            <span class="pill" style="font-size:7px;padding:2px 5px;">⌂ Home studio</span><span class="pill" style="font-size:7px;padding:2px 5px;">⌖ Travels 8 km</span><span class="pill" style="font-size:7px;padding:2px 5px;">◎ ~2 h reply</span><span class="pill" style="font-size:7px;padding:2px 5px;">EN · FR</span>
+          </div>
+        </div>
+
+        <!-- anchor nav -->
+        <div class="row" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 14px;gap:13px;font-size:8px;font-weight:650;background:var(--surface);">
+          <span style="padding:7px 0;border-bottom:2px solid var(--ink);">Services</span><span style="padding:7px 0;color:var(--muted);">Hours</span><span style="padding:7px 0;color:var(--muted);">Area</span><span style="padding:7px 0;color:var(--muted);">Reviews (48)</span><span style="padding:7px 0;color:var(--muted);">Photos</span>
+        </div>
+
+        <!-- services -->
+        <div style="padding:11px 14px;">
+          <div class="row between" style="margin-bottom:6px;"><b style="font-size:11.5px;">Services &amp; prices<span class="mk">2</span></b><span class="tiny" style="font-size:7px;">CAD · from</span></div>
+          <div class="card" style="padding:8px;margin-bottom:6px;">
+            <div class="row between"><div><b style="font-size:9.5px;">Knotless braids</b><div class="tiny" style="font-size:6.5px;">3–5 h · hair included</div></div><div style="text-align:right;"><b style="font-size:9px;">$120</b><div class="tiny" style="font-size:6px;">most requested</div></div></div>
+            <div class="row between" style="margin-top:6px;"><span class="pill pill-soft" style="font-size:6px;">Gentle</span><span class="btn btn-sm" style="font-size:7px;padding:3px 8px;">Request</span></div>
+          </div>
+          <div class="card" style="padding:8px;margin-bottom:6px;">
+            <div class="row between"><div><b style="font-size:9.5px;">Box braids</b><div class="tiny" style="font-size:6.5px;">3–4 h · hair provided</div></div><div style="text-align:right;"><b style="font-size:9px;">$90</b></div></div>
+            <div class="row between" style="margin-top:6px;"><span class="pill pill-soft" style="font-size:6px;">Small · medium · jumbo</span><span class="btn btn-sm" style="font-size:7px;padding:3px 8px;">Request</span></div>
+          </div>
+          <div class="card" style="padding:8px;margin-bottom:6px;">
+            <div class="row between"><div><b style="font-size:9.5px;">Kids braids</b><div class="tiny" style="font-size:6.5px;">1.5–2.5 h · under 12</div></div><div style="text-align:right;"><b style="font-size:9px;">$55</b></div></div>
+            <div class="row between" style="margin-top:6px;"><span class="pill pill-soft" style="font-size:6px;">Gentle</span><span class="btn btn-sm" style="font-size:7px;padding:3px 8px;">Request</span></div>
+          </div>
+          <div class="row between" style="margin-top:7px;"><span class="tiny" style="font-size:7px;">No deposit · card or cash on the day</span><span class="tiny" style="font-size:7px;text-decoration:underline;">All 4 →</span></div>
+        </div>
+
+        <!-- hours + area -->
+        <div style="padding:0 14px 11px;">
+          <div class="card" style="padding:10px;margin-bottom:8px;">
+            <div class="row between"><b style="font-size:10px;">Opening hours<span class="mk">3</span></b><span class="pill" style="font-size:6.5px;background:#e3f0e2;border-color:#a9c2a8;">Open now</span></div>
+            <div class="row between" style="font-size:8px;margin-top:5px;"><span>Today · Friday</span><b>10:00 – 19:00</b></div>
+            <div class="row between" style="font-size:8px;margin-top:3px;color:var(--muted);"><span>Saturday</span><span>09:00 – 17:00</span></div>
+            <div class="tiny" style="margin-top:4px;font-size:6.5px;">Appointments only · <span style="text-decoration:underline;">All hours</span></div>
+          </div>
+          <div class="card" style="padding:10px;">
+            <div class="row between"><b style="font-size:10px;">Service area<span class="mk">4</span></b><span class="tiny" style="font-size:6.5px;">~8 km</span></div>
+            <div class="map" style="height:86px;border-radius:6px;margin-top:5px;border:1px solid var(--line);">
+              <div class="water"></div><div class="radius-circle" style="width:58px;height:58px;left:48%;top:52%;transform:translate(-50%,-50%);"></div>
+              <div class="pin active" style="left:48%;top:52%;font-size:6px;height:15px;min-width:15px;">N</div>
+              <div class="map-attrib" style="font-size:5px;">© OSM</div>
+            </div>
+            <div class="row wrap" style="gap:3px;margin-top:5px;"><span class="pill" style="font-size:6.5px;padding:1px 4px;">Le Plateau</span><span class="pill" style="font-size:6.5px;padding:1px 4px;">Mile End</span><span class="pill" style="font-size:6.5px;padding:1px 4px;">Rosemont</span><span class="pill" style="font-size:6.5px;padding:1px 4px;">+2</span></div>
+          </div>
+        </div>
+
+        <!-- reviews -->
+        <div style="padding:0 14px 12px;">
+          <div class="row between" style="margin-bottom:5px;"><b style="font-size:11px;">Reviews<span class="mk">5</span></b><span class="tiny" style="font-size:7px;">See all 48 →</span></div>
+          <div class="row" style="gap:8px;align-items:center;margin-bottom:6px;"><span class="display" style="font-size:30px;line-height:1;">4.9</span><div><div class="rating" style="font-size:8px;">★★★★★</div><div class="tiny" style="font-size:6.5px;">48 reviews · 41 verified</div></div><span class="verified" style="font-size:6.5px;margin-left:auto;">Booked only</span></div>
+          <div class="card" style="padding:8px;margin-bottom:5px;">
+            <div class="row between"><div class="row" style="gap:5px;"><div class="avatar" style="width:18px;height:18px;font-size:5px;">SM</div><b style="font-size:8px;">Sarah M.</b></div><span class="rating" style="font-size:7px;">5.0</span></div>
+            <p style="font-size:7.5px;line-height:1.5;margin:4px 0 0;">Nadia took her time and explained every step. My braids lasted eight weeks and still looked neat.</p>
+          </div>
+          <div class="card" style="padding:8px;">
+            <div class="row between"><div class="row" style="gap:5px;"><div class="avatar" style="width:18px;height:18px;font-size:5px;">JR</div><b style="font-size:8px;">Joséphine R.</b></div><span class="rating" style="font-size:7px;">5.0</span></div>
+            <p style="font-size:7.5px;line-height:1.5;margin:4px 0 0;">Punctual, patient, and the style was even better than the photo I sent.</p>
+          </div>
+        </div>
+
+        <!-- safety note -->
+        <div style="margin:0 14px 11px;background:#f6efe2;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:7px;color:#5e4a25;">
+          <b>Checked by HOLYDO:</b> identity, 4 services, 9 photos. Never send a deposit before written confirmation.
+        </div>
+
+        <!-- sticky CTA -->
+        <div style="border-top:1.5px solid var(--ink);background:var(--surface);padding:8px 12px;display:flex;gap:7px;align-items:center;">
+          <div style="flex:1;"><div class="tiny" style="font-size:6px;">FROM</div><b style="font-size:12px;">$120</b><span style="font-size:6.5px;color:var(--muted);"> · 3–5 h</span></div>
+          <span class="btn" style="font-size:8px;padding:6px 9px;">Message</span>
+          <button class="btn btn-primary" style="font-size:9px;padding:8px 12px;">Request appointment<span class="mk" style="width:13px;height:13px;font-size:7px;margin-left:3px;">6</span></button>
+        </div>
+        <div class="mobile-home-indicator"><i></i></div>
+      </div>
+
+      <!-- booking sheet inset + rationale -->
+      <div style="flex:1;min-width:330px;max-width:620px;">
+        <div class="tiny" style="margin-bottom:8px;">Booking request sheet · opened by the sticky CTA</div>
+        <div class="inset" style="width:100%;max-width:380px;">
+          <h4><span>Request · Nadia Braids Studio</span><span>✕</span></h4>
+          <div style="border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:10px;">
+            <div class="tiny" style="margin-bottom:3px;">Step 1 of 2 · Details</div>
+            <div class="row between" style="margin-bottom:8px;"><b style="font-size:11px;">Knotless braids</b><span class="price" style="font-size:11px;">From $120</span></div>
+            <div class="field"><label style="font-size:8px;">Preferred date</label><div class="input" style="padding:6px 8px;font-size:9px;"><span>Sat, 22 Nov 2026</span><span style="margin-left:auto;">▾</span></div></div>
+            <div class="field"><label style="font-size:8px;">Preferred window</label><div class="row" style="gap:4px;"><span class="pill on" style="font-size:7px;">Morning</span><span class="pill" style="font-size:7px;">Afternoon</span><span class="pill" style="font-size:7px;">Evening</span></div></div>
+            <div class="field"><label style="font-size:8px;">Your name</label><div class="input" style="padding:6px 8px;font-size:9px;">Amina K.</div></div>
+            <div class="field" style="margin-bottom:6px;"><label style="font-size:8px;">Phone or email</label><div class="input" style="padding:6px 8px;font-size:9px;">amina@example.com</div></div>
+            <div class="field" style="margin-bottom:5px;"><label style="font-size:8px;">Anything Nadia should know?</label><div class="input textarea" style="height:42px;padding:6px 8px;font-size:8px;">First time, medium length, sensitive scalp…</div></div>
+            <div class="row" style="gap:4px;margin:7px 0;"><span style="font-size:7px;color:var(--muted);">✓ No payment now · you’ll confirm details with Nadia</span></div>
+            <button class="btn btn-primary btn-block" style="font-size:9px;">Send request</button>
+            <div class="tiny" style="text-align:center;margin-top:4px;font-size:6.5px;">Nadia usually replies within 2 hours</div>
+          </div>
+        </div>
+
+        <div class="notes" style="grid-template-columns:1fr;margin-top:18px;">
+          <div class="note"><h4><span class="n">A</span>Two-step request, no account wall</h4><p>Step 1 captures service, date, window and contact. Step 2 is a confirmation/review of the request. An account is offered after sending, not required before — reducing drop-off while still allowing the provider to respond by email.</p></div>
+          <div class="note"><h4><span class="n">B</span>Contact details unlock after request</h4><p>Showing a phone number on a public profile invites spam and moves conversations off-platform. Instead, the provider receives the request and can choose to call, text, or use the contact details the customer supplied.</p></div>
+          <div class="note"><h4><span class="n">C</span>Mobile anchors</h4><p>The anchor row jumps to Services, Hours, Area, Reviews and Photos. Sticky request bar appears after the first scroll and stays above the home indicator. The page does not use the bottom tab bar to keep the CTA uncluttered.</p></div>
+          <div class="note"><h4><span class="n">D</span>What must be true before launch</h4><p>Approved-only 404s, structured service/price data, timezone-safe hours, approximate map circle, verified-review rules, rate-limited requests, and a clear cancellation/response policy. These are product requirements, not polish.</p></div>
+        </div>
+
+        <div class="callout" style="margin-top:14px;"><b>Design note:</b> the profile should feel authored by the provider. Her words, her photos, her prices — HOLYDO provides the frame and the verification, not a generic template voice.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <a class="link" href="search.html">← Search results</a>
+    <span class="tiny">HOLYDO MARKET · Wireframe 03 / 04 · Provider profile</span>
+    <a class="link" href="join.html">Next: Provider sign-up →</a>
+  </footer>
+</div>
+</body>
+</html>

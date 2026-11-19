@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HOLYDO MARKET — Wireframes & first-version review</title>
+<link rel="stylesheet" href="wireframe.css">
+<style>
+  .hero { display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:center; padding:26px 0 46px; border-bottom:1.5px solid var(--ink); }
+  .hero h1 { font-family:var(--serif); font-size:clamp(48px,7vw,92px); line-height:.9; letter-spacing:-.035em; margin:8px 0 16px; }
+  .hero p { font-size:15px; color:#4e483f; max-width:560px; }
+  .status-card { background:var(--ink); color:var(--paper); border-radius:20px; padding:22px; transform:rotate(1.2deg); box-shadow:8px 8px 0 rgba(27,24,21,.16); }
+  .status-card .row { font-size:11px; padding:7px 0; border-bottom:1px solid rgba(255,255,255,.16); }
+  .status-card .row:last-child { border:0; }
+  .status-card b { color:var(--accent); }
+  .gallery { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin:24px 0 10px; }
+  .screen-card { background:var(--surface); border:1.5px solid var(--ink); border-radius:16px; overflow:hidden; box-shadow:5px 5px 0 rgba(27,24,21,.12); display:flex; flex-direction:column; }
+  .screen-card .top { padding:14px 16px 11px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .screen-card h3 { margin:0; font-family:var(--serif); font-size:24px; letter-spacing:-.01em; }
+  .screen-card .route { font-family:var(--mono); font-size:8.5px; color:var(--muted); margin-top:2px; }
+  .previews { display:grid; grid-template-columns:1fr 128px; gap:10px; padding:14px; background:#f4efe4; }
+  .preview { border:1px solid var(--ink); border-radius:7px; overflow:hidden; background:var(--paper); position:relative; }
+  .preview img { width:100%; height:330px; object-fit:cover; object-position:top; display:block; }
+  .preview.mob img { height:330px; object-fit:cover; object-position:top; }
+  .preview .tag { position:absolute; top:6px; left:6px; font-family:var(--mono); font-size:7px; letter-spacing:.08em; background:var(--surface); border:1px solid var(--ink); padding:2px 5px; border-radius:3px; }
+  .screen-card .bottom { padding:12px 16px; display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; border-top:1px solid var(--line); }
+  .screen-card .bottom .links { display:flex; gap:10px; font-size:10px; }
+  .screen-card .bottom a { text-decoration:underline; text-underline-offset:3px; }
+  .palette { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:12px; }
+  .sw { border:1px solid var(--ink); border-radius:9px; padding:9px; min-height:78px; display:flex; flex-direction:column; justify-content:flex-end; font-size:9px; }
+  .sw b { display:block; font-size:10px; }
+  .sw code { font-family:var(--mono); font-size:7.5px; opacity:.7; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:14px; }
+  .panel { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:17px 19px; }
+  .panel h3 { margin:0 0 8px; font-family:var(--serif); font-size:23px; }
+  .panel p, .panel li { font-size:11.5px; color:#4b453c; line-height:1.6; }
+  .panel ul, .panel ol { margin:8px 0 0; padding-left:18px; }
+  .decision { border-left:3px solid var(--clay); background:#fbeee8; padding:13px 16px; border-radius:0 10px 10px 0; margin-top:10px; font-size:11.5px; }
+  .decision b { color:var(--clay); }
+  @media (max-width:900px) {
+    .hero, .cols, .gallery { grid-template-columns:1fr; }
+    .palette { grid-template-columns:repeat(3,1fr); }
+    .previews { grid-template-columns:1fr 100px; }
+    .preview img, .preview.mob img { height:240px; }
+  }
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-head" style="max-width:none;">
+    <div class="doc-kicker">Design review · Approved · v1 built</div>
+    <div class="hero">
+      <div>
+        <h1>HOLYDO<br>MARKET</h1>
+        <p>Local services, humanly verified. A first-version concept for a mobile-first marketplace that
+          connects neighbourhood customers with independent providers and small businesses.</p>
+        <div class="row wrap" style="gap:7px;margin-top:16px;">
+          <span class="pill on">4 wireframes</span>
+          <span class="pill">Desktop + mobile</span>
+          <span class="pill">Approval gate</span>
+          <span class="pill">No product code yet</span>
+        </div>
+        <div class="row wrap" style="gap:14px;margin-top:20px;">
+          <a class="btn btn-primary" href="../docs/V1-PLAN.md">Read the v1 plan</a>
+          <a class="btn" href="../docs/REPOSITORY-REVIEW.md">Repository review</a>
+          <a class="btn" href="../docs/WIREFRAMES.md">Wireframe notes</a>
+        </div>
+      </div>
+      <div class="status-card">
+        <div class="tiny" style="color:#cfd9ca;margin-bottom:9px;">REVIEW STATUS</div>
+        <div class="row between"><span>Repository</span><b>Empty · greenfield</b></div>
+        <div class="row between"><span>Product code</span><b>v1 built</b></div>
+        <div class="row between"><span>Plan</span><b>Approved</b></div>
+        <div class="row between"><span>Wireframes</span><b>Approved</b></div>
+        <div class="row between"><span>Next step</span><span>Verify the running app</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="callout" style="margin:26px 0 0;font-size:11px;">
+    <b>Implemented:</b> the approved design became the running v1 app. This page remains the
+    wireframe record — open the project README for setup, demo accounts and verified scope.
+  </div>
+
+  <!-- GALLERY -->
+  <section class="wf-section" style="margin-top:38px;">
+    <div class="wf-section-head">
+      <h2><span>THE SET</span>Four screens, two sizes</h2>
+      <p class="intent">Each page is drawn at 1180 px desktop and 390 px mobile, with numbered annotations.
+        Click through to the full wireframe or open the high-resolution PNGs.</p>
+    </div>
+
+    <div class="gallery">
+      <!-- HOME -->
+      <article class="screen-card">
+        <div class="top">
+          <div><h3>01 · Homepage</h3><div class="route">/</div></div>
+          <span class="pill" style="font-size:8px;">Search · categories · trust</span>
+        </div>
+        <div class="previews">
+          <div class="preview"><span class="tag">DESKTOP</span><img src="screens/home-desktop.png" alt="Homepage desktop wireframe"></div>
+          <div class="preview mob"><span class="tag">MOBILE</span><img src="screens/home-mobile.png" alt="Homepage mobile wireframe"></div>
+        </div>
+        <div class="bottom">
+          <span class="small">One search, eight categories, nearby proof, approval story.</span>
+          <span class="links"><a href="home.html">Open wireframe</a><a href="screens/home-desktop.png">PNG</a></span>
+        </div>
+      </article>
+
+      <!-- SEARCH -->
+      <article class="screen-card">
+        <div class="top">
+          <div><h3>02 · Search results</h3><div class="route">/search?q=braids&amp;hood=le-plateau</div></div>
+          <span class="pill" style="font-size:8px;">Filters · map · list</span>
+        </div>
+        <div class="previews">
+          <div class="preview"><span class="tag">DESKTOP</span><img src="screens/search-desktop.png" alt="Search results desktop wireframe"></div>
+          <div class="preview mob"><span class="tag">MOBILE</span><img src="screens/search-mobile.png" alt="Search results mobile wireframe"></div>
+        </div>
+        <div class="bottom">
+          <span class="small">Distance, price, verification and service setting at a glance.</span>
+          <span class="links"><a href="search.html">Open wireframe</a><a href="screens/search-desktop.png">PNG</a></span>
+        </div>
+      </article>
+
+      <!-- PROVIDER -->
+      <article class="screen-card">
+        <div class="top">
+          <div><h3>03 · Provider profile</h3><div class="route">/providers/nadia-braids-studio</div></div>
+          <span class="pill" style="font-size:8px;">Services · hours · reviews</span>
+        </div>
+        <div class="previews">
+          <div class="preview"><span class="tag">DESKTOP</span><img src="screens/provider-desktop.png" alt="Provider profile desktop wireframe"></div>
+          <div class="preview mob"><span class="tag">MOBILE</span><img src="screens/provider-mobile.png" alt="Provider profile mobile wireframe"></div>
+        </div>
+        <div class="bottom">
+          <span class="small">A real storefront, with a persistent request action.</span>
+          <span class="links"><a href="provider.html">Open wireframe</a><a href="screens/provider-desktop.png">PNG</a></span>
+        </div>
+      </article>
+
+      <!-- JOIN -->
+      <article class="screen-card">
+        <div class="top">
+          <div><h3>04 · Provider sign-up</h3><div class="route">/provider/join</div></div>
+          <span class="pill" style="font-size:8px;">7 steps · approval</span>
+        </div>
+        <div class="previews">
+          <div class="preview"><span class="tag">DESKTOP</span><img src="screens/join-desktop.png" alt="Provider sign-up desktop wireframe"></div>
+          <div class="preview mob"><span class="tag">MOBILE</span><img src="screens/join-mobile.png" alt="Provider sign-up mobile wireframe"></div>
+        </div>
+        <div class="bottom">
+          <span class="small">Draft autosave, service settings, human review, pending state.</span>
+          <span class="links"><a href="join.html">Open wireframe</a><a href="screens/join-desktop.png">PNG</a></span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- DESIGN -->
+  <section class="wf-section">
+    <div class="wf-section-head">
+      <h2><span>DIRECTION</span>The neighbourhood noticeboard, reimagined</h2>
+      <p class="intent">Warm paper, a confident editorial serif, real photography, ink borders and
+        stamp-like verification. Friendly and local; precise enough to trust with an appointment.</p>
+    </div>
+    <div class="panel">
+      <h3>Colour tokens</h3>
+      <p>Final values, not placeholders. The wireframes use a deliberately reduced palette; the build
+        will apply these tokens throughout.</p>
+      <div class="palette">
+        <div class="sw" style="background:#17130f;color:#f6f0e4;"><b>Ink</b><code>#17130F</code></div>
+        <div class="sw" style="background:#f6f0e4;"><b>Paper</b><code>#F6F0E4</code></div>
+        <div class="sw" style="background:#fffdf8;"><b>Surface</b><code>#FFFDF8</code></div>
+        <div class="sw" style="background:#f2b33d;"><b>Marigold</b><code>#F2B33D</code></div>
+        <div class="sw" style="background:#c9502e;color:#fffdf8;"><b>Clay</b><code>#C9502E</code></div>
+        <div class="sw" style="background:#173d2e;color:#f6f0e4;"><b>Pine</b><code>#173D2E</code></div>
+      </div>
+      <div class="cols">
+        <div>
+          <h3 style="font-size:18px;margin-top:18px;">Type</h3>
+          <p><span style="font-family:var(--serif);font-size:26px;color:var(--ink);">Fraunces</span> for display and headlines — expressive, editorial, not corporate.
+            <span style="font-weight:650;">Inter</span> for UI and body — quiet, legible, excellent at small sizes.</p>
+          <h3 style="font-size:18px;margin-top:18px;">Shape &amp; motion</h3>
+          <p>18–28 px radii, 1 px ink borders, sticker-offset shadows on feature cards. 150–250 ms ease-out;
+            no ambient animation, no glassmorphism. Mobile uses a bottom tab bar, sticky actions and sheets.</p>
+        </div>
+        <div>
+          <h3 style="font-size:18px;margin-top:18px;">What we borrow — structure only</h3>
+          <ul>
+            <li><b>Parkbench:</b> neighbourhoods as destinations; warm, human community tone.</li>
+            <li><b>The Gigs:</b> browse → compare → profile → request marketplace logic.</li>
+            <li><b>Sparker:</b> category entry points, listings + map, mobile-first directory cards.</li>
+          </ul>
+          <p style="margin-top:8px;">No layout, copy, logo, image, or code is copied from any reference.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOURNEYS -->
+  <section class="wf-section">
+    <div class="wf-section-head">
+      <h2><span>FLOWS</span>Two journeys, one approval gate</h2>
+      <p class="intent">The complete step-by-step journeys, including edge states, are in the v1 plan.
+        These are the paths the build will be tested against.</p>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <h3>Customer</h3>
+        <ol>
+          <li>Land on the homepage → choose a category or search a service.</li>
+          <li>Set city / neighbourhood, or explicitly use device location.</li>
+          <li>Compare results: distance, price, verified state, service setting.</li>
+          <li>Open a profile: photos, about, services, hours, travel area, reviews.</li>
+          <li>Request an appointment: service, date, window, contact, note.</li>
+          <li>Confirmation → provider accepts/declines → arrange details.</li>
+          <li>After completion, leave a verified review.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h3>Service provider</h3>
+        <ol>
+          <li>Discover “For providers” → create a free account.</li>
+          <li>Choose independent or business.</li>
+          <li>Add profile, services/prices, photos, location, hours, service settings.</li>
+          <li>Review and submit for approval (draft autosaves throughout).</li>
+          <li>Admin approves or rejects with a note; profile stays private until approved.</li>
+          <li>Dashboard: manage requests, edit services/hours, update availability.</li>
+          <li>Receive reviews; keep the profile accurate.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPROVAL -->
+  <section class="wf-section">
+    <div class="wf-section-head">
+      <h2><span>GATE</span>Approve the direction before I build</h2>
+      <p class="intent">Nothing in the product has been coded yet. Once approved, I will build M1–M5
+        and test both journeys end-to-end.</p>
+    </div>
+    <div class="cols">
+      <div class="panel">
+        <h3>What I need confirmed</h3>
+        <div class="decision"><b>1 · Wireframes &amp; scope</b><br>Approve the four screens, the mobile-first direction, and the v1 scope as drawn.</div>
+        <div class="decision"><b>2 · Launch market</b><br>I propose seeding <b>Montréal</b> (Le Plateau, Rosemont, Villeray, Little Burgundy). It is one seed file to change.</div>
+        <div class="decision"><b>3 · Booking model</b><br>V1 sends <b>appointment requests</b> the provider confirms. No payments, no real-time calendar.</div>
+      </div>
+      <div class="panel">
+        <h3>Build sequence after approval</h3>
+        <ul>
+          <li><b>M1 Foundation</b> — Next.js, Prisma schema, tokens, seed data, README.</li>
+          <li><b>M2 Discovery</b> — home, search/filters/map, provider profile.</li>
+          <li><b>M3 Supply</b> — auth, 7-step onboarding, provider dashboard.</li>
+          <li><b>M4 Trust &amp; demand</b> — admin approval, requests inbox, reviews.</li>
+          <li><b>M5 Polish</b> — PWA, states, accessibility, Playwright journeys.</li>
+        </ul>
+        <p style="margin-top:10px;">Each milestone ends with lint, typecheck, and a runnable build. Major changes are explained in the README and in my update.</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;font-size:11px;">
+      <b>To approve:</b> reply “approved” (with any changes), or answer the three questions above.
+      I will not build the interface until you confirm.
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span class="tiny">HOLYDO MARKET · First-version design review · 2026</span>
+    <span class="tiny"><a href="../docs/REPOSITORY-REVIEW.md">Repository review</a> · <a href="../docs/V1-PLAN.md">V1 plan</a> · <a href="../docs/WIREFRAMES.md">Wireframe notes</a></span>
+  </footer>
+</div>
+</body>
+</html>

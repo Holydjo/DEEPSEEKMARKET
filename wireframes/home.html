@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HOLYDO MARKET — Wireframe 01 · Homepage</title>
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+<div class="doc">
+
+  <header class="doc-head">
+    <div class="doc-kicker">Wireframe 01 / 04 · Public</div>
+    <h1 class="doc-title">Homepage</h1>
+    <p class="doc-intro">The job of this page is to turn a vague need (“I need my hair done”) into a
+      located search in one action. Categories and nearby providers prove the marketplace is alive;
+      the approval story earns trust before the first click.</p>
+    <div class="doc-meta">
+      <span>Mobile-first · 390 px</span><span>Desktop · 1180 px</span><span>Route · /</span><span>States · default / returning / empty</span>
+    </div>
+  </header>
+
+  <nav class="doc-nav">
+    <a class="on" href="home.html">01 · Homepage</a>
+    <a href="search.html">02 · Search results</a>
+    <a href="provider.html">03 · Provider profile</a>
+    <a href="join.html">04 · Provider sign-up</a>
+    <a href="index.html">All wireframes</a>
+    <a href="../docs/WIREFRAMES.md">Notes</a>
+  </nav>
+
+  <div class="legend">
+    <b>Legend</b>
+    <span><i class="swatch" style="background:#f3b846"></i>Primary action</span>
+    <span><i class="swatch" style="background:#fffdf8"></i>Surface</span>
+    <span><i class="swatch" style="background:#dbd4c7"></i>Content / image placeholder</span>
+    <span><span class="mk">n</span> Annotation → notes below</span>
+    <span>Type is representative; final type scale is still open.</span>
+  </div>
+
+  <!-- ============================================================
+       DESKTOP
+       ============================================================ -->
+  <section class="wf-section" id="desktop">
+    <div class="wf-section-head">
+      <h2><span>01A</span>Desktop</h2>
+      <p class="intent">Above the fold: one headline, one search, one trust signal. Everything below
+        the fold alternates proof of supply (providers, categories, neighbourhoods) with the provider invitation.</p>
+    </div>
+
+    <div class="sheet-label"><b>1180 × ~1720</b><span>Scroll ↓</span></div>
+
+    <div class="frame-desktop">
+      <div class="browser-bar">
+        <div class="browser-dots"><i></i><i></i><i></i></div>
+        <div class="browser-url">holydomarket.ca — find local help, close to home</div>
+        <div class="browser-actions"></div>
+      </div>
+
+      <div class="desk">
+        <!-- announcement -->
+        <div style="display:flex;justify-content:center;gap:22px;align-items:center;padding:7px 20px;background:var(--ink);color:var(--paper);font-size:9.5px;font-family:var(--mono);letter-spacing:.04em;">
+          <span>NOW LIVE IN MONTRÉAL</span>
+          <span style="opacity:.5">•</span>
+          <span>312 VERIFIED PROVIDERS ACROSS 24 NEIGHBOURHOODS</span>
+          <span style="opacity:.5">•</span>
+          <span style="text-decoration:underline;text-underline-offset:2px;">LIST YOUR SERVICE →</span>
+        </div>
+
+        <!-- header -->
+        <header class="site-header">
+          <div class="logo"><b>HOLYDO</b><span>MARKET</span></div>
+          <nav class="nav">
+            <span><b>Discover</b></span><span>Categories</span><span>How it works</span><span>For providers</span>
+          </nav>
+          <div class="header-right">
+            <span class="loc-pill">Le Plateau, Montréal <span style="opacity:.5">▾</span></span>
+            <a class="btn btn-ghost" href="#">Log in</a>
+            <a class="btn btn-primary" href="join.html">List your service</a>
+          </div>
+        </header>
+
+        <!-- hero -->
+        <section style="display:grid;grid-template-columns:1.06fr .94fr;gap:38px;padding:36px 34px 30px;align-items:center;">
+          <div>
+            <div class="eyebrow">Local services, humanly verified</div>
+            <h1 class="display h1">Good work,<br>right around<br>the corner.</h1>
+            <p class="lede" style="max-width:430px;">Hair, braids, beauty, cleaning, repairs — find trusted
+              people and small businesses near you. See real prices, real photos, and a real person behind every profile.</p>
+
+            <div class="searchbar" style="max-width:600px;">
+              <div class="search-seg" style="flex:1.2;">
+                <span class="ico">⌕</span>
+                <div><small>What do you need?</small><strong>Braids &amp; protective styles</strong></div>
+              </div>
+              <div class="search-seg" style="flex:1;">
+                <span class="ico">⌖</span>
+                <div><small>Where?</small><strong>Le Plateau, Montréal</strong></div>
+              </div>
+              <button class="btn btn-primary search-go">Search</button>
+            </div>
+
+            <div class="row wrap" style="margin-top:11px;gap:6px;">
+              <span class="tiny" style="margin-right:3px;">Popular</span>
+              <span class="pill">Knotless braids</span>
+              <span class="pill">Deep cleaning</span>
+              <span class="pill">Phone repair</span>
+              <span class="pill">Silk press</span>
+              <span class="pill">Move-out clean</span>
+            </div>
+          </div>
+
+          <!-- collage -->
+          <div style="position:relative;height:388px;">
+            <div class="ph" data-label="Photo · braider at work" style="height:330px;border-radius:18px 18px 120px 18px;"></div>
+            <div class="ph" data-label="Photo · detail" style="position:absolute;left:-26px;bottom:0;width:154px;height:172px;border-radius:14px;border:3px solid var(--paper);box-shadow:0 0 0 1px var(--ink);"></div>
+            <div class="stamp" style="position:absolute;top:18px;right:16px;"><span>Approved by</span><b>HOLYDO</b><span>Nov 2026</span></div>
+            <div class="card" style="position:absolute;right:-6px;bottom:12px;padding:10px 12px;width:188px;">
+              <div class="row between"><span class="rating">4.9 <small>(48)</small></span><span class="verified">Verified</span></div>
+              <div style="font-size:10.5px;font-weight:650;margin-top:5px;">Nadia Braids Studio</div>
+              <div class="tiny" style="margin-top:2px;">Le Plateau · 1.2 km</div>
+            </div>
+            <span class="mk" style="position:absolute;left:-34px;top:-11px;">4</span>
+          </div>
+        </section>
+
+        <!-- proof strip -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);">
+          <div style="padding:11px 26px;display:flex;gap:9px;align-items:baseline;border-right:1px solid var(--line);"><b class="display" style="font-size:19px;">312</b><span class="small">approved providers</span></div>
+          <div style="padding:11px 26px;display:flex;gap:9px;align-items:baseline;border-right:1px solid var(--line);"><b class="display" style="font-size:19px;">24</b><span class="small">neighbourhoods</span></div>
+          <div style="padding:11px 26px;display:flex;gap:9px;align-items:baseline;"><b class="display" style="font-size:19px;">4.9<span style="font-size:12px;">/5</span></b><span class="small">average review across 1,840 appointments</span></div>
+        </div>
+
+        <!-- categories -->
+        <section class="section" style="padding-top:28px;">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow" style="margin-bottom:7px;">Start here</div>
+              <h3>What do you need a hand with?<span class="mk">1</span></h3>
+            </div>
+            <a class="link" href="search.html">All 12 categories →</a>
+          </div>
+          <div class="cat-grid">
+            <a class="cat" href="search.html"><span class="ico">◐</span><span><b>Hair</b><small>84 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">≈</span><span><b>Braids</b><small>56 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">✧</span><span><b>Beauty</b><small>72 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">◍</span><span><b>Nails</b><small>38 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">⌂</span><span><b>Cleaning</b><small>61 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">✚</span><span><b>Repairs</b><small>45 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">▤</span><span><b>Tutoring</b><small>27 providers</small></span></a>
+            <a class="cat" href="search.html"><span class="ico">＋</span><span><b>More</b><small>See everything</small></span></a>
+          </div>
+        </section>
+
+        <!-- near you -->
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow" style="margin-bottom:7px;">Within 5 km of Le Plateau</div>
+              <h3>Close to you<span class="mk">2</span></h3>
+            </div>
+            <div class="row" style="gap:5px;">
+              <span class="pill on">Nearby</span><span class="pill">Top rated</span><span class="pill">New</span>
+              <span class="link" style="margin-left:8px;">See all →</span>
+            </div>
+          </div>
+          <div class="provider-grid">
+            <article class="card pcard card-hover">
+              <div class="ph" data-label="Photo · braids"></div>
+              <div class="pcard-body">
+                <div class="pcard-top">
+                  <div>
+                    <div class="row" style="gap:5px;"><h4>Nadia Braids Studio</h4><span class="verified">Verified</span></div>
+                    <div class="meta"><span>Braids &amp; protective styles</span><span class="dot"></span><span>Le Plateau</span></div>
+                  </div>
+                  <span class="heart">♡</span>
+                </div>
+                <div class="row between" style="margin-top:7px;">
+                  <span class="rating">4.9 <small>(48)</small></span>
+                  <span class="small" style="font-weight:600;">1.2 km</span>
+                </div>
+                <div class="tags"><span class="pill pill-soft">Home studio</span><span class="pill pill-soft">Travels to you</span><span class="pill pill-soft">Open today</span></div>
+                <div class="foot"><span class="price">From $65 <small>/ service</small></span><span class="btn btn-sm">View →</span></div>
+              </div>
+            </article>
+
+            <article class="card pcard">
+              <div class="ph" data-label="Photo · hair salon"></div>
+              <div class="pcard-body">
+                <div class="pcard-top">
+                  <div>
+                    <div class="row" style="gap:5px;"><h4>Atelier Mèches</h4><span class="verified">Verified</span></div>
+                    <div class="meta"><span>Hair &amp; colour</span><span class="dot"></span><span>Rosemont</span></div>
+                  </div>
+                  <span class="heart">♡</span>
+                </div>
+                <div class="row between" style="margin-top:7px;">
+                  <span class="rating">4.8 <small>(31)</small></span>
+                  <span class="small" style="font-weight:600;">2.8 km</span>
+                </div>
+                <div class="tags"><span class="pill pill-soft">Salon</span><span class="pill pill-soft">Walk-ins</span><span class="pill pill-soft">Open today</span></div>
+                <div class="foot"><span class="price">From $45 <small>/ service</small></span><span class="btn btn-sm">View →</span></div>
+              </div>
+            </article>
+
+            <article class="card pcard">
+              <div class="ph" data-label="Photo · cleaning"></div>
+              <div class="pcard-body">
+                <div class="pcard-top">
+                  <div>
+                    <div class="row" style="gap:5px;"><h4>Maison Propre</h4><span class="verified">Verified</span></div>
+                    <div class="meta"><span>Home cleaning</span><span class="dot"></span><span>Villeray</span></div>
+                  </div>
+                  <span class="heart">♡</span>
+                </div>
+                <div class="row between" style="margin-top:7px;">
+                  <span class="rating">5.0 <small>(22)</small></span>
+                  <span class="small" style="font-weight:600;">3.1 km</span>
+                </div>
+                <div class="tags"><span class="pill pill-soft">Business</span><span class="pill pill-soft">Comes to you</span><span class="pill pill-soft">Eco products</span></div>
+                <div class="foot"><span class="price">From $90 <small>/ visit</small></span><span class="btn btn-sm">View →</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- approval / trust band -->
+        <section class="band-dark">
+          <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:38px;padding:32px 34px;align-items:center;">
+            <div>
+              <div class="eyebrow" style="margin-bottom:9px;">Why you can relax a little</div>
+              <h3 class="display" style="font-size:36px;line-height:1.02;margin:0 0 10px;">Every profile is checked<br>by a person, not a bot.<span class="mk on-dark">3</span></h3>
+              <p class="lede" style="max-width:420px;">Before a provider appears in search, a HOLYDO reviewer checks who they are, what they offer, and the photos they use. If something changes, we look again.</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;max-width:440px;">
+                <span class="check">Identity &amp; contact confirmed</span>
+                <span class="check">Services &amp; prices reviewed</span>
+                <span class="check">Photos checked for accuracy</span>
+                <span class="check">Re-reviewed after major changes</span>
+              </div>
+            </div>
+            <div class="card" style="color:var(--ink);padding:16px;transform:rotate(-1deg);">
+              <div class="row between" style="margin-bottom:10px;">
+                <span class="tiny">Application · HD-1042</span><span class="pill" style="background:#dcebdd;border-color:#9db69f;">● Approved</span>
+              </div>
+              <div class="row" style="gap:10px;margin-bottom:12px;">
+                <div class="avatar lg">NB</div>
+                <div><b style="font-size:12px;">Nadia Braids Studio</b><div class="small">Independent · Braids · Le Plateau</div></div>
+              </div>
+              <div class="lines" style="gap:8px;">
+                <div class="row" style="gap:8px;"><span style="font-size:8px;color:#244a2c;">✓</span><span class="small" style="color:var(--ink);">Photos and portfolio checked</span><div class="grow"></div><span class="tiny">12 Nov</span></div>
+                <div class="row" style="gap:8px;"><span style="font-size:8px;color:#244a2c;">✓</span><span class="small" style="color:var(--ink);">Services, prices and duration reviewed</span><div class="grow"></div><span class="tiny">12 Nov</span></div>
+                <div class="row" style="gap:8px;"><span style="font-size:8px;color:#244a2c;">✓</span><span class="small" style="color:var(--ink);">Identity and travel area confirmed</span><div class="grow"></div><span class="tiny">13 Nov</span></div>
+              </div>
+              <div class="divider"></div>
+              <div class="row between"><span class="small">Reviewed by <b>Amélie · Trust team</b></span><span class="stamp" style="width:48px;height:48px;font-size:5.5px;"><b style="font-size:7px;">HOLYDO</b>APPROVED</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- provider band -->
+        <section class="band-accent">
+          <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:34px;padding:30px 34px;align-items:center;">
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px;">For independent providers &amp; small businesses</div>
+              <h3 class="display" style="font-size:35px;line-height:1.03;margin:0 0 8px;">Do what you do best.<br>We’ll bring the neighbourhood.<span class="mk">5</span></h3>
+              <p style="font-size:11.5px;max-width:420px;margin:0 0 14px;">Free profile during launch. No commission on appointment requests.
+                You keep your prices, your clients, and your independence.</p>
+              <div class="row"><a class="btn btn-dark" href="join.html">Create your provider profile →</a><span class="tiny" style="margin-left:4px;">Takes about 12 minutes</span></div>
+            </div>
+            <div class="card" style="padding:14px;transform:rotate(1.2deg);">
+              <div class="row between"><div><div class="tiny">Your dashboard · Today</div><b style="font-size:12px;">3 new requests</b></div><span class="pill" style="background:#dcebdd;border-color:#9db69f;">Profile live</span></div>
+              <div class="divider"></div>
+              <div class="row between" style="margin-bottom:8px;"><span style="font-size:10.5px;"><b>Knotless braids</b> · Sat, 2–5 pm</span><span class="pill pill-soft">New</span></div>
+              <div class="row between" style="margin-bottom:8px;"><span style="font-size:10.5px;"><b>Deep clean</b> · Fri morning</span><span class="pill pill-soft">New</span></div>
+              <div class="row between"><span class="small">Profile views this week</span><b style="font-size:12px;">148 ↑ 22%</b></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- neighbourhoods -->
+        <section class="section">
+          <div class="section-head">
+            <div><div class="eyebrow" style="margin-bottom:7px;">Browse by place</div><h3>Good help is a short walk away<span class="mk">6</span></h3></div>
+            <a class="link" href="search.html">All neighbourhoods →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <a class="card" href="search.html" style="text-decoration:none;"><div class="ph" data-label="Le Plateau" style="height:92px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:10px 12px;"><b style="font-size:12px;">Le Plateau</b><div class="small">86 providers · 1.2 km</div></div></a>
+            <a class="card" href="search.html" style="text-decoration:none;"><div class="ph" data-label="Rosemont" style="height:92px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:10px 12px;"><b style="font-size:12px;">Rosemont</b><div class="small">64 providers · 2.8 km</div></div></a>
+            <a class="card" href="search.html" style="text-decoration:none;"><div class="ph" data-label="Villeray" style="height:92px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:10px 12px;"><b style="font-size:12px;">Villeray</b><div class="small">51 providers · 3.1 km</div></div></a>
+            <a class="card" href="search.html" style="text-decoration:none;"><div class="ph" data-label="Little Burgundy" style="height:92px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:10px 12px;"><b style="font-size:12px;">Little Burgundy</b><div class="small">37 providers · 3.6 km</div></div></a>
+          </div>
+        </section>
+
+        <!-- footer -->
+        <footer style="border-top:1.5px solid var(--ink);background:#efe9dd;padding:26px 34px 16px;">
+          <div style="display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr;gap:26px;">
+            <div>
+              <div class="logo"><b>HOLYDO</b><span>MARKET</span></div>
+              <p class="small" style="max-width:250px;margin:9px 0 0;">A local marketplace for the people who keep a neighbourhood running. Independently built in Montréal.</p>
+            </div>
+            <div><div class="tiny" style="margin-bottom:7px;">Discover</div><div class="small" style="line-height:2;">All categories<br>Neighbourhoods<br>How it works<br>Trust &amp; safety</div></div>
+            <div><div class="tiny" style="margin-bottom:7px;">Providers</div><div class="small" style="line-height:2;">Why HOLYDO<br>Create a profile<br>Provider log in<br>Approval process</div></div>
+            <div><div class="tiny" style="margin-bottom:7px;">Company</div><div class="small" style="line-height:2;">About<br>Contact<br>Privacy<br>Terms</div></div>
+          </div>
+          <div class="row between" style="margin-top:20px;padding-top:10px;border-top:1px solid var(--line);"><span class="tiny">© 2026 HOLYDO MARKET · MONTRÉAL, QC</span><span class="tiny">EN · FR <span style="opacity:.4">(coming)</span></span></div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         NOTES
+         ============================================================ -->
+    <div class="notes">
+      <div class="note"><h4><span class="n">1</span>Categories are the second search</h4><p>Eight category tiles with live provider counts. On mobile this becomes a horizontally scrollable row plus “All categories”, so it never pushes the nearby results below two screens.</p></div>
+      <div class="note"><h4><span class="n">2</span>Cards carry the decision data</h4><p>Photo, name, verified state, category, neighbourhood, rating, distance, service setting, and “from” price. A customer should be able to shortlist without opening every profile. “Nearby / Top rated / New” re-sorts in place; “See all” goes to the full results page.</p></div>
+      <div class="note"><h4><span class="n">3</span>The approval story is explicit</h4><p>The trust band explains <em>what</em> is checked and shows a real decision record. The badge is never used as decoration. This is also where admin rejection/resubmission can be explained honestly.</p></div>
+      <div class="note"><h4><span class="n">4</span>Location is visible, never silent</h4><p>The header keeps the current location editable. The hero search shows it in the second field. Geolocation is only requested after an explicit “Use my location” action, with city/neighbourhood as a fallback.</p></div>
+      <div class="note"><h4><span class="n">5</span>Provider invitation comes after proof</h4><p>Supply is invited only after the page has demonstrated demand and trust. The small dashboard mock previews exactly what they get. No commission is stated plainly; this is a launch promise, not a hidden upsell.</p></div>
+      <div class="note"><h4><span class="n">6</span>Place links are first-class</h4><p>Neighbourhoods are browsable, indexable destinations that link to pre-filtered search. This supports local SEO and the mental model “what’s near me?” better than a generic city dropdown alone.</p></div>
+      <div class="note"><h4><span class="n">7</span>Mobile structure</h4><p>Header condenses to logo + location. Search stacks into two fields and a full-width button. Categories become horizontal tiles. Provider cards become a horizontal swipe deck. The bottom tab bar holds Explore, Search, Saved, Account.</p></div>
+      <div class="note"><h4><span class="n">8</span>States to design</h4><ul><li>Returning visitor: last city restored, “Near you” personalised.</li><li>No geolocation: clear city picker; no misleading distances.</li><li>No nearby providers: nearby neighbourhoods + category links, not a dead end.</li><li>Loading: skeleton cards at the exact final dimensions.</li></ul></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MOBILE
+       ============================================================ -->
+  <section class="wf-section" id="mobile">
+    <div class="wf-section-head">
+      <h2><span>01B</span>Mobile</h2>
+      <p class="intent">The primary experience. Same content hierarchy, compressed to one thumb-reachable
+        column. Search and location are the first two interactive elements.</p>
+    </div>
+
+    <div style="display:flex;gap:34px;align-items:flex-start;flex-wrap:wrap;">
+      <div class="frame-mobile">
+        <div class="statusbar"><span>9:41</span><span class="pills"><span>▮▮▮</span><span>WiFi</span><i></i></span></div>
+
+        <!-- app header -->
+        <div class="row between" style="padding:10px 16px 8px;">
+          <div class="logo logo-m"><b>HOLYDO</b><span>MARKET</span></div>
+          <div class="row" style="gap:6px;">
+            <span class="loc-pill" style="padding:5px 8px;font-size:9px;">Le Plateau ▾</span>
+            <span class="btn btn-icon" style="width:28px;height:28px;font-size:11px;">☰</span>
+          </div>
+        </div>
+
+        <!-- hero -->
+        <div style="padding:8px 16px 14px;">
+          <div class="eyebrow" style="font-size:7.5px;">Local services, humanly verified</div>
+          <h1 class="display" style="font-size:36px;margin:8px 0 8px;line-height:.98;">Good work,<br>right around<br>the corner.</h1>
+          <p style="font-size:10.5px;color:#5c554a;line-height:1.55;margin:0 0 12px;">Hair, braids, beauty, cleaning, repairs — trusted people and small businesses near you.</p>
+
+          <div style="border:1.3px solid var(--ink);border-radius:14px;background:var(--surface);padding:5px;box-shadow:3px 3px 0 rgba(27,24,21,.12);">
+            <div class="row" style="padding:8px 10px;gap:8px;"><span style="font-size:13px;opacity:.55;">⌕</span><div><small style="display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);">What do you need?</small><b style="font-size:11px;">Braids &amp; protective styles</b></div></div>
+            <div style="height:1px;background:var(--line);margin:0 10px;"></div>
+            <div class="row" style="padding:8px 10px;gap:8px;"><span style="font-size:13px;opacity:.55;">⌖</span><div class="grow"><small style="display:block;font-size:7px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);">Where?</small><b style="font-size:11px;">Le Plateau, Montréal</b></div><span style="font-size:8px;text-decoration:underline;color:var(--muted);">Use location</span></div>
+            <button class="btn btn-primary btn-block" style="margin-top:3px;border-radius:10px;">Search nearby</button>
+          </div>
+
+          <div class="row" style="gap:5px;margin-top:9px;overflow:hidden;">
+            <span class="pill" style="font-size:8px;padding:4px 7px;">Knotless braids</span>
+            <span class="pill" style="font-size:8px;padding:4px 7px;">Deep cleaning</span>
+            <span class="pill" style="font-size:8px;padding:4px 7px;">Phone repair</span>
+          </div>
+        </div>
+
+        <!-- categories -->
+        <div style="border-top:1px solid var(--line);padding:13px 16px;">
+          <div class="row between" style="margin-bottom:9px;"><b style="font-size:12px;">Browse by category</b><span class="tiny">All 12 →</span></div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px;">
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">◐</span><span><b style="font-size:10px;">Hair</b><small style="font-size:8px;">84 nearby</small></span></div>
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">≈</span><span><b style="font-size:10px;">Braids</b><small style="font-size:8px;">56 nearby</small></span></div>
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">✧</span><span><b style="font-size:10px;">Beauty</b><small style="font-size:8px;">72 nearby</small></span></div>
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">⌂</span><span><b style="font-size:10px;">Cleaning</b><small style="font-size:8px;">61 nearby</small></span></div>
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">✚</span><span><b style="font-size:10px;">Repairs</b><small style="font-size:8px;">45 nearby</small></span></div>
+            <div class="cat" style="padding:8px;gap:8px;"><span class="ico" style="width:28px;height:28px;font-size:12px;">＋</span><span><b style="font-size:10px;">More</b><small style="font-size:8px;">See all</small></span></div>
+          </div>
+        </div>
+
+        <!-- near you -->
+        <div style="border-top:1px solid var(--line);padding:13px 16px;">
+          <div class="row between" style="margin-bottom:8px;"><b style="font-size:12px;">Close to you <span class="tiny" style="color:var(--muted);">· within 5 km</span></b><span class="tiny">See all →</span></div>
+          <div style="display:flex;gap:9px;overflow:hidden;">
+            <div class="card" style="flex:0 0 218px;">
+              <div class="ph" data-label="Photo · braids" style="height:112px;border:0;border-bottom:1px solid var(--line);"></div>
+              <div style="padding:9px;">
+                <div class="row between"><b style="font-size:10.5px;">Nadia Braids Studio</b><span class="heart" style="width:20px;height:20px;font-size:10px;">♡</span></div>
+                <div class="row" style="gap:5px;margin-top:2px;"><span class="verified" style="font-size:7px;padding:1px 4px;">Verified</span><span class="rating" style="font-size:8.5px;">4.9 <small>(48)</small></span></div>
+                <div class="tiny" style="margin-top:3px;font-size:7px;">Braids · Le Plateau · 1.2 km</div>
+                <div class="row between" style="margin-top:6px;"><span class="price" style="font-size:10.5px;">From $65</span><span class="pill" style="font-size:7px;padding:2px 6px;">Open today</span></div>
+              </div>
+            </div>
+            <div class="card" style="flex:0 0 218px;">
+              <div class="ph" data-label="Photo · cleaning" style="height:112px;border:0;border-bottom:1px solid var(--line);"></div>
+              <div style="padding:9px;">
+                <div class="row between"><b style="font-size:10.5px;">Maison Propre</b><span class="heart" style="width:20px;height:20px;font-size:10px;">♡</span></div>
+                <div class="row" style="gap:5px;margin-top:2px;"><span class="verified" style="font-size:7px;padding:1px 4px;">Verified</span><span class="rating" style="font-size:8.5px;">5.0 <small>(22)</small></span></div>
+                <div class="tiny" style="margin-top:3px;font-size:7px;">Cleaning · Villeray · 3.1 km</div>
+                <div class="row between" style="margin-top:6px;"><span class="price" style="font-size:10.5px;">From $90</span><span class="pill" style="font-size:7px;padding:2px 6px;">Comes to you</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- trust card -->
+        <div style="margin:0 16px 13px;background:var(--pine);color:#f4efe4;border-radius:12px;padding:13px;">
+          <div class="row between" style="margin-bottom:5px;"><span class="tiny" style="color:#cfd9ca;">Why you can relax</span><span class="stamp" style="width:38px;height:38px;font-size:4.5px;color:#f4efe4;border-color:#f4efe4;background:transparent;"><b style="font-size:5.5px;">HOLYDO</b>OK</span></div>
+          <b style="font-size:12px;">Every profile is checked by a person.</b>
+          <p style="font-size:9px;color:#cfd9ca;margin:5px 0 7px;">Identity, services, prices and photos are reviewed before a provider goes live.</p>
+          <span class="check" style="font-size:8px;">Approved providers only</span>
+        </div>
+
+        <!-- provider CTA -->
+        <div style="margin:0 16px 14px;background:var(--accent);border-radius:12px;padding:13px;border:1px solid var(--ink);">
+          <div class="tiny" style="margin-bottom:4px;">For providers</div>
+          <b style="font-size:13px;">Do what you do best. We’ll bring the neighbourhood.</b>
+          <div class="row between" style="margin-top:8px;"><span style="font-size:8px;">Free during launch · no commission</span><a class="btn btn-dark btn-sm" style="font-size:8px;padding:4px 8px;" href="join.html">Get listed →</a></div>
+        </div>
+
+        <!-- neighbourhoods -->
+        <div style="padding:0 16px 16px;">
+          <div class="row between" style="margin-bottom:7px;"><b style="font-size:11px;">Nearby neighbourhoods</b><span class="tiny">All →</span></div>
+          <div style="display:flex;gap:8px;overflow:hidden;">
+            <div class="card" style="flex:0 0 120px;"><div class="ph" data-label="Plateau" style="height:54px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:6px 8px;"><b style="font-size:9px;">Le Plateau</b><div class="tiny" style="font-size:7px;">86 providers</div></div></div>
+            <div class="card" style="flex:0 0 120px;"><div class="ph" data-label="Rosemont" style="height:54px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:6px 8px;"><b style="font-size:9px;">Rosemont</b><div class="tiny" style="font-size:7px;">64 providers</div></div></div>
+            <div class="card" style="flex:0 0 120px;"><div class="ph" data-label="Villeray" style="height:54px;border:0;border-bottom:1px solid var(--line);"></div><div style="padding:6px 8px;"><b style="font-size:9px;">Villeray</b><div class="tiny" style="font-size:7px;">51 providers</div></div></div>
+          </div>
+        </div>
+
+        <div class="tabbar">
+          <div class="tab on"><span class="ti">⌂</span>Explore</div>
+          <div class="tab"><span class="ti">⌕</span>Search</div>
+          <div class="tab"><span class="ti">♡</span>Saved</div>
+          <div class="tab"><span class="ti">◔</span>Account</div>
+        </div>
+        <div class="mobile-home-indicator"><i></i></div>
+      </div>
+
+      <!-- design rationale beside the phone -->
+      <div style="flex:1;min-width:320px;max-width:600px;display:flex;flex-direction:column;gap:12px;">
+        <div class="note"><h4><span class="n">A</span>Thumb zone</h4><p>Search, location and the primary button sit in the top 40% only because search is the landing intent. Primary actions on later screens (booking, request) move to the bottom edge. Bottom navigation is always reachable.</p></div>
+        <div class="note"><h4><span class="n">B</span>One decision per band</h4><p>Each band has a single job: search, browse, compare nearby, trust, or become a provider. No carousel that hides the only useful content; horizontal swipes always show a visible next card.</p></div>
+        <div class="note"><h4><span class="n">C</span>Compression, not deletion</h4><p>Everything from desktop survives on mobile. Categories become 2×3 with “More”, provider cards become a swipe deck with the same decision data, and the trust band becomes a compact card.</p></div>
+        <div class="note"><h4><span class="n">D</span>Above the fold on a 844 px device</h4><p>Visible without scrolling: logo, location, headline, service + location fields, search button, and the start of categories. Real content begins immediately — no full-screen splash or cookie wall.</p></div>
+        <div class="callout"><b>Open question:</b> on mobile, should “Close to you” come before categories? I propose categories first on a first visit (orientation), then remember the last intent and lift nearby providers on return.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <a class="link" href="index.html">← All wireframes</a>
+    <span class="tiny">HOLYDO MARKET · Wireframe 01 / 04 · Homepage</span>
+    <a class="link" href="search.html">Next: Search results →</a>
+  </footer>
+</div>
+</body>
+</html>

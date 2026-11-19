@@ -1,0 +1,238 @@
+// HOLYDO MARKET — data model
+// SQLite in v1, but no SQLite-specific features are used, so the same schema
+// can move to Postgres by changing the datasource provider.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  role         String   @default("CUSTOMER") // CUSTOMER | PROVIDER | ADMIN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  provider          Provider?          @relation("ProviderOwner")
+  reviewedProviders Provider[]         @relation("ProviderReviewer")
+  sessions          Session[]
+  requests          BookingRequest[]   @relation("CustomerRequests")
+  reviews           Review[]
+  adminActions      AdminAction[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Category {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  name      String
+  blurb     String?
+  icon      String  @default("sparkles")
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  providers Provider[]
+  services  Service[]
+}
+
+model Provider {
+  id       String @id @default(cuid())
+  userId   String @unique
+  slug     String @unique
+  type     String @default("INDEPENDENT") // INDEPENDENT | BUSINESS
+  status   String @default("DRAFT")        // DRAFT | PENDING | APPROVED | REJECTED | SUSPENDED
+
+  displayName String
+  legalName   String?
+  tagline     String?
+  about       String @default("")
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  logoUrl  String?
+  coverUrl String?
+
+  // Public location is the neighbourhood; the street address stays private.
+  addressLine   String @default("")
+  city          String
+  neighbourhood String
+  postalCode    String?
+  lat           Float
+  lng           Float
+  travelRadiusKm Int  @default(5)
+
+  servesAtHome      Boolean @default(false)
+  servesAtSalon     Boolean @default(false)
+  servesAtShop      Boolean @default(false)
+  travelsToClient   Boolean @default(false)
+
+  phone           String
+  email           String
+  website         String?
+  instagram       String?
+  languages       String  @default("English, French")
+  responseTimeHours Int?
+
+  submittedAt      DateTime?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  reviewedBy       User?     @relation("ProviderReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  reviewNote       String?
+
+  ratingAvg Float @default(0)
+  ratingCount Int @default(0)
+  viewCount   Int @default(0)
+  featured    Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User            @relation("ProviderOwner", fields: [userId], references: [id], onDelete: Cascade)
+  services     Service[]
+  photos       ProviderPhoto[]
+  hours        OpeningHour[]
+  areas        ServiceArea[]
+  requests     BookingRequest[]
+  reviews      Review[]
+  adminActions AdminAction[]
+
+  @@index([status, city])
+  @@index([status, categoryId])
+  @@index([lat, lng])
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  providerId  String
+  categoryId  String?
+  name        String
+  description String?
+  priceCents  Int
+  priceType   String  @default("FIXED") // FIXED | FROM | HOURLY
+  durationMin Int?
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+
+  provider Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  requests BookingRequest[]
+
+  @@index([providerId, isActive])
+}
+
+model ProviderPhoto {
+  id         String @id @default(cuid())
+  providerId String
+  url        String
+  alt        String @default("")
+  sortOrder  Int    @default(0)
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
+}
+
+model OpeningHour {
+  id         String @id @default(cuid())
+  providerId String
+  dayOfWeek  Int // 0 = Sunday … 6 = Saturday
+  opensAt    String @default("09:00")
+  closesAt   String @default("17:00")
+  isClosed   Boolean @default(false)
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, dayOfWeek])
+}
+
+model ServiceArea {
+  id         String @id @default(cuid())
+  providerId String
+  label      String
+  city       String
+
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId])
+}
+
+model BookingRequest {
+  id           String @id @default(cuid())
+  reference    String @unique
+  providerId   String
+  serviceId    String?
+  customerUserId String?
+
+  name         String
+  email        String
+  phone        String
+  preferredDate DateTime
+  preferredWindow String // MORNING | AFTERNOON | EVENING
+  message      String?
+  providerNote String?
+
+  status       String   @default("PENDING") // PENDING | ACCEPTED | DECLINED | COMPLETED | CANCELLED
+  createdAt    DateTime @default(now())
+  respondedAt  DateTime?
+
+  provider Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  service  Service?  @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  customer User?     @relation("CustomerRequests", fields: [customerUserId], references: [id], onDelete: SetNull)
+  review   Review?
+
+  @@index([providerId, status, createdAt])
+  @@index([customerUserId])
+}
+
+model Review {
+  id               String  @id @default(cuid())
+  providerId       String
+  authorUserId     String
+  bookingRequestId String? @unique
+  rating           Int
+  body             String
+  status           String  @default("PUBLISHED") // PUBLISHED | HIDDEN
+  isVerified       Boolean @default(false)
+  createdAt        DateTime @default(now())
+
+  provider Provider        @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  author   User            @relation(fields: [authorUserId], references: [id], onDelete: Cascade)
+  booking  BookingRequest? @relation(fields: [bookingRequestId], references: [id], onDelete: SetNull)
+
+  @@unique([providerId, authorUserId])
+  @@index([providerId, status])
+}
+
+model AdminAction {
+  id            String   @id @default(cuid())
+  adminUserId   String
+  providerId    String
+  action        String // APPROVE | REJECT | SUSPEND | REINSTATE
+  note          String?
+  createdAt     DateTime @default(now())
+
+  admin    User     @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, createdAt])
+}
