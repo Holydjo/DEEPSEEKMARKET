@@ -18,7 +18,7 @@ export async function NotificationBell({ className = "" }: { className?: string 
       href="/notifications"
       aria-label={t("notifications.title")}
       title={t("notifications.title")}
-      className={`relative flex h-8 w-8 items-center justify-center rounded-full border border-line bg-surface text-muted hover:border-ink hover:text-ink ${className}`}
+      className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-muted hover:border-ink hover:text-ink ${className}`}
     >
       <Bell className="h-3.5 w-3.5" aria-hidden />
       {count > 0 && (

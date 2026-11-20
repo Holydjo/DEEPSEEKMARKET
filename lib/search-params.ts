@@ -54,6 +54,27 @@ export function parseSearchParams(
 }
 
 /**
+ * A search without a chosen neighbourhood/position and without an explicit
+ * radius covers the whole launch city. Category links and "all Montréal"
+ * must not silently restrict results to 5 km around the centre.
+ */
+export function isCitywideSearch(
+  params: Record<string, SearchParamValue>,
+): boolean {
+  const filters = parseSearchParams(params);
+  const rawRadius = params.radius;
+  const hasExplicitRadius = Array.isArray(rawRadius)
+    ? rawRadius.length > 0
+    : Boolean(rawRadius);
+  return (
+    !filters.hood &&
+    !filters.lat &&
+    !filters.lng &&
+    !hasExplicitRadius
+  );
+}
+
+/**
  * Serialise filters back to a query string, omitting defaults. Overrides let
  * chips and sort links remove a single filter without rebuilding the page.
  */

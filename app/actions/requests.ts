@@ -201,6 +201,12 @@ export async function createReview(
     orderBy: { createdAt: "desc" },
   });
 
+  if (!completed) {
+    return {
+      error: "Only customers with a completed appointment can review this provider.",
+    };
+  }
+
   const nextRating = ratingAfterPublish(
     provider.ratingAvg,
     provider.ratingCount,
@@ -212,10 +218,10 @@ export async function createReview(
       data: {
         providerId: provider.id,
         authorUserId: user.id,
-        bookingRequestId: completed?.id,
+        bookingRequestId: completed.id,
         rating: parsed.data.rating,
         body: parsed.data.body,
-        isVerified: Boolean(completed),
+        isVerified: true,
       },
     }),
     db.provider.update({

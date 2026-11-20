@@ -79,7 +79,7 @@ export async function SiteHeader() {
 
   return (
     <>
-      <div className="hidden border-b border-ink bg-ink text-paper md:block">
+      <section aria-label={t("topbar.region")} className="hidden border-b border-ink bg-ink text-paper md:block">
         <div className="container-hd flex h-8 items-center justify-between font-mono text-[9px] uppercase tracking-[0.1em]">
           <span className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-marigold" />
@@ -92,7 +92,7 @@ export async function SiteHeader() {
             <LocaleSwitcher locale={locale} compact />
           </div>
         </div>
-      </div>
+      </section>
 
       <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur-md">
         <div className="container-hd flex h-[62px] items-center gap-5">
@@ -128,7 +128,7 @@ export async function SiteHeader() {
                   href="/saved"
                   aria-label={t("nav.savedProviders")}
                   title={t("nav.savedProviders")}
-                  className="hidden h-8 w-8 items-center justify-center rounded-full border border-line bg-surface text-muted hover:border-ink hover:text-clay sm:flex"
+                  className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-muted hover:border-ink hover:text-clay sm:flex"
                 >
                   <Heart className="h-3.5 w-3.5" aria-hidden />
                 </Link>
@@ -174,7 +174,7 @@ export async function SiteHeader() {
             {/* Mobile menu */}
             <details className="group relative md:hidden">
               <summary
-                className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface [&::-webkit-details-marker]:hidden"
+                className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-full border border-line bg-surface [&::-webkit-details-marker]:hidden"
                 aria-label={t("nav.menu")}
               >
                 <Menu className="h-4 w-4" aria-hidden />

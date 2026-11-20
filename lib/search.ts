@@ -3,7 +3,13 @@ import "server-only";
 import type { Prisma } from "@prisma/client";
 import { db } from "./db";
 import { formatDistance, haversineKm, resolveOrigin, type Origin } from "./location";
-import { filtersToQuery, parseSearchParams, type SearchFilters, type SearchParamValue } from "./search-params";
+import {
+  filtersToQuery,
+  isCitywideSearch,
+  parseSearchParams,
+  type SearchFilters,
+  type SearchParamValue,
+} from "./search-params";
 
 export { filtersToQuery };
 export type { SearchFilters };
@@ -45,6 +51,7 @@ export type SearchResponse = {
   origin: Origin;
   mapPoints: MapPoint[];
   filters: SearchFilters;
+  citywide: boolean;
 };
 
 function minPrice(provider: ProviderCardData): number | null {
@@ -71,6 +78,9 @@ function matchesQuery(provider: ProviderCardData, q: string): boolean {
 export async function searchProviders(params: Record<string, SearchParamValue>): Promise<SearchResponse> {
   const filters = parseSearchParams(params);
   const origin = resolveOrigin(filters);
+  // With no chosen neighbourhood/position, category and "all Montréal" links
+  // should search the whole city, not a 5 km circle around the centre.
+  const citywide = isCitywideSearch(params);
   const pageSize = 12;
 
   const where: Prisma.ProviderWhereInput = { status: "APPROVED" };
@@ -93,7 +103,7 @@ export async function searchProviders(params: Record<string, SearchParamValue>):
     if (!matchesQuery(provider, filters.q)) continue;
 
     const distanceKm = haversineKm(origin, { lat: provider.lat, lng: provider.lng });
-    if (distanceKm > filters.radius) continue;
+    if (!citywide && distanceKm > filters.radius) continue;
 
     const lowest = minPrice(provider);
     if (filters.priceMax && (lowest === null || lowest > filters.priceMax * 100)) continue;
@@ -155,6 +165,7 @@ export async function searchProviders(params: Record<string, SearchParamValue>):
     origin,
     mapPoints,
     filters: { ...filters, page },
+    citywide,
   };
 }
 

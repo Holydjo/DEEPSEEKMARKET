@@ -10,20 +10,30 @@ import {
   Store,
   UserRound,
 } from "lucide-react";
+import { translate, type MessageKey } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 
-const items = [
-  { href: "/provider/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/provider/dashboard/profile", label: "Profile", icon: UserRound },
-  { href: "/provider/dashboard/services", label: "Services", icon: ListChecks },
-  { href: "/provider/dashboard/requests", label: "Requests", icon: CalendarCheck, badge: true },
-  { href: "/provider/dashboard/reviews", label: "Reviews", icon: Star },
+const items: Array<{
+  href: string;
+  key: MessageKey;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  badge?: boolean;
+}> = [
+  { href: "/provider/dashboard", key: "pnav.overview", icon: LayoutDashboard, exact: true },
+  { href: "/provider/dashboard/profile", key: "pnav.profile", icon: UserRound },
+  { href: "/provider/dashboard/services", key: "pnav.services", icon: ListChecks },
+  { href: "/provider/dashboard/requests", key: "pnav.requests", icon: CalendarCheck, badge: true },
+  { href: "/provider/dashboard/reviews", key: "pnav.reviews", icon: Star },
 ];
 
 export function ProviderNav({
   pendingCount,
+  locale,
   variant = "desktop",
 }: {
   pendingCount: number;
+  locale: Locale;
   variant?: "desktop" | "mobile";
 }) {
   const pathname = usePathname();
@@ -35,7 +45,7 @@ export function ProviderNav({
           ? "grid gap-1"
           : "grid grid-cols-5 gap-1"
       }
-      aria-label="Provider dashboard"
+      aria-label={translate(locale, "nav.providerDashboard")}
     >
       {items.map((item) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -55,7 +65,7 @@ export function ProviderNav({
             }
           >
             <Icon className="h-3.5 w-3.5" aria-hidden />
-            {item.label}
+            {translate(locale, item.key)}
             {item.badge && pendingCount > 0 && (
               <span
                 className={`ml-auto flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[8px] font-bold ${
@@ -73,7 +83,7 @@ export function ProviderNav({
           href="/"
           className="mt-2 flex items-center gap-2.5 rounded-lg border-t border-line px-3 py-2.5 text-[11px] text-muted hover:text-ink"
         >
-          <Store className="h-3.5 w-3.5" aria-hidden /> Marketplace
+          <Store className="h-3.5 w-3.5" aria-hidden /> {translate(locale, "nav.marketplace")}
         </Link>
       )}
     </nav>

@@ -13,8 +13,9 @@ import {
 } from "lucide-react";
 import { requireProvider } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getTranslator } from "@/lib/i18n/server";
+import { bookingStatusLabel, windowLabel } from "@/lib/i18n/labels";
 import { formatDate, formatDateTime, formatRelative, initials } from "@/lib/format";
-import { BOOKING_STATUS_LABEL, PREFERRED_WINDOW_LABEL } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,10 @@ export default async function ProviderOverviewPage({
   searchParams: Promise<{ submitted?: string; saved?: string }>;
 }) {
   const { submitted, saved } = await searchParams;
-  const { provider: base, user } = await requireProvider();
+  const [{ provider: base, user }, { locale, t }] = await Promise.all([
+    requireProvider(),
+    getTranslator(),
+  ]);
 
   const provider = await db.provider.findUnique({
     where: { id: base.id },
@@ -57,11 +61,11 @@ export default async function ProviderOverviewPage({
   ]);
 
   const checklist = [
-    { label: "Public profile", done: Boolean(provider.displayName && provider.about.length >= 80), href: "/provider/dashboard/profile" },
-    { label: "Services & prices", done: provider.services.length > 0, href: "/provider/dashboard/services" },
-    { label: "Photos", done: provider.photos.length > 0, href: "/provider/dashboard/profile#photos" },
-    { label: "Location & area", done: Boolean(provider.addressLine && provider.areas.length), href: "/provider/dashboard/profile#location" },
-    { label: "Opening hours", done: provider.hours.some((hour) => !hour.isClosed), href: "/provider/dashboard/profile#hours" },
+    { label: t("pdash.checklistProfile"), done: Boolean(provider.displayName && provider.about.length >= 80), href: "/provider/dashboard/profile" },
+    { label: t("pdash.checklistServices"), done: provider.services.length > 0, href: "/provider/dashboard/services" },
+    { label: t("pdash.checklistPhotos"), done: provider.photos.length > 0, href: "/provider/dashboard/profile#photos" },
+    { label: t("pdash.checklistLocation"), done: Boolean(provider.addressLine && provider.areas.length), href: "/provider/dashboard/profile#location" },
+    { label: t("pdash.checklistHours"), done: provider.hours.some((hour) => !hour.isClosed), href: "/provider/dashboard/profile#hours" },
   ];
   const completeCount = checklist.filter((item) => item.done).length;
   const hasPlaces =
@@ -73,60 +77,66 @@ export default async function ProviderOverviewPage({
   > = {
     DRAFT: {
       tone: "border-marigold/60 bg-marigold-soft/50",
-      title: "Your profile is a draft",
-      text: "Finish the remaining steps and submit it for review. Nothing is public yet.",
-      cta: { href: "/provider/onboarding?step=business", label: "Continue application" },
+      title: t("pdash.statusDraftTitle"),
+      text: t("pdash.statusDraftText"),
+      cta: { href: "/provider/onboarding?step=business", label: t("pdash.statusDraftCta") },
     },
     PENDING: {
       tone: "border-marigold/50 bg-marigold-soft/60",
-      title: "Your application is in review",
-      text: `Submitted ${provider.submittedAt ? formatDateTime(provider.submittedAt) : "recently"}. A HOLYDO reviewer usually responds within 48 hours. You can keep editing services while you wait.`,
+      title: t("pdash.statusPendingTitle"),
+      text: t("pdash.statusPendingText", {
+        when: provider.submittedAt
+          ? formatDateTime(provider.submittedAt, locale)
+          : t("pdash.statusPendingRecently"),
+      }),
     },
     APPROVED: {
       tone: "border-pine/20 bg-pine-soft",
-      title: "You’re live on HOLYDO",
-      text: "Your profile is public and appearing in search. Share your link with your clients.",
-      cta: { href: `/providers/${provider.slug}`, label: "View public profile" },
+      title: t("pdash.statusApprovedTitle"),
+      text: t("pdash.statusApprovedText"),
+      cta: { href: `/providers/${provider.slug}`, label: t("pdash.statusApprovedCta") },
     },
     REJECTED: {
       tone: "border-clay/30 bg-clay-soft",
-      title: "Changes are needed before approval",
-      text: provider.reviewNote || "A reviewer has left a note. Update your profile and resubmit.",
-      cta: { href: "/provider/onboarding?step=business", label: "Fix & resubmit" },
+      title: t("pdash.statusRejectedTitle"),
+      text: provider.reviewNote || t("pdash.statusRejectedText"),
+      cta: { href: "/provider/onboarding?step=business", label: t("pdash.statusRejectedCta") },
     },
     SUSPENDED: {
       tone: "border-ink bg-ink text-paper",
-      title: "Your profile is suspended",
-      text: "Your profile is hidden from search. Existing requests remain visible here. Contact hello@holydo.market to appeal.",
+      title: t("pdash.statusSuspendedTitle"),
+      text: t("pdash.statusSuspendedText"),
     },
   };
   const status = statusContent[provider.status] ?? statusContent.DRAFT;
+  const formatRating = (value: number) =>
+    value.toFixed(1).replace(".", locale === "fr" ? "," : ".");
 
   return (
     <div>
       {submitted === "1" && (
         <div className="mb-4 rounded-xl border border-pine/20 bg-pine-soft px-4 py-3 text-[11px] font-medium text-pine">
-          Application submitted. Your profile is private until it is approved.
+          {t("pdash.bannerSubmitted")}
         </div>
       )}
       {saved === "1" && (
         <div className="mb-4 rounded-xl border border-pine/20 bg-pine-soft px-4 py-3 text-[11px] font-medium text-pine">
-          Changes saved.
+          {t("pdash.bannerSaved")}
         </div>
       )}
 
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="eyebrow">Provider studio</p>
+          <p className="eyebrow">{t("nav.providerStudio")}</p>
           <h1 className="display mt-2 text-[clamp(1.9rem,3.5vw,2.8rem)]">
-            Good to see you, {user.name.split(" ")[0]}.
+            {t("pdash.greeting", { name: user.name.split(" ")[0] })}
           </h1>
           <p className="mt-1 text-[11px] text-muted">
             {provider.displayName} · {provider.neighbourhood}, {provider.city}
           </p>
         </div>
         <Link href="/provider/dashboard/requests" className="btn btn-primary btn-sm">
-          Requests {pendingCount > 0 && <span className="rounded-full bg-ink px-1.5 py-0.5 text-[8px] text-paper">{pendingCount}</span>}
+          {t("pnav.requests")} {pendingCount > 0 && <span className="rounded-full bg-ink px-1.5 py-0.5 text-[8px] text-paper">{pendingCount}</span>}
         </Link>
       </div>
 
@@ -149,10 +159,10 @@ export default async function ProviderOverviewPage({
 
       <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         {[
-          { label: "Profile views", value: provider.viewCount, note: "all time", icon: Eye },
-          { label: "New requests", value: pendingCount, note: "waiting on you", icon: CalendarCheck },
-          { label: "Rating", value: provider.ratingCount > 0 ? provider.ratingAvg.toFixed(1) : "New", note: `${reviewCount} recent reviews`, icon: Star },
-          { label: "Live services", value: provider.services.filter((service) => service.isActive).length, note: `${completedCount} completed`, icon: ListChecks },
+          { label: t("pdash.statsViews"), value: provider.viewCount, note: t("pdash.statsViewsNote"), icon: Eye },
+          { label: t("pdash.statsRequests"), value: pendingCount, note: t("pdash.statsRequestsNote"), icon: CalendarCheck },
+          { label: t("pdash.statsRating"), value: provider.ratingCount > 0 ? formatRating(provider.ratingAvg) : t("rating.new"), note: t("pdash.statsRatingNote", { count: reviewCount }), icon: Star },
+          { label: t("pdash.statsServices"), value: provider.services.filter((service) => service.isActive).length, note: t("pdash.statsServicesNote", { count: completedCount }), icon: ListChecks },
         ].map((stat) => (
           <div key={stat.label} className="card p-3.5">
             <div className="flex items-center justify-between">
@@ -169,11 +179,11 @@ export default async function ProviderOverviewPage({
         <section className="card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="eyebrow">Latest</p>
-              <h2 className="mt-1 text-xl">Recent requests</h2>
+              <p className="eyebrow">{t("pdash.latest")}</p>
+              <h2 className="mt-1 text-xl">{t("pdash.recentRequests")}</h2>
             </div>
             <Link href="/provider/dashboard/requests" className="text-[10px] font-medium underline decoration-line underline-offset-4">
-              View all →
+              {t("pdash.viewAll")}
             </Link>
           </div>
 
@@ -185,13 +195,13 @@ export default async function ProviderOverviewPage({
                     {initials(request.name)}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-semibold">{request.name} <span className="font-normal text-muted">· {request.service?.name ?? "Service"}</span></p>
+                    <p className="text-[11px] font-semibold">{request.name} <span className="font-normal text-muted">· {request.service?.name ?? t("pdash.serviceFallback")}</span></p>
                     <p className="text-[9px] text-muted">
-                      {formatDate(request.preferredDate)} · {PREFERRED_WINDOW_LABEL[request.preferredWindow] ?? request.preferredWindow}
+                      {formatDate(request.preferredDate, locale)} · {windowLabel(locale, request.preferredWindow)}
                     </p>
                   </div>
                   <span className={`pill !text-[8px] ${statusTone(request.status)}`}>
-                    {BOOKING_STATUS_LABEL[request.status] ?? request.status}
+                    {bookingStatusLabel(locale, request.status)}
                   </span>
                 </div>
               ))}
@@ -199,8 +209,8 @@ export default async function ProviderOverviewPage({
           ) : (
             <div className="mt-4 rounded-xl border border-dashed border-line bg-surface-2 p-5 text-center">
               <CalendarCheck className="mx-auto h-5 w-5 text-muted" aria-hidden />
-              <p className="mt-2 text-[11px] font-semibold">No requests yet</p>
-              <p className="mt-1 text-[9.5px] text-muted">A complete, approved profile is the best way to get discovered.</p>
+              <p className="mt-2 text-[11px] font-semibold">{t("pdash.requestsEmptyTitle")}</p>
+              <p className="mt-1 text-[9.5px] text-muted">{t("pdash.requestsEmptyBody")}</p>
             </div>
           )}
         </section>
@@ -208,8 +218,8 @@ export default async function ProviderOverviewPage({
         <section className="card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="eyebrow">Finish strong</p>
-              <h2 className="mt-1 text-xl">Profile checklist</h2>
+              <p className="eyebrow">{t("pdash.checklistEyebrow")}</p>
+              <h2 className="mt-1 text-xl">{t("pdash.checklistTitle")}</h2>
             </div>
             <span className="text-[10px] font-semibold">{completeCount}/5</span>
           </div>
@@ -229,7 +239,7 @@ export default async function ProviderOverviewPage({
           </div>
           {!hasPlaces && (
             <p className="mt-2 rounded-lg bg-clay-soft px-2.5 py-2 text-[9px] text-clay">
-              Add at least one service setting before submitting.
+              {t("pdash.checklistPlaceWarning")}
             </p>
           )}
         </section>
@@ -238,27 +248,27 @@ export default async function ProviderOverviewPage({
       <div className="mt-4 grid gap-2.5 sm:grid-cols-3">
         <Link href="/provider/dashboard/profile" className="card flex items-center gap-3 p-3.5 transition-colors hover:border-ink">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-marigold-soft"><MapPin className="h-3.5 w-3.5" aria-hidden /></span>
-          <span className="text-[11px] font-semibold">Edit profile &amp; area</span>
+          <span className="text-[11px] font-semibold">{t("pdash.linkProfile")}</span>
           <ArrowRight className="ml-auto h-3.5 w-3.5 text-muted" aria-hidden />
         </Link>
         <Link href="/provider/dashboard/services" className="card flex items-center gap-3 p-3.5 transition-colors hover:border-ink">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-marigold-soft"><ListChecks className="h-3.5 w-3.5" aria-hidden /></span>
-          <span className="text-[11px] font-semibold">Manage services</span>
+          <span className="text-[11px] font-semibold">{t("pdash.linkServices")}</span>
           <ArrowRight className="ml-auto h-3.5 w-3.5 text-muted" aria-hidden />
         </Link>
         <Link href="/provider/dashboard/reviews" className="card flex items-center gap-3 p-3.5 transition-colors hover:border-ink">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-marigold-soft"><Star className="h-3.5 w-3.5" aria-hidden /></span>
-          <span className="text-[11px] font-semibold">Read reviews</span>
+          <span className="text-[11px] font-semibold">{t("pdash.linkReviews")}</span>
           <ArrowRight className="ml-auto h-3.5 w-3.5 text-muted" aria-hidden />
         </Link>
       </div>
 
       <div className="mt-5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-[9.5px] text-muted">
         <span className="inline-flex items-center gap-1.5">
-          <TrendingUp className="h-3 w-3" aria-hidden /> Profile views are counted each time your page loads.
+          <TrendingUp className="h-3 w-3" aria-hidden /> {t("pdash.noteViews")}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Clock className="h-3 w-3" aria-hidden /> Last updated {formatRelative(provider.updatedAt)}
+          <Clock className="h-3 w-3" aria-hidden /> {t("pdash.noteUpdated", { when: formatRelative(provider.updatedAt, locale) })}
         </span>
       </div>
     </div>

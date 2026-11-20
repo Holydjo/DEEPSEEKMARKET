@@ -98,13 +98,23 @@ export default async function ProviderPage({
   const user = await getCurrentUser();
   const savedIds = await getSavedProviderIds(user?.id);
   const isSaved = savedIds.has(provider.id);
-  const existingReview = user
-    ? await db.review.findUnique({
-        where: {
-          providerId_authorUserId: { providerId: provider.id, authorUserId: user.id },
-        },
-      })
-    : null;
+  const [existingReview, completedRequest] = user
+    ? await Promise.all([
+        db.review.findUnique({
+          where: {
+            providerId_authorUserId: { providerId: provider.id, authorUserId: user.id },
+          },
+        }),
+        db.bookingRequest.findFirst({
+          where: {
+            providerId: provider.id,
+            customerUserId: user.id,
+            status: "COMPLETED",
+          },
+          select: { id: true },
+        }),
+      ])
+    : [null, null];
 
   // A view is a lightweight signal for the provider dashboard. Failure must not
   // prevent the profile from rendering.
@@ -250,7 +260,7 @@ export default async function ProviderPage({
 
         {/* Body */}
         <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-          <main>
+          <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
                 <VerifiedBadge locale={locale} />
@@ -548,6 +558,10 @@ export default async function ProviderPage({
                       date: formatDateTime(existingReview.createdAt, locale),
                     })}
                   </p>
+                ) : !completedRequest ? (
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted">
+                    {t("provider.reviews.verifiedOnly")}
+                  </p>
                 ) : (
                   <ActionForm action={createReview} className="mt-3 grid gap-3" locale={locale}>
                     <input type="hidden" name="providerId" value={provider.id} />
@@ -627,7 +641,7 @@ export default async function ProviderPage({
                 </div>
               </section>
             )}
-          </main>
+          </div>
 
           {/* Sticky rail */}
           <aside className="lg:sticky lg:top-20">

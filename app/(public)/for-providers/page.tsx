@@ -218,7 +218,7 @@ export default async function ForProvidersPage() {
             {steps.map((step) => (
               <div key={step.n} className="relative rounded-2xl border border-line bg-paper p-5">
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-clay">{step.n}</span>
+                  <span className="font-mono text-[10px] text-ink-soft">{step.n}</span>
                   <span className="pill !text-[8px]">{step.time}</span>
                 </div>
                 <h3 className="mt-5 text-lg">{step.title}</h3>
@@ -263,11 +263,11 @@ export default async function ForProvidersPage() {
           </div>
           <div className="rounded-card border border-ink bg-pine p-6 text-paper shadow-[5px_5px_0_var(--color-ink)] md:p-8">
             <Sparkles className="h-6 w-6 text-marigold" aria-hidden />
-            <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/55">
+            <p className="mt-5 font-mono text-[9px] uppercase tracking-[0.12em] text-paper/75">
               {t("providers.pricing.plan")}
             </p>
             <p className="mt-1 font-display text-5xl">
-              $0<span className="text-base text-paper/50">{t("providers.pricing.month")}</span>
+              $0<span className="text-base text-paper/75">{t("providers.pricing.month")}</span>
             </p>
             <p className="mt-2 text-[11px] leading-relaxed text-paper/65">
               {t("providers.pricing.planBody")}
@@ -275,7 +275,7 @@ export default async function ForProvidersPage() {
             <Link href="/provider/join" className="btn btn-primary btn-block mt-5">
               {t("providers.pricing.cta")}
             </Link>
-            <p className="mt-2 text-center text-[9px] text-paper/50">{t("providers.pricing.note")}</p>
+            <p className="mt-2 text-center text-[9px] text-paper/75">{t("providers.pricing.note")}</p>
           </div>
         </div>
       </section>
@@ -309,7 +309,7 @@ export default async function ForProvidersPage() {
       <section className="border-y border-ink bg-marigold">
         <div className="container-hd flex flex-col items-start justify-between gap-5 py-10 md:flex-row md:items-center">
           <div>
-            <p className="eyebrow !text-ink/55 before:!bg-ink">{t("providers.cta.eyebrow")}</p>
+            <p className="eyebrow !text-ink before:!bg-ink">{t("providers.cta.eyebrow")}</p>
             <h2 className="display mt-2 text-[clamp(1.9rem,3.4vw,2.8rem)]">
               {t("providers.cta.title")}
             </h2>

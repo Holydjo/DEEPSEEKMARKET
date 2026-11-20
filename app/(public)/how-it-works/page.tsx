@@ -176,7 +176,7 @@ export default async function HowItWorksPage() {
       <section id="approval" className="scroll-mt-24 border-y border-ink bg-pine text-paper">
         <div className="container-hd grid gap-10 py-14 md:py-20 lg:grid-cols-[1fr_0.95fr]">
           <div>
-            <p className="eyebrow !text-paper/55 before:!bg-paper/40">{t("how.approval.eyebrow")}</p>
+            <p className="eyebrow !text-paper/75 before:!bg-paper/40">{t("how.approval.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[560px] text-[clamp(2.1rem,4vw,3.4rem)]">
               {t("how.approval.title")}
             </h2>
@@ -191,7 +191,7 @@ export default async function HowItWorksPage() {
                   </span>
                   <div>
                     <p className="text-[12px] font-semibold">{title}</p>
-                    <p className="mt-0.5 text-[10px] leading-relaxed text-paper/60">{text}</p>
+                    <p className="mt-0.5 text-[10px] leading-relaxed text-paper/80">{text}</p>
                   </div>
                 </div>
               ))}
@@ -209,7 +209,7 @@ export default async function HowItWorksPage() {
               {states.map(([title, text, tone]) => (
                 <div key={title} className={`rounded-xl border border-line p-3 ${tone}`}>
                   <p className="text-[11px] font-semibold">{title}</p>
-                  <p className="mt-0.5 text-[9.5px] leading-relaxed text-ink/65">{text}</p>
+                  <p className="mt-0.5 text-[9.5px] leading-relaxed text-ink/80">{text}</p>
                 </div>
               ))}
             </div>

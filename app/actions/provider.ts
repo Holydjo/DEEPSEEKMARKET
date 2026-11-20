@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { basename } from "node:path";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -19,6 +19,12 @@ import {
 import { formatDateForLocale } from "@/lib/format";
 import { getNeighbourhood, getCity } from "@/lib/location";
 import type { ActionState } from "@/lib/types";
+import {
+  isSafeUploadName,
+  legacyUploadFilePath,
+  uploadDirectory,
+  uploadFilePath,
+} from "@/lib/uploads";
 
 function withSaved(path: string): string {
   return `${path}${path.includes("?") ? "&" : "?"}saved=1`;
@@ -215,9 +221,8 @@ export async function uploadProviderPhotoAction(
 
   const extension = ALLOWED_TYPES[file.type];
   const filename = `provider-${provider.id}-${randomUUID()}.${extension}`;
-  const uploadDir = join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
-  await writeFile(join(uploadDir, filename), Buffer.from(await file.arrayBuffer()));
+  await mkdir(uploadDirectory(), { recursive: true });
+  await writeFile(uploadFilePath(filename), Buffer.from(await file.arrayBuffer()));
 
   const url = `/uploads/${filename}`;
   await db.providerPhoto.create({
@@ -249,7 +254,11 @@ export async function deleteProviderPhotoAction(formData: FormData): Promise<voi
   if (photo) {
     await db.providerPhoto.delete({ where: { id: photo.id } });
     if (photo.url.startsWith("/uploads/")) {
-      await unlink(join(process.cwd(), "public", photo.url)).catch(() => undefined);
+      const name = basename(photo.url);
+      if (isSafeUploadName(name)) {
+        await unlink(uploadFilePath(name)).catch(() => undefined);
+        await unlink(legacyUploadFilePath(name)).catch(() => undefined);
+      }
     }
     if (provider.coverUrl === photo.url) {
       const next = await db.providerPhoto.findFirst({

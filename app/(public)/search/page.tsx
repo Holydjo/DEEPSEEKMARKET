@@ -66,7 +66,7 @@ export default async function SearchPage({
     getSavedProviderIds(user?.id),
   ]);
 
-  const { filters, origin } = search;
+  const { filters, origin, citywide } = search;
   const selectedCategory = categories.find((category) => category.slug === filters.category);
   const selectedCategoryLabel = selectedCategory
     ? categoryLabel(locale, selectedCategory.slug, selectedCategory.name)
@@ -74,16 +74,20 @@ export default async function SearchPage({
   const hood = neighbourhoodBySlug(filters.hood);
   const filterCount = activeFilterCount(filters);
   const locationLabel =
-    filters.lat && filters.lng
-      ? t("search.location.yours")
-      : hood?.name ?? t("search.location.centre", { city: MONTREAL.name });
+    citywide
+      ? MONTREAL.name
+      : filters.lat && filters.lng
+        ? t("search.location.yours")
+        : hood?.name ?? t("search.location.centre", { city: MONTREAL.name });
   const locationNear =
     locale === "fr"
-      ? filters.lat && filters.lng
-        ? `de ${t("search.location.yours")}`
-        : hood
-          ? nearPlace(locale, hood.name)
-          : `du ${t("search.location.centre", { city: MONTREAL.name })}`
+      ? citywide
+        ? "de Montréal"
+        : filters.lat && filters.lng
+          ? `de ${t("search.location.yours")}`
+          : hood
+            ? nearPlace(locale, hood.name)
+            : `du ${t("search.location.centre", { city: MONTREAL.name })}`
       : locationLabel;
 
   const placeLabels: Record<string, string> = {
@@ -183,10 +187,12 @@ export default async function SearchPage({
             </h1>
             <p className="mt-1 text-[11.5px] text-muted">
               {selectedCategoryLabel ? `${selectedCategoryLabel} · ` : ""}
-              {t("search.meta.line", {
-                radius: filters.radius,
-                sort: sortMeta,
-              })}
+              {citywide
+                ? t("search.meta.citywide", { sort: sortMeta })
+                : t("search.meta.line", {
+                    radius: filters.radius,
+                    sort: sortMeta,
+                  })}
               {filters.q ? t("search.meta.matching", { query: filters.q }) : ""}
             </p>
           </div>
@@ -236,7 +242,7 @@ export default async function SearchPage({
         {/* Main grid */}
         <div className="mt-4 grid gap-4 lg:grid-cols-[226px_minmax(0,1fr)_318px] lg:items-start">
           {/* Filters */}
-          <aside className="lg:sticky lg:top-20">
+          <aside aria-label={t("filter.title")} className="lg:sticky lg:top-20">
             <details className="group lg:hidden">
               <summary className="btn btn-outline btn-sm w-full list-none [&::-webkit-details-marker]:hidden">
                 <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden />
@@ -253,11 +259,11 @@ export default async function SearchPage({
           </aside>
 
           {/* Map */}
-          <aside className="order-2 lg:order-3 lg:sticky lg:top-20">
+          <aside aria-label={t("map.aria")} className="order-2 lg:order-3 lg:sticky lg:top-20">
             <MapToggle
               points={search.mapPoints}
               origin={{ lat: origin.lat, lng: origin.lng }}
-              radiusKm={filters.radius}
+              radiusKm={citywide ? 25 : filters.radius}
               locale={locale}
             />
             <div className="mt-2 hidden items-center justify-between text-[9.5px] text-muted lg:flex">
@@ -304,6 +310,7 @@ export default async function SearchPage({
               <span className="text-[9.5px] text-muted">{t("search.currency")}</span>
             </div>
 
+            <h2 className="sr-only">{t("search.results")}</h2>
             {search.results.length > 0 ? (
               <div className="grid gap-2.5">
                 {search.results.map((result) => (
@@ -336,15 +343,17 @@ export default async function SearchPage({
                     : t("search.empty.titleProviders", { radius: filters.radius })}
                 </h2>
                 <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted">
-                  {t("search.empty.body")}
+                  {citywide ? t("search.empty.bodyCitywide") : t("search.empty.body")}
                 </p>
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
-                  <Link
-                    href={`/search${filtersToQuery(filters, { radius: Math.min(filters.radius * 2, 25), page: 1 })}`}
-                    className="btn btn-primary btn-sm"
-                  >
-                    {t("search.empty.extend", { radius: Math.min(filters.radius * 2, 25) })}
-                  </Link>
+                  {!citywide && (
+                    <Link
+                      href={`/search${filtersToQuery(filters, { radius: Math.min(filters.radius * 2, 25), page: 1 })}`}
+                      className="btn btn-primary btn-sm"
+                    >
+                      {t("search.empty.extend", { radius: Math.min(filters.radius * 2, 25) })}
+                    </Link>
+                  )}
                   <Link href="/search" className="btn btn-outline btn-sm">
                     {t("search.empty.startOver")}
                   </Link>

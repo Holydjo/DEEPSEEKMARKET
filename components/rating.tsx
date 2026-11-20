@@ -55,6 +55,7 @@ export function StarRow({
   return (
     <span
       className={`inline-flex items-center gap-0.5 ${className}`}
+      role="img"
       aria-label={translate(locale, "rating.outOf", {
         value: value.toFixed(1).replace(".", locale === "fr" ? "," : "."),
       })}

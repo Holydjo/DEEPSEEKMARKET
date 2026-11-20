@@ -2,15 +2,21 @@ import Link from "next/link";
 import { LogOut, ShieldCheck } from "lucide-react";
 import { requireProvider } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getTranslator } from "@/lib/i18n/server";
+import { providerStatusLabel } from "@/lib/i18n/labels";
 import { logoutAction } from "@/app/actions/auth";
 import { Logo } from "@/components/logo";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ProviderNav } from "@/components/provider-nav";
 import { NotificationBell } from "@/components/notification-bell";
 import { initials } from "@/lib/format";
-import { PROVIDER_STATUS_LABEL } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Provider dashboard", robots: { index: false } };
+
+export async function generateMetadata() {
+  const { t } = await getTranslator();
+  return { title: t("pdash.metaTitle"), robots: { index: false } };
+}
 
 function statusTone(status: string): string {
   if (status === "APPROVED") return "pill-pine";
@@ -23,7 +29,10 @@ function statusTone(status: string): string {
 export default async function ProviderDashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { user, provider } = await requireProvider();
+  const [{ user, provider }, { locale, t }] = await Promise.all([
+    requireProvider(),
+    getTranslator(),
+  ]);
   const pendingCount = await db.bookingRequest.count({
     where: { providerId: provider.id, status: "PENDING" },
   });
@@ -34,20 +43,21 @@ export default async function ProviderDashboardLayout({
         <div className="container-hd flex h-16 items-center gap-3">
           <Logo compact />
           <span className="hidden rounded-full border border-line bg-paper px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.1em] text-muted sm:inline">
-            Provider studio
+            {t("nav.providerStudio")}
           </span>
           <span className={`pill !text-[8.5px] ${statusTone(provider.status)}`}>
-            {PROVIDER_STATUS_LABEL[provider.status as keyof typeof PROVIDER_STATUS_LABEL] ?? provider.status}
+            {providerStatusLabel(locale, provider.status)}
           </span>
 
           <div className="ml-auto flex items-center gap-2">
             {provider.status === "APPROVED" ? (
               <Link href={`/providers/${provider.slug}`} className="hidden text-[11px] font-medium underline decoration-line underline-offset-4 hover:decoration-ink sm:block">
-                View public profile ↗
+                {t("pcommon.viewPublic")} ↗
               </Link>
             ) : (
-              <span className="hidden text-[10px] text-muted sm:block">Private until approved</span>
+              <span className="hidden text-[10px] text-muted sm:block">{t("pcommon.privateUntilApproved")}</span>
             )}
+            <LocaleSwitcher locale={locale} compact />
             <NotificationBell />
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-[8px] font-bold text-paper">
               {initials(user.name)}
@@ -55,13 +65,13 @@ export default async function ProviderDashboardLayout({
             <form action={logoutAction}>
               <button className="flex h-8 items-center gap-1.5 rounded-full border border-line px-2.5 text-[10px] text-muted hover:border-ink hover:text-ink">
                 <LogOut className="h-3 w-3" aria-hidden />
-                <span className="hidden md:inline">Log out</span>
+                <span className="hidden md:inline">{t("nav.logout")}</span>
               </button>
             </form>
           </div>
         </div>
         <div className="container-hd pb-2 lg:hidden">
-          <ProviderNav pendingCount={pendingCount} variant="mobile" />
+          <ProviderNav pendingCount={pendingCount} locale={locale} variant="mobile" />
         </div>
       </header>
 
@@ -69,18 +79,18 @@ export default async function ProviderDashboardLayout({
         <aside className="hidden lg:block">
           <div className="sticky top-24">
             <div className="rounded-xl border border-line bg-surface p-2.5">
-              <ProviderNav pendingCount={pendingCount} />
+              <ProviderNav pendingCount={pendingCount} locale={locale} />
             </div>
             <div className="mt-3 rounded-xl border border-line bg-surface-2 p-3">
               <p className="flex items-center gap-1.5 text-[10px] font-semibold">
-                <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> Human reviewed
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> {t("pcommon.humanReviewedTitle")}
               </p>
               <p className="mt-1 text-[9px] leading-relaxed text-muted">
-                You can edit services and hours anytime. Major identity changes may be re-checked.
+                {t("pdash.humanBody")}
               </p>
             </div>
             <p className="mt-3 px-1 text-[8.5px] leading-relaxed text-muted">
-              Signed in as {user.email}
+              {t("pdash.signedInAs", { email: user.email })}
             </p>
           </div>
         </aside>

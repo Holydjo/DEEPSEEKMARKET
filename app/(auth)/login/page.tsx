@@ -129,7 +129,7 @@ export default async function LoginPage({
       <aside className="rounded-card border border-ink bg-pine p-6 text-paper shadow-[5px_5px_0_var(--color-ink)] md:p-8">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-marigold" aria-hidden />
-          <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/60">
+          <p className="font-mono text-[9px] uppercase tracking-[0.14em] text-paper/80">
             {t("auth.demo.eyebrow")}
           </p>
         </div>
@@ -143,7 +143,7 @@ export default async function LoginPage({
             <div key={account.email} className="rounded-xl border border-paper/15 bg-paper/5 p-3">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-[11px] font-semibold text-marigold">{account.role}</span>
-                <span className="text-[9px] text-paper/50">{account.note}</span>
+                <span className="text-[9px] text-paper/75">{account.note}</span>
               </div>
               <div className="mt-1.5 font-mono text-[10.5px] leading-relaxed text-paper/90">
                 {account.email}
@@ -154,7 +154,7 @@ export default async function LoginPage({
           ))}
         </div>
 
-        <p className="mt-5 text-[10px] leading-relaxed text-paper/50">
+        <p className="mt-5 text-[10px] leading-relaxed text-paper/75">
           <ArrowUpRight className="mr-1 inline h-3 w-3" aria-hidden />
           {t("auth.demo.seededStart")} <code>prisma/seed.ts</code>
           {t("auth.demo.seededEnd")}

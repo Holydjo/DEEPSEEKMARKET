@@ -357,7 +357,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden bg-pine text-paper">
         <div className="container-hd grid items-center gap-10 py-14 md:py-20 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <p className="eyebrow !text-paper/55 before:!bg-paper/40">{t("home.trust.eyebrow")}</p>
+            <p className="eyebrow !text-paper/75 before:!bg-paper/40">{t("home.trust.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[560px] text-[clamp(2.1rem,4vw,3.4rem)] text-paper">
               {t("home.trust.title")}
             </h2>
@@ -435,7 +435,7 @@ export default async function HomePage() {
       <section className="border-y border-ink bg-marigold">
         <div className="container-hd grid items-center gap-8 py-12 md:grid-cols-[1.05fr_0.95fr] md:py-14">
           <div>
-            <p className="eyebrow !text-ink/55 before:!bg-ink">{t("home.cta.eyebrow")}</p>
+            <p className="eyebrow !text-ink before:!bg-ink">{t("home.cta.eyebrow")}</p>
             <h2 className="display mt-3 max-w-[600px] text-[clamp(2rem,3.8vw,3.2rem)]">
               {t("home.cta.title")}
             </h2>
@@ -446,7 +446,7 @@ export default async function HomePage() {
               <Link href="/provider/join" className="btn btn-dark">
                 {t("home.cta.button")} <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
-              <span className="text-[10px] text-ink/65">{t("home.cta.note")}</span>
+              <span className="text-[10px] text-ink/80">{t("home.cta.note")}</span>
             </div>
           </div>
 

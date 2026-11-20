@@ -8,6 +8,8 @@ import { createSession, destroySession, getCurrentUser, safeNextPath } from "@/l
 import { getLocale } from "@/lib/i18n/server";
 import { uniqueSlug } from "@/lib/slug";
 import { MONTREAL } from "@/lib/location";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIp } from "@/lib/request-ip";
 import type { ActionState } from "@/lib/types";
 
 const emailField = z.string().trim().toLowerCase().email("Enter a valid email address.");
@@ -29,6 +31,19 @@ export async function loginAction(_state: ActionState, formData: FormData): Prom
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check your details and try again." };
+  }
+
+  const ip = await getClientIp();
+  const [ipLimit, credentialLimit] = await Promise.all([
+    Promise.resolve(rateLimit(`login-ip:${ip}`, 40, 10 * 60_000)),
+    Promise.resolve(rateLimit(`login:${parsed.data.email}:${ip}`, 10, 10 * 60_000)),
+  ]);
+  if (!ipLimit.allowed || !credentialLimit.allowed) {
+    const retryAfterMs = Math.max(ipLimit.retryAfterMs, credentialLimit.retryAfterMs);
+    const minutes = Math.max(1, Math.ceil(retryAfterMs / 60_000));
+    return {
+      error: `Too many login attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
   }
 
   const user = await db.user.findUnique({ where: { email: parsed.data.email } });
@@ -65,6 +80,15 @@ export async function signupAction(_state: ActionState, formData: FormData): Pro
   const existing = await db.user.findUnique({ where: { email: parsed.data.email } });
   if (existing) {
     return { error: "An account with this email already exists. Try logging in instead." };
+  }
+
+  const ip = await getClientIp();
+  const limit = rateLimit(`signup:${ip}`, 5, 60 * 60_000);
+  if (!limit.allowed) {
+    const minutes = Math.max(1, Math.ceil(limit.retryAfterMs / 60_000));
+    return {
+      error: `Too many sign-up attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
   }
 
   const locale = await getLocale();
@@ -129,6 +153,15 @@ export async function providerJoinAction(
   const parsed = providerJoinSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Check your details and try again." };
+  }
+
+  const ip = await getClientIp();
+  const limit = rateLimit(`provider-signup:${ip}`, 5, 60 * 60_000);
+  if (!limit.allowed) {
+    const minutes = Math.max(1, Math.ceil(limit.retryAfterMs / 60_000));
+    return {
+      error: `Too many sign-up attempts. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`,
+    };
   }
 
   const existing = await db.user.findUnique({ where: { email: parsed.data.email } });

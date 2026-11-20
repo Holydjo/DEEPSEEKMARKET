@@ -1,0 +1,92 @@
+[
+  {
+    "name": "home",
+    "path": "/",
+    "violations": []
+  },
+  {
+    "name": "search",
+    "path": "/search?q=braids&hood=le-plateau",
+    "violations": []
+  },
+  {
+    "name": "profile",
+    "path": "/providers/nadia-braids-studio",
+    "violations": []
+  },
+  {
+    "name": "login",
+    "path": "/login",
+    "violations": []
+  },
+  {
+    "name": "for-providers",
+    "path": "/for-providers",
+    "violations": []
+  },
+  {
+    "name": "how-it-works",
+    "path": "/how-it-works",
+    "violations": []
+  },
+  {
+    "name": "join",
+    "path": "/provider/join",
+    "violations": []
+  },
+  {
+    "name": "saved",
+    "path": "/saved",
+    "violations": []
+  },
+  {
+    "name": "account",
+    "path": "/account",
+    "violations": []
+  },
+  {
+    "name": "notifications",
+    "path": "/notifications",
+    "violations": []
+  },
+  {
+    "name": "request",
+    "path": "/requests/HD-SCJY4",
+    "violations": []
+  },
+  {
+    "name": "onboarding",
+    "path": "/provider/onboarding?step=business",
+    "violations": []
+  },
+  {
+    "name": "provider-dashboard",
+    "path": "/provider/dashboard",
+    "violations": []
+  },
+  {
+    "name": "admin",
+    "path": "/admin",
+    "violations": []
+  },
+  {
+    "name": "admin-applications",
+    "path": "/admin/applications",
+    "violations": []
+  },
+  {
+    "name": "admin-reviews",
+    "path": "/admin/reviews",
+    "violations": []
+  },
+  {
+    "name": "admin-emails",
+    "path": "/admin/emails",
+    "violations": []
+  },
+  {
+    "name": "admin-providers",
+    "path": "/admin/providers",
+    "violations": []
+  }
+]

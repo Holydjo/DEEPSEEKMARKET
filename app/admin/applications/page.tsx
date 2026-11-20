@@ -81,7 +81,7 @@ export default async function AdminApplicationsPage({
               }`}
             >
               {filter === "ALL" ? "All" : PROVIDER_STATUS_LABEL[filter as keyof typeof PROVIDER_STATUS_LABEL] ?? filter}
-              <span className={`ml-1.5 ${active === filter ? "text-paper/60" : "text-muted"}`}>{count}</span>
+              <span className={`ml-1.5 ${active === filter ? "text-paper/80" : "text-muted"}`}>{count}</span>
             </Link>
           );
         })}

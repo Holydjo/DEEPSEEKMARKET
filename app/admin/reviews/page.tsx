@@ -72,7 +72,7 @@ export default async function AdminReviewsPage({
               }`}
             >
               {filter === "ALL" ? "All" : filter === "PUBLISHED" ? "Published" : "Hidden"}
-              <span className={`ml-1.5 ${active === filter ? "text-paper/60" : "text-muted"}`}>{count}</span>
+              <span className={`ml-1.5 ${active === filter ? "text-paper/80" : "text-muted"}`}>{count}</span>
             </Link>
           );
         })}

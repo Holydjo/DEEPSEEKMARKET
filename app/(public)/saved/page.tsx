@@ -54,6 +54,7 @@ export default async function SavedProvidersPage() {
 
       {saved.length > 0 ? (
         <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <h2 className="sr-only">{t("saved.eyebrow")}</h2>
           {saved.map(({ provider }) => {
             const minPrice = provider.services.length
               ? Math.min(...provider.services.map((service) => service.priceCents))

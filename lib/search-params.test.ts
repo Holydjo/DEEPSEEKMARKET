@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filtersToQuery, parseSearchParams } from "./search-params";
+import { filtersToQuery, isCitywideSearch, parseSearchParams } from "./search-params";
 
 describe("parseSearchParams", () => {
   it("applies sensible defaults", () => {
@@ -88,5 +88,22 @@ describe("filtersToQuery", () => {
     const filters = parseSearchParams({ page: "3" });
     expect(filtersToQuery(filters)).toContain("page=3");
     expect(filtersToQuery(filters, { page: 1 })).not.toContain("page=");
+  });
+});
+
+
+describe("isCitywideSearch", () => {
+  it("is citywide with no location and no explicit radius", () => {
+    expect(isCitywideSearch({ category: "cleaning" })).toBe(true);
+    expect(isCitywideSearch({ q: "braids" })).toBe(true);
+  });
+
+  it("is not citywide when a neighbourhood or position is chosen", () => {
+    expect(isCitywideSearch({ hood: "le-plateau" })).toBe(false);
+    expect(isCitywideSearch({ lat: "45.5", lng: "-73.6" })).toBe(false);
+  });
+
+  it("is not citywide when the visitor explicitly sets a radius", () => {
+    expect(isCitywideSearch({ radius: "10" })).toBe(false);
   });
 });

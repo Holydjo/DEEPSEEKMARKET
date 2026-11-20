@@ -3,11 +3,15 @@ import "server-only";
 import { db } from "./db";
 import { isLocale, type Locale } from "./i18n/config";
 import { translate, type MessageKey } from "./i18n/dictionary";
+import { deliverEmail } from "./email";
 
 export type MessageVars = Record<string, string | number>;
 
 export function siteUrl(path = ""): string {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base =
+    process.env.SITE_URL ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "http://localhost:3000";
   return `${base.replace(/\/$/, "")}${path}`;
 }
 
@@ -37,7 +41,7 @@ export async function queueEmail(input: {
     : "";
   const body = `${input.body}${link}\n\n${translate(input.locale, "email.signature")}`;
 
-  await db.emailMessage.create({
+  const queued = await db.emailMessage.create({
     data: {
       to: input.to,
       subject: input.subject,
@@ -46,6 +50,11 @@ export async function queueEmail(input: {
       status: "QUEUED",
     },
   });
+
+  // If RESEND_API_KEY or SMTP_HOST is configured, attempt delivery now. The
+  // row stays queued/failed if delivery is unavailable, so the request flow
+  // itself is never blocked by email.
+  await deliverEmail(queued.id);
 }
 
 export async function notifyUser(input: {

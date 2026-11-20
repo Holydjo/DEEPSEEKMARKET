@@ -21,6 +21,19 @@ export function providerTypeLabel(locale: Locale, type: string): string {
   return translate(locale, PROVIDER_TYPE_KEYS[type] ?? "common.provider");
 }
 
+const PROVIDER_STATUS_KEYS: Record<string, MessageKey> = {
+  DRAFT: "providerStatus.DRAFT",
+  PENDING: "providerStatus.PENDING",
+  APPROVED: "providerStatus.APPROVED",
+  REJECTED: "providerStatus.REJECTED",
+  SUSPENDED: "providerStatus.SUSPENDED",
+};
+
+export function providerStatusLabel(locale: Locale, status: string): string {
+  const key = PROVIDER_STATUS_KEYS[status];
+  return key ? translate(locale, key) : status;
+}
+
 const BOOKING_STATUS_KEYS: Record<string, MessageKey> = {
   PENDING: "status.PENDING",
   ACCEPTED: "status.ACCEPTED",

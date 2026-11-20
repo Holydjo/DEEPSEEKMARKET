@@ -9,7 +9,9 @@ cleaning, repairs and more.
 > [wireframes](wireframes/index.html). Core customer, provider and admin journeys have been
 > tested end-to-end. v1.1 added saved providers, admin review moderation and rate limiting.
 > v1.2 adds in-app notifications, an email outbox, password reset, request
-> cancellation/rescheduling, and an FR/EN language option for the customer-facing site.
+> cancellation/rescheduling, and an FR/EN language option. The QA pass also added production
+> photo storage, real email delivery adapters, login rate limiting, completed-appointment
+> reviews, citywide category search, and provider-side French.
 
 ![HOLYDO MARKET homepage](docs/screenshots/home.png)
 
@@ -90,7 +92,8 @@ before any public deployment.**
 - Free provider account creation and a **7-step application**: account, business, services,
   photos, location/area, opening hours, review & submit.
 - Draft providers can save and resume; every step persists to the database.
-- Photo upload (JPG/PNG/WebP, max 6 MB, up to 8 photos) with local storage.
+- Photo upload (JPG/PNG/WebP, max 6 MB, up to 8 photos). Files are stored outside
+  `public/` and served by a route handler, so they also work after a production build.
 - Provider dashboard with profile completeness, views, requests, rating and quick actions.
 - Edit public profile, service settings, private address, travel radius, service areas, photos
   and opening hours.
@@ -110,7 +113,9 @@ before any public deployment.**
 - Review moderation: hide or restore any review. Hidden reviews disappear from the public
   profile and the provider's weighted rating is recalculated in both directions.
 - Email outbox at `/admin/emails`: every transactional message is recorded with recipient,
-  subject, body and template. No SMTP provider is configured in this demo.
+  subject, body and template. It sends through Resend (`RESEND_API_KEY`) or SMTP
+  (`SMTP_HOST`) when configured; otherwise messages stay queued and can be retried.
+- Login and sign-up rate limiting, and reviews require a completed appointment.
 - Every decision is written to an `AdminAction` audit trail and attributed to the admin.
 
 ### Only approved profiles are public
@@ -136,7 +141,7 @@ Draft, pending, rejected and suspended providers return 404 publicly.
 | Maps | Leaflet + OpenStreetMap, dynamically imported |
 | Validation | Zod on every server action |
 | Icons | Lucide |
-| Tests | Vitest (54 unit tests) |
+| Tests | Vitest (61 unit tests) |
 
 ### Why scrypt instead of Argon2id?
 
@@ -151,9 +156,11 @@ Argon2id, hashes can be re-derived on next login without changing the user model
 app/
   (public)/              public layout, home, search, provider profile, account, saved,
                          notifications, requests, how-it-works, for-providers
+  uploads/               runtime image route (reads storage/uploads)
   (auth)/                login, signup, forgot-password, reset-password
   provider/join/         step 1 of the provider application
   provider/onboarding/   7-step application (server actions, uploaded photos)
+storage/uploads/         runtime provider photos (not committed)
   provider/dashboard/    overview, profile, services, requests, reviews
   admin/                 overview, applications, application detail, reviews, emails, providers
   actions/               auth, provider, request/review and admin server actions
@@ -180,7 +187,11 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 - [`lib/reviews.ts`](lib/reviews.ts) — weighted rating recalculation for moderation.
 - [`lib/rate-limit.ts`](lib/rate-limit.ts) — in-process rate limiting for public forms.
 - [`lib/i18n`](lib/i18n) — EN/FR catalogs, cookie detection and the language switcher.
-- [`lib/notifications.ts`](lib/notifications.ts) — in-app notifications and the queued email outbox.
+- [`lib/notifications.ts`](lib/notifications.ts) — in-app notifications and the email outbox.
+- [`lib/email.ts`](lib/email.ts) — Resend/SMTP delivery, status tracking and retries.
+- [`lib/uploads.ts`](lib/uploads.ts) — upload paths and safe filename/content-type helpers.
+- [`app/uploads/[...path]/route.ts`](app/uploads/[...path]/route.ts) — streams runtime uploads
+  outside `public/`.
 - [`lib/password-reset.ts`](lib/password-reset.ts) — hashed, expiring, single-use reset tokens.
 - [`app/actions/provider.ts`](app/actions/provider.ts) — the full provider lifecycle.
 - [`app/actions/admin.ts`](app/actions/admin.ts) — approval and moderation with audit logging.
@@ -242,22 +253,22 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
   and admin login.
 - Browser-tested saving/unsaving providers, the private `/saved` page, and admin hide/publish
   review moderation with rating recalculation (48 → 47 → 48 reviews).
-- Browser-tested request notifications, the email outbox, password reset through a real
-  one-time token, rescheduling and cancellation.
+- Browser-tested request notifications, SMTP delivery through a local capture server, password
+  reset through a real one-time token, rescheduling and cancellation.
 - Browser-tested the FR language switch and French header/footer/navigation.
 - Mobile viewport checks at 390 × 844: no horizontal overflow on home, search, profile, join,
   login, onboarding or dashboard.
 
 ## Known limitations (intentional for v1)
 
-- **Email is queued, not delivered.** v1.2 records every transactional email in
-  `/admin/emails`; connecting an SMTP/transactional provider requires configuration and a
-  delivery worker. There is no email verification yet.
+- **Email delivery needs credentials.** Without `RESEND_API_KEY` or `SMTP_HOST`, messages
+  stay queued in `/admin/emails` and can be retried. There is no email verification, bounce
+  handling or delivery worker yet. Set `SITE_URL` to the public origin used in reset links.
 - **No payments, deposits, payouts or commission.** Appointments are requests confirmed
   directly by the provider.
 - **No calendar sync or real-time availability.** Opening hours are a guide.
-- **No OAuth.** Email + password with a working reset link. FR covers the customer-facing site;
-  provider/admin internal dashboards remain English in this pass.
+- **No OAuth.** Email + password with a working reset link. Customer and provider pages are
+  FR/EN; admin remains English internally.
 - **Local image storage.** `public/uploads` is for the demo; production should use object
   storage with image processing and virus/MIME scanning.
 - **SQLite.** The schema avoids SQLite-specific features and is ready for Postgres, but v1 runs
@@ -275,8 +286,8 @@ docs/                    repository review, v1 plan, wireframe notes, final scre
 
 ## Next steps
 
-1. Connect a transactional email provider and a delivery worker to the outbox.
-2. Email verification, OAuth and account security hardening.
+1. Email verification, OAuth and account security hardening.
+2. Durable object storage for provider photos and a background email worker.
 3. Postgres + object storage + image processing.
 4. Distributed rate limiting, CAPTCHA on public forms, and supply-demand analytics.
 5. Real availability / calendar slots and provider response templates.

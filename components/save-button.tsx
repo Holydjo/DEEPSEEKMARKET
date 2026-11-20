@@ -31,7 +31,7 @@ export function SaveButton({
   const loginHref = `/login?next=${encodeURIComponent(pathname)}`;
   const base =
     variant === "icon"
-      ? "flex h-8 w-8 items-center justify-center rounded-full border border-ink bg-surface/95 text-ink shadow-[1px_1px_0_rgba(23,19,15,.2)] backdrop-blur-sm transition-colors hover:bg-marigold-soft"
+      ? "flex h-10 w-10 items-center justify-center rounded-full border border-ink bg-surface/95 text-ink shadow-[1px_1px_0_rgba(23,19,15,.2)] backdrop-blur-sm transition-colors hover:bg-marigold-soft"
       : "btn btn-outline btn-sm";
 
   if (!isAuthed) {
