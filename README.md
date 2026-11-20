@@ -29,6 +29,9 @@ npm run dev
 
 Open **http://localhost:3000**.
 
+For a staging deployment (Render, persistent disk, Resend), see
+**[deploy.md](deploy.md)**.
+
 `npm run db:reset` rebuilds and reseeds the SQLite database. The database lives at
 `prisma/dev.db`.
 
