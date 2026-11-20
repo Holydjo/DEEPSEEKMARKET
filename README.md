@@ -85,6 +85,8 @@ before any public deployment.**
 - FR/EN language switch with browser-language detection and a cookie preference. The public
   customer journey is translated; internal provider/admin dashboards remain English for now.
 - Password reset by email link (one hour, single use, sessions invalidated).
+- EN/FR switch via a plain `/locale/fr` link, so it still works without client JavaScript;
+  the choice is stored in a cookie and the current path/filters are preserved.
 - Sign-up / login, installable web app manifest, sitemap, robots rules and JSON-LD.
 
 ### Providers

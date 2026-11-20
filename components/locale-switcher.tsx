@@ -1,9 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import { Languages } from "lucide-react";
-import { setLocaleAction } from "@/app/actions/locale";
 import { translate } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -14,17 +11,6 @@ export function LocaleSwitcher({
   locale: Locale;
   compact?: boolean;
 }) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
-
-  function change(next: Locale) {
-    if (next === locale || pending) return;
-    startTransition(async () => {
-      await setLocaleAction(next);
-      router.refresh();
-    });
-  }
-
   return (
     <div
       className={`inline-flex items-center rounded-full border border-line bg-surface p-0.5 ${
@@ -37,19 +23,17 @@ export function LocaleSwitcher({
         <Languages className="h-3 w-3" />
       </span>
       {(["en", "fr"] as const).map((value) => (
-        <button
+        <a
           key={value}
-          type="button"
-          onClick={() => change(value)}
-          disabled={pending}
-          aria-pressed={locale === value}
-          className={`rounded-full px-2 py-1 font-semibold uppercase transition-colors ${
+          href={`/locale/${value}`}
+          aria-current={locale === value ? "page" : undefined}
+          className={`rounded-full px-2.5 py-1.5 font-semibold uppercase transition-colors ${
             locale === value ? "bg-ink text-paper" : "text-muted hover:text-ink"
           }`}
           title={value === "en" ? "English" : "Français"}
         >
           {value}
-        </button>
+        </a>
       ))}
     </div>
   );

@@ -25,6 +25,23 @@ Les deux bloquants P0 sont corrigés et vérifiés sur un build de production. L
 
 ---
 
+## Correctif complémentaire — clic « FR » sans effet
+
+**Signalé après la première passe :** le cookie passait bien à `fr`, mais la page restait en anglais.
+
+**Cause :** le sélecteur utilisait une navigation client Next.js ; le Router Cache réaffichait la version anglaise préchargée. De plus, le lien du pied de page « EN · FR » était du texte statique, et le cookie `Secure` pouvait être refusé en HTTP sur une adresse LAN.
+
+**Corrigé :**
+- le sélecteur est maintenant un **lien plein-page** `/locale/fr` (fonctionne sans JavaScript, vide le cache client) ;
+- le changement préserve le chemin et les filtres via le référent ;
+- le pied de page utilise le vrai sélecteur ;
+- la route `/locale/[locale]` construit l’origine depuis `Host` / `X-Forwarded-*`, pour rester sur l’adresse LAN ;
+- les cookies locale **et session** ne sont `Secure` que sur HTTPS (utile en test HTTP sur `192.168.x.x`).
+
+**Vérifié :** header, footer, recherche filtrée, mobile 390 px, LAN `192.168.2.39:3001`, et navigation **JavaScript désactivé** → `lang="fr"`, cookie `holydo_locale=fr`, contenu français. Login LAN également OK.
+
+---
+
 ## P0-1 — Stockage des photos
 
 **Avant :** les fichiers étaient écrits dans `public/uploads` après le build ; Next.js ne les servait pas → `404`, image cassée sur le profil public.
@@ -166,6 +183,7 @@ Corrections :
 | Catégories ville | ✅ |
 | FR prestataire | ✅ |
 | Mobile 390 px | ✅ aucun débordement |
+| Clic FR header/footer/mobile/LAN/sans JS | ✅ |
 
 ---
 

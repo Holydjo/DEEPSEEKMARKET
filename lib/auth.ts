@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Provider } from "@prisma/client";
 import { db } from "./db";
+import { isSecureRequest } from "./request-protocol";
 
 const SESSION_COOKIE = "holydo_session";
 const SESSION_DAYS = 30;
@@ -22,10 +23,11 @@ export async function createSession(userId: string): Promise<void> {
   });
 
   const store = await cookies();
+  const secure = await isSecureRequest();
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure,
     path: "/",
     expires: expiresAt,
   });

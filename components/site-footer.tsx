@@ -2,9 +2,10 @@ import Link from "next/link";
 import { Instagram, Mail, MapPin } from "lucide-react";
 import { getTranslator } from "@/lib/i18n/server";
 import { Logo } from "./logo";
+import { LocaleSwitcher } from "./locale-switcher";
 
 export async function SiteFooter() {
-  const { t } = await getTranslator();
+  const { locale, t } = await getTranslator();
 
   return (
     <footer className="border-t border-ink bg-surface pb-24 pt-12 md:pb-8">
@@ -68,7 +69,7 @@ export async function SiteFooter() {
             <span className="inline-flex items-center gap-1">
               <Instagram className="h-3 w-3" aria-hidden /> @holydomarket
             </span>
-            <span>{t("footer.language")}</span>
+            <LocaleSwitcher locale={locale} compact />
           </div>
         </div>
       </div>
